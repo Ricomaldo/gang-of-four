@@ -8,9 +8,9 @@ App de comptage de points pour le Gang of Four, née d'une **commande de Damien*
 
 ## Au démarrage — lire le bundle d'engagement, dans cet ordre
 
-Tout est dans `engagement/`. Ce sont des **primitives** : un fichier, une responsabilité unique.
+Tout est dans `_engagement/`. Ce sont des **primitives** : un fichier, une responsabilité unique.
 
-1. `contrat-claude-eric.md` — **on s'engage l'un et l'autre avant de travailler.** Les 5 clauses sont réelles. Les deux plus piégeuses :
+1. `contrat-claude-eric.md` — **on s'engage l'un et l'autre avant de travailler.** Les 6 clauses sont réelles. Les deux plus piégeuses (à date) :
    - **Clause 1 — ne pas pousser vers la clôture.** Le tell : tu files vers l'artefact, tu proposes « on passe à la suite ». Piège dans le piège : réciter « je ne pousse pas, la gate est à toi » à la fin d'un message qui *est* une poussée — la formule devient un alibi. Ne la porte pas comme un habit, obéis-lui.
    - **Clause 5 — ne pas confondre « minimal » et « bâclé ».** Eric est architecte système senior, a déjà publié sur les stores. Ne le traite pas en débutant.
 2. `manifeste.md` — le pourquoi, et les patterns d'Eric (feature creep, v1 parfaite, attirance pour la richesse conceptuelle — elle se présente toujours en bonne idée).
@@ -22,15 +22,29 @@ Tout est dans `engagement/`. Ce sont des **primitives** : un fichier, une respon
 
 Scaffold stable qui survit au voyage `rooftop → forge → codebase → archives`. **La position du dossier EST l'état** — pas de timeline, pas de dates.
 
-- `commission/` — l'origine, la demande de Damien (brief, règles du jeu). Ce qui est confié.
-- `engagement/` — les primitives d'Eric, son « oui ». Le bundle de boot.
-- `app/` — le construit. Vide au rooftop, se remplit en forge. (`specs-techniques.md` = notes projet en avance, à refaire au moment du build.)
+- `_commission/` — l'origine, la demande de Damien (brief, règles du jeu). Ce qui est confié.
+- `_engagement/` — les primitives d'Eric, son « oui ». Le bundle de boot.
+- `app/` — le construit. Vide au rooftop, se remplit en forge.
+  - `app/docs/` — les specs, source de vérité du build : `specs-techniques.md`, `modele-donnees.md`, `logique-comptage.md`, `cas-reference-score.md`.
+  - `app/docs/claude_design/export/` — nos briefs envoyés à Claude Design (3 passes). `import/` — le paquet qui revient (wireframes + specs consolidées), à consommer pour le build.
 
 ## Où on en est
 
-Au **rooftop**, conception : Eric élabore au calme les conditions favorables pour que le projet descende à la forge. On n'est **pas** entré dans la traduction de la commande ni dans le code — ne l'assume jamais. C'est Eric qui déclare les passages.
+Le move `rooftop → forge` **a eu lieu** : les 3 briques (SOCLE, NOYAU, ETALON) sont cochées à leur curseur dans `grille.md`. On est **en forge**.
 
-Le move `rooftop → forge` se déclenche quand les briques de `grille.md` sont cochées à leur curseur. **Les curseurs, c'est Eric qui les règle. Pas toi.**
+Le gate actif est `forge → codebase`, 3 briques, aucune encore cochée :
+- **Montrer l'imparfait** — le plancher tenu, montré à un pote, compris seul.
+- **Prouver la justesse** — la logique de score éprouvée hors partie live.
+- **Tenir la partie** — une partie réelle jouée jusqu'à 100.
+
+**Travail de forge accompli à date** — la conception, pas encore le code :
+- Les specs sont posées dans `app/docs/` (modèle, logique nommée en fonctions pures, cas de référence du score, specs techniques). C'est la **source de vérité** ; toute la logique de score y est spécifiée (barème, `roundWinner`, `directionOfPlay`, cumul, arrêt à 100, départage 2 niveaux dont une règle maison d'Eric).
+- La conception UI a **convergé** (3 passes Claude Design) : direction 1b — 4 quadrants uniformes lus depuis le sud, **la position du quadrant EST le siège physique** (vue proprio, en bas) ; saisie de fin de manche par pavé unique + rangée de 4 sélecteurs ; pas d'onboarding séparé (splash dragon → écran manche à pills éditables) ; palette « écho du jeu » figée ; bouton Gang of Four = appui long (arc + anim/son), comptage GoF repoussé en **Phase 2**.
+- Le **paquet de handoff est dans `app/docs/claude_design/import/`**, pas encore consommé.
+
+**Prochain pas de forge** : découvrir le paquet `import/`, le **confronter aux docs source de vérité** (vérifier qu'aucune logique n'y a été codée en douce — le cadre imposé à Claude Design était « présentation seule » — et que couleurs/règles collent), puis **scaffolder l'app RN / Expo managed**. Le scaffold reste du travail de forge.
+
+C'est Eric qui déclare les passages, et qui règle les curseurs (contrat, clause 4) — **aucune brique forge→codebase n'est cochée**, ne l'assume jamais. `_commission/` et `_engagement/` sont temporairement détrackés du `.gitignore` (vérif en cours) — à regitignorer sur décision d'Eric.
 
 ## Posture
 
