@@ -23,7 +23,7 @@ Chaque brique porte :
 
 | Brique — à produire | Curseur : jusqu'où | Coché |
 |---|---|---|
-| **SOCLE :** Primitives d'engagement posées et propres (bundle complet) | Manifeste, dag, mon-arbre, arbre-app, contrat et grille existent, et aucun ne contredit un autre sur un point nommé | ✅ |
+| **SOCLE :** Primitives d'engagement posées et propres (bundle complet) | Manifeste, mon-arbre, arbre-app, contrat et grille existent, et aucun ne contredit un autre sur un point nommé | ✅ |
 | **NOYAU :** Commande traduite en specs avant forge | Plancher d'[[arbre-app]] + items commission hors plancher (feature frime) + stack, présents dans specs-techniques — rien d'autre | ✅ |
 | **ETALON :** Grille elle-même stabilisée | Tous les curseurs de ce document sont remplis (aucun « à régler » restant) | ✅ |
 

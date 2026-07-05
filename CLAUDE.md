@@ -15,40 +15,26 @@ Tout est dans `_engagement/`. Ce sont des **primitives** : un fichier, une respo
    - **Clause 5 — ne pas confondre « minimal » et « bâclé ».** Eric est architecte système senior, a déjà publié sur les stores. Ne le traite pas en débutant.
 2. `manifeste.md` — le pourquoi, et les patterns d'Eric (feature creep, v1 parfaite, attirance pour la richesse conceptuelle — elle se présente toujours en bonne idée).
 3. `arbre-app.md` et `mon-arbre.md` — les deux arbres des fins : les fins de l'app / les disciplines d'Eric.
-4. `dag.md` — les deux arbres reliés par leur tissu (3 nœuds-ponts).
-5. `grille.md` — **l'instrument.** La seule primitive qui *agit* : elle mesure les briques et déclenche le move.
+4. `grille.md` — **l'instrument.** La seule primitive qui *agit* : elle mesure les briques et déclenche le move.
 
 ## La structure
 
 Scaffold stable qui survit au voyage `rooftop → forge → codebase → archives`. **La position du dossier EST l'état** — pas de timeline, pas de dates.
 
-- `_commission/` — l'origine, la demande de Damien (brief, règles du jeu). Ce qui est confié.
+- `_commission/` — l'origine, la demande de Damien, et le fil de son usage. `brief-01-amorce` (l'amorce, non retouchée) + `brief-02-complement` (la commande enrichie par le 1er retour) + `regles-jeu.pdf` + `journal-damien` (log de com, verbatim Damien tagué `FD-NN` — un conduit, pas un lieu de traitement). Ce qui est confié **et écouté**.
 - `_engagement/` — les primitives d'Eric, son « oui ». Le bundle de boot.
-- `app/` — le construit. Vide au rooftop, désormais l'app RN / Expo managed.
-  - `app/docs/` — les specs, source de vérité du build : `specs-techniques.md`, `modele-donnees.md`, `logique-comptage.md`, `cas-reference-score.md`.
+- `app/` — le construit, l'app RN / Expo managed. `changelog.md` (versions produit).
+  - `app/docs/` — les specs (source de vérité du build : `specs-techniques`, `modele-donnees`, `logique-comptage`, `cas-reference-score`) et le registre `bugs.md` (`BUG-NN`).
   - `app/docs/claude_design/export/` — nos briefs envoyés à Claude Design (3 passes). `import/` — le paquet revenu (wireframes), confronté puis consommé.
   - `app/src/` — le code : `domain/` (logique pure, prouvée), `store/` (Zustand, source de vérité stockée), `screens/`, `components/`, `theme/`. `app/__tests__/` — les cas de référence du score. Règle de dépendance : `screens → store → domain`, jamais l'inverse.
 
 ## Où on en est
 
-Le move `rooftop → forge` **a eu lieu** (SOCLE, NOYAU, ETALON cochés dans `grille.md`). On est **en forge**, et le **code du plancher est complet et tourne** — Eric l'a lancé sur simulateur iOS (la boucle démarrer → saisir → cumuler → arrêt à 100 → annoncer le gagnant tourne de bout en bout).
+On est **en forge**, plancher complet et éprouvé. L'app a été buildée pour Android (EAS, APK preview) et livrée à Damien, qui l'a installée seul et jugée « ça fait le job ».
 
-Le gate actif est `forge → codebase`, 3 briques, **aucune cochée** (Eric constate) :
-- **Prouver la justesse** — la logique **branchée et éprouvée** : 33 tests verts dérivés de `cas-reference-score.md` (barème, cumul, arrêt à 100, départage 2 niveaux bout-en-bout). Curseur **atteint par la logique** ; reste le constat.
-- **Montrer l'imparfait** — un pote voit l'app, comprend seul le geste de saisie. *Acte réel, pas fait.*
-- **Tenir la partie** — une vraie partie à 4 jusqu'à 100. Désormais *possible* (l'app finit et annonce le vainqueur). *Acte réel, pas fait.*
+L'état vit dans le socle, pas ici : le retour Damien → `journal-damien`, les fins de l'app → `arbre-app`, la commande à jour → `brief-02-complement`, les bugs → `app/docs/bugs.md`. Ne pas redoubler ces sources d'un récit horodaté.
 
-**Travail de forge accompli** — le code, plus seulement la conception :
-- App **RN / Expo managed** (SDK 57, TS / React Navigation / Zustand). Paquet `import/` **confronté** aux docs source (aucune logique codée en douce ; barème/couleurs conformes) puis consommé.
-- **`domain/`** : barème, `roundWinner`, `directionOfPlay`, cumul, `isGameOver`, départage 2 niveaux — pures, testées. **`store/`** ne garde que le brut (prénoms, cartes, statut) ; scores/cumuls/vainqueur toujours dérivés.
-- **UI câblée** sur `domain/` : cumuls dans les pills, sens sur le disque, sélecteur par défaut sur `roundWinner`, carnet sur le barème. **Déclencheur de fin** : ≥100 → gel + annonce du vainqueur + Nouvelle partie (avec `confirm` ratifié, Sug B).
-- Décisions design entrées dans les specs : easter egg GoF = appui long ; action Nouvelle partie + confirm.
-
-**À valider par Eric** : `TABLE_SEATS` (ordre horaire des sièges dérivé de la grille) — n'impacte que le départage niveau 2 (cas rare).
-
-**Prochain pas — la commande : livrer pour Android.** Build local sur le tél d'Eric, et peut-être Google Play pour partager. Restent **hors plancher** (pas requis pour livrer) : auto-avance du pavé (le « 1 » qui attend), easter egg GoF, accès grille par glissé, polish UI.
-
-C'est Eric qui déclare les passages et règle les curseurs (contrat, clause 4) — **aucune brique forge→codebase n'est cochée**, ne l'assume jamais. `_commission/` et `_engagement/` sont temporairement détrackés du `.gitignore` — à regitignorer sur décision d'Eric.
+Le gate actif est `forge → codebase`, 3 briques, **aucune cochée** (Eric constate seul, ne l'assume jamais) : **prouver la justesse** (les tests), **montrer l'imparfait** (Damien a compris le geste seul), **tenir la partie** (une vraie partie à 4 jusqu'à 100 — pas encore). C'est Eric qui déclare les passages et règle les curseurs (contrat, clause 4).
 
 ## Posture
 
