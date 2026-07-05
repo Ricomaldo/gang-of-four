@@ -1,8 +1,8 @@
 ---
 title: GoF — Arbre-app
 created: 2026-07-02
-updated: 2026-07-03
-version: 0.2.0
+updated: 2026-07-05
+version: 0.3.0
 status: active
 type: arbre-des-fins
 ---
@@ -52,3 +52,15 @@ En une phrase : **saisir quatre nombres par manche, en tirer un score juste, cum
 Confort, hors plancher : nommer les joueurs, afficher le dealer, démarrer proprement une partie. Une soirée est jouable sans, de mémoire.
 
 Feature frime — dans la commission, nœud éjectable : animation + son au tap sur la zone d'un joueur (« Gang of Four ! »), comptage des GOF par joueur. Pas dans le plancher, mais dans la demande de Damien — à rouvrir en forge selon la dispo.
+
+## Branche 3 — le jeu se raconte (Le Social)
+
+Révélée par l'usage, pas prévue au départ : le premier retour de Damien (voir `_commission/journal-damien`) montre que l'app sert une fin de plus — la vie sociale de la partie. Une bande qui se vanne depuis trente ans veut du récit : palmarès, feuille qu'on s'envoie, « voir quand on s'est losé ». C'est la réouverture, par un besoin né à la table, du nœud « la partie oublie » de la branche 2 — précisément la condition qui l'autorisait.
+
+Ce qui doit être vrai pour qu'elle le soit :
+
+- La partie laisse une trace lisible : une feuille de score manche × joueur, pas seulement des totaux.
+- Cette trace se partage sans infrastructure : le partage natif du téléphone suffit — pas de serveur, pas de comptes, le multi-appareils reste tranché.
+- Le suivi valorise le récit : manches gagnées, manches jouées, et la frime (le « Gang of Four ! » de la combinaison reine).
+
+Le séquençage de cette branche en paliers (le premier : « Le Palmarès ») n'est pas ici — l'arbre dit le pourquoi, pas l'ordre.

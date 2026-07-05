@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Gang of Four",
+    "slug": "gang-of-four",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.irim.gangoffour"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F4F1E8",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.irim.gangoffour"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "abc0cad2-7b0c-4cf8-940c-97b2c6308332"
+      }
+    },
+    "owner": "irim",
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "imageWidth": 300,
+          "resizeMode": "contain",
+          "backgroundColor": "#F4F1E8"
+        }
+      ]
+    ]
+  }
+}
