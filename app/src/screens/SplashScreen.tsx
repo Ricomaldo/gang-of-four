@@ -4,7 +4,7 @@
  * Placeholder ici : l'asset dragon définitif sera branché plus tard.
  */
 import { useEffect } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
 import { palette } from '../theme/tokens';
@@ -19,14 +19,21 @@ export function SplashScreen({ navigation }: Props) {
 
   return (
     <Pressable style={styles.wrap} onPress={() => navigation.replace('Round')}>
-      <Text style={styles.dragon}>🐉</Text>
-      <Text style={styles.title}>Gang of Four</Text>
+      <View style={styles.logoStack}>
+        <Image source={require('../../assets/official/gang-of-four.webp')} style={styles.logo} />
+        <Image
+          source={require('../../assets/official/game-box.webp')}
+          style={[styles.logo, styles.logoSpacing]}
+        />
+      </View>      
+      {/* <Text style={styles.title}>Score Sheet</Text> */}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   wrap: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: palette.fondCreme },
-  dragon: { fontSize: 96 },
-  title: { fontSize: 24, color: palette.encre, marginTop: 12, letterSpacing: 1 },
+  logoStack: { alignItems: 'center' },
+  logo: { width: 300, height: 300, resizeMode: 'contain' },
+  logoSpacing: { marginBottom: 18 },
 });
