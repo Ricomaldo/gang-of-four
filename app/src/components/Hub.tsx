@@ -25,13 +25,13 @@ const BTN = 88; // bouton central
 export function Hub({ state, direction, gofPlayerName, disabled = false, onPress }: Props) {
   const label =
     state === 'gofTriggered' ? `GANG OF FOUR\n${gofPlayerName ?? ''}` :
-    state === 'ready'        ? 'READY ?' :
-    state === 'enterScores'  ? 'ENTER\nSCORES' :
+    state === 'ready'        ? 'READY' :
+    state === 'enterScores'  ? 'ENTRER\nSCORES' :
     'FIN DE\nMANCHE';
 
   const isDisabled = disabled || state === 'gofTriggered';
-  // Manche 1 = anti-horaire = défaut (proto). Horaire = arc en miroir.
-  const mirrored = direction === 'horaire';
+  // Manche 1 = anti-horaire = orientation par défaut ; horaire = arc en miroir.
+  const mirrored = direction === 'anti-horaire';
 
   return (
     <TouchableOpacity

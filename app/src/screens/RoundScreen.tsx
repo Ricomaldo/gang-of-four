@@ -139,7 +139,7 @@ export function RoundScreen({ navigation }: Props) {
   };
 
   const renderQuadrant = (id: PlayerId, isBottom: boolean) => (
-    <Quadrant key={id} align={inSetup && isBottom ? 'top' : 'center'}>
+    <Quadrant key={id} align={inSetup && isBottom ? 'center' : 'center'}>
       <PlayerPill
         color={seatColors[id]}
         prenom={players[id].prenom}
