@@ -30,7 +30,7 @@ Scaffold stable qui survit au voyage `rooftop → forge → codebase → archive
 
 ## Où on en est
 
-On est **en forge**, plancher complet et éprouvé. L'app a été buildée pour Android (EAS, APK preview) et livrée à Damien, qui l'a installée seul et jugée « ça fait le job ».
+On est **en forge**, plancher complet et éprouvé. L'app a été buildée pour Android (EAS, APK preview) et livrée à Damien, qui l'a installée seul et jugée « ça fait le job ». Le fil avec lui est vivant : un 2e retour, après vraie manipulation des tableaux, affine le plancher (bugs de sens corrigés) et pousse tout entier vers l'axe récit — détail dans `journal-damien`.
 
 L'état vit dans le socle, pas ici : le retour Damien → `journal-damien`, les fins de l'app → `arbre-app`, la commande à jour → `brief-02-complement`, les bugs → `app/docs/bugs.md`. Ne pas redoubler ces sources d'un récit horodaté.
 

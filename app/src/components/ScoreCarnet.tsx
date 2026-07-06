@@ -9,7 +9,7 @@
  * Zone présentationnelle : dérive tout de l'archive, ne stocke rien.
  */
 import { StyleSheet, Text, View } from 'react-native';
-import { PLAYER_IDS } from '../domain/model';
+import { SEAT_ORDER } from '../domain/model';
 import type { GameArchive, PlayerId } from '../domain/model';
 import { directionOfPlay } from '../domain/direction';
 import { computeRoundScore, computeTotals } from '../domain/scoring';
@@ -20,11 +20,14 @@ export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArc
   const { players, rounds } = archive;
   const totals = computeTotals(rounds);
 
+  // Dernière colonne (ordre tour de table) — pas de séparateur vertical à droite.
+  const lastId = SEAT_ORDER[SEAT_ORDER.length - 1];
+
   // Cumul progressif par joueur, manche après manche.
   const running: Record<PlayerId, number> = { 0: 0, 1: 0, 2: 0, 3: 0 };
   const rows = rounds.map((r, i) => {
     const winner = roundWinner(r);
-    const cells = PLAYER_IDS.map((id) => {
+    const cells = SEAT_ORDER.map((id) => {
       const pts = computeRoundScore(r.cardCounts[id]);
       running[id] += pts;
       return { id, pts, cumul: running[id], isWinner: id === winner };
@@ -39,8 +42,8 @@ export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArc
         <View style={[styles.dirCell, styles.headDir]}>
           <Text style={styles.headDirText}>↔</Text>
         </View>
-        {PLAYER_IDS.map((id) => (
-          <View key={id} style={[styles.cell, styles.headCell, id !== 3 && styles.colDivider]}>
+        {SEAT_ORDER.map((id) => (
+          <View key={id} style={[styles.cell, styles.headCell, id !== lastId && styles.colDivider]}>
             <View style={[styles.dot, { backgroundColor: seatColors[id] }]} />
             <Text style={styles.headText}>{(players[id].prenom[0] ?? '?').toUpperCase()}</Text>
           </View>
@@ -60,7 +63,7 @@ export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArc
                 key={c.id}
                 style={[
                   styles.cell,
-                  c.id !== 3 && styles.colDivider,
+                  c.id !== lastId && styles.colDivider,
                   c.isWinner && { backgroundColor: seatColors[c.id] + '22' },
                 ]}
               >
@@ -79,8 +82,8 @@ export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArc
         <View style={[styles.dirCell, styles.totalDir, styles.colDividerLight]}>
           <Text style={styles.totalDirText}>TOT</Text>
         </View>
-        {PLAYER_IDS.map((id) => (
-          <View key={id} style={[styles.cell, id !== 3 && styles.colDividerLight]}>
+        {SEAT_ORDER.map((id) => (
+          <View key={id} style={[styles.cell, id !== lastId && styles.colDividerLight]}>
             <Text style={styles.totalText}>{totals[id]}</Text>
           </View>
         ))}

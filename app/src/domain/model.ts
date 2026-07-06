@@ -64,3 +64,12 @@ export interface Soiree {
  * N'influe que sur le départage niveau 2 (cas rare : égalité totale ET égalité de dernière manche).
  */
 export const TABLE_SEATS: Seats = { 0: 0, 1: 1, 3: 2, 2: 3 };
+
+/**
+ * Ordre de présentation « tour de table » : les joueurs rangés par rang horaire
+ * (dérivé de TABLE_SEATS) → [0, 1, 3, 2]. Sert aux colonnes du carnet et aux
+ * sélecteurs de saisie, pour suivre qui joue après qui plutôt que l'ordre PlayerId.
+ */
+export const SEAT_ORDER: readonly PlayerId[] = ([...PLAYER_IDS] as PlayerId[]).sort(
+  (a, b) => TABLE_SEATS[a] - TABLE_SEATS[b],
+);

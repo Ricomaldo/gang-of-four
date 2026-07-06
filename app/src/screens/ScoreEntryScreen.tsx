@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { NumPad } from '../components/NumPad';
 import { SeatSelectors } from '../components/SeatSelectors';
-import { MAX_CARDS, PLAYER_IDS } from '../domain/model';
+import { MAX_CARDS, PLAYER_IDS, SEAT_ORDER } from '../domain/model';
 import type { CardCount, PlayerId, Round } from '../domain/model';
 import { isValidRoundInput, roundWinner } from '../domain/winner';
 import { useGameStore } from '../store/gameStore';
@@ -62,7 +62,8 @@ export function ScoreEntryScreen({ navigation }: Props) {
     navigation.goBack();
   };
 
-  const seats = PLAYER_IDS.map((id) => ({
+  // Sélecteurs en ordre tour de table (SEAT_ORDER), cohérent avec les colonnes du carnet.
+  const seats = SEAT_ORDER.map((id) => ({
     id,
     color: seatColors[id],
     initial: (players[id].prenom[0] ?? '?').toUpperCase(),

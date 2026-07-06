@@ -37,6 +37,9 @@ _2e retour Damien (FD-07/09/11/12) :_
 - **Sens de jeu — 4 flèches** entre les joueurs, autour du hub, tournant dans le sens du cycle de table (remplace l'arc central, jugé ambigu par Damien — FD-07).
 - **Fin de partie → feuille de score** : bascule automatique sur le carnet à la fin (l'accès aux stats ne se perd plus — FD-12) ; feuille ré-accessible depuis la carte vainqueur.
 
+### Modifié
+- **Ordre tour de table** : colonnes du carnet et sélecteurs de saisie présentés dans l'ordre des sièges (`SEAT_ORDER`, dérivé de `TABLE_SEATS`) plutôt que l'ordre `PlayerId` — cohérence saisie ↔ carnet visible pendant la partie.
+
 ### Ossature (refactor)
 - Composants nommés et attrapables pour le polish : `Hub`, `Quadrant`, `QuadrantGrid`, `PlayerPill`, `ScoreCarnet`, `Palmares`.
 - `CenterDisc` → `Hub` (composant-pivot à états).
