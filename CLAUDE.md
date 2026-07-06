@@ -34,7 +34,7 @@ On est **en forge**, plancher complet et éprouvé. L'app a été buildée pour 
 
 L'état vit dans le socle, pas ici : le retour Damien → `journal-damien`, les fins de l'app → `arbre-app`, la commande à jour → `brief-02-complement`, les bugs → `app/docs/bugs.md`. Ne pas redoubler ces sources d'un récit horodaté.
 
-Le gate actif est `forge → codebase`, 4 briques, **une cochée** (Eric constate seul, ne l'assume jamais) : **montrer l'imparfait** ✅ (Damien a compris le geste seul) ; restent **prouver la justesse** (les tests), **tenir la partie** (une vraie partie à 4 jusqu'à 100 — prévue mercredi 8/07 20h) et **écrire l'histoire** (l'axe récit — la partie laisse une trace ; cochable seulement au palier 2 / DB, le palier 1 en pose le germe). C'est Eric qui déclare les passages et règle les curseurs (pacte, clause 4).
+Le gate actif est `forge → codebase`, 4 briques, **deux cochées** (Eric constate seul, ne l'assume jamais) : **montrer l'imparfait** ✅ (Damien a compris le geste seul) et **prouver la justesse** ✅ (49 tests verts, 100 % contre la logique) ; restent **tenir la partie** (une vraie partie à 4 jusqu'à 100 — prévue mercredi 8/07 20h) et **écrire l'histoire** (l'axe récit — la partie laisse une trace ; cochable seulement au palier 2 / DB, le palier 1 en pose le germe). C'est Eric qui déclare les passages et règle les curseurs (pacte, clause 4).
 
 ## Posture
 

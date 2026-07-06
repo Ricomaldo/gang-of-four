@@ -32,7 +32,7 @@ Chaque brique porte :
 | Brique — à produire | Curseur : jusqu'où | Coché |
 |---|---|---|
 | **Montrer l'imparfait :** le plancher tient sans moi | Un pote a vu l'app tourner sans qu'Eric explique à côté, et a compris seul le geste de saisie de fin de manche | ✅ |
-| **Prouver la justesse :** la logique de score est éprouvée hors partie live | Un jeu de cas de référence dérivés des règles — dont les cas-limites de paliers et l'arrêt à 100 — passe à 100 % contre la logique | ☐ |
+| **Prouver la justesse :** la logique de score est éprouvée hors partie live | Un jeu de cas de référence dérivés des règles — dont les cas-limites de paliers et l'arrêt à 100 — passe à 100 % contre la logique | ✅ |
 | **Tenir la partie :** une partie réelle est jouée jusqu'au bout | Une partie à 4 est allée jusqu'à 100 points avec l'app, score annoncé juste à la fin | ☐ |
 | **Écrire l'histoire :** la partie ne s'oublie pas, elle se relit | La partie laisse une **trace relisible** — sa feuille manche × joueur se rouvre après coup. Fait vrai seulement avec la persistance du **palier 2 (DB)** ; le palier 1 en pose le germe (tableau de score, manches gagnées, carnet de soirée) | ☐ |
 
@@ -54,3 +54,5 @@ Chaque brique porte :
 *2026-07-06 — **Montrer l'imparfait** cochée. Déclaration d'Eric (à distance de l'ordinateur, transcription déléguée) : Damien a installé l'APK seul, jugé « ça fait le job » et compris le geste de saisie sans explication à côté. Restent ouvertes : Prouver la justesse, Tenir la partie (partie réelle prévue mercredi 8/07 20h).*
 
 *v0.6 — brique **ÉCRIRE L'HISTOIRE** ajoutée à forge→codebase : l'axe récit (Branche 3 de [[arbre-app]], « le jeu se raconte »), jusque-là une *fin* sans preuve, devient un gate explicite — même geste qu'en v0.3 pour la justesse. Brique et curseur posés par Eric. Cochable seulement au palier 2 (persistance DB) ; présente dès maintenant pour justifier le tableau de score et le germe du palmarès.*
+
+*2026-07-06 — **Prouver la justesse** cochée. Constat d'Eric : 49 tests verts couvrant barème (cas-limites de paliers), cumul, arrêt à 100 (dont double franchissement), départage bout-en-bout — 100 % contre la logique. Restent ouvertes : Tenir la partie (partie réelle mercredi 8/07 20h) ; Écrire l'histoire (attend le palier 2).*
