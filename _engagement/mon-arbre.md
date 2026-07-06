@@ -1,8 +1,8 @@
 ---
 title: GoF — Mon arbre
 created: 2026-07-02
-updated: 2026-07-03
-version: 0.2.0
+updated: 2026-07-06
+version: 0.3.0
 status: active
 type: arbre-des-fins
 ---
@@ -22,7 +22,8 @@ Trois verbes sous les mots-clés de départ : **lâcher**, **écouter**, **cadre
 Sortir avant que ce soit fini. La branche la plus adverse à mes patterns : perfectionnisme et pulsion de la v1 parfaite vivent là.
 
 - **Montrer l'imparfait.** Le montrer à *un* pote suffit à valoir « lâché » — pas besoin de la vraie partie à quatre. Feuille fermée, directement actionable.
-- **Arrêter de travailler un truc améliorable.** La difficulté n'est pas de m'arrêter au plancher, c'est de *fixer le plancher juste* — trop bas je livre du cassé, trop haut je recrée la v1 parfaite sous un autre nom. La méthode est déjà éprouvée : *pas « ce qui serait bien », mais « ce qui ne doit pas manquer ».* Comme je fixe mal le plancher seul, le contrat m'aide à le tenir (clause 4).
+- **Arrêter de travailler un truc améliorable.** La difficulté n'est pas de m'arrêter au plancher, c'est de *fixer le plancher juste* — trop bas je livre du cassé, trop haut je recrée la v1 parfaite sous un autre nom. La méthode est déjà éprouvée : *pas « ce qui serait bien », mais « ce qui ne doit pas manquer ».* Comme je fixe mal le plancher seul, le pacte m'aide à le tenir (clause 4).
+- **Situer le polish, pas le réprimer.** Le soin graphique est d'abord un *plaisir* — le graphiste en moi joue avec les formes et les couleurs, et ce projet doit en porter (formation d'intégration à la base). Ce n'est donc pas une pente à couper mais une matière à *placer* : l'ossature (composants nommés, factorisés) est au plancher, le rendu fin va au bon palier. La peur du « c'est moche » qui rôde derrière n'est pas un juge extérieur, c'est une affaire de mon regard propre et de mon auto-satisfaction. *2026-07-06 — tenu en direct : polish reporté au palier 2 pendant que la voix murmurait, l'ossature (Quadrant, Hub) exigée et obtenue. Le lâcher a tenu sous tension.*
 
 ## Branche — Écouter
 
@@ -38,8 +39,8 @@ Le public de l'app n'est pas la table d'un soir, c'est un groupe tournant. Le su
 
 ## Branche — Cadrer
 
-Travailler avec l'IA sous protocole plutôt qu'à l'aveugle. Le premier artefact de cette branche existe déjà : le [[contrat-claude-eric]].
+Travailler avec l'IA sous protocole plutôt qu'à l'aveugle. Le premier artefact de cette branche existe déjà : le [[pacte-claude-eric]].
 
-- Le contrat est **bilatéral** : versant Eric (patterns importés du manifeste, le rythme lui appartient) et versant Claude (quatre clauses nommées en construisant ce projet).
+- Le pacte est **bilatéral** : versant Eric (patterns importés du manifeste, le rythme lui appartient) et versant Claude (quatre clauses nommées en construisant ce projet).
 - Il est **vivant** : points d'alignement et d'amendement à accrocher dans la timeline (prochain artefact).
 - Chaque travers de l'un fait tourner un travers de l'autre — un jeu d'engrenages, pas deux listes.

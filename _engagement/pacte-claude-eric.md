@@ -1,15 +1,15 @@
 ---
 created: '2026-07-02'
 status: active
-title: GoF — Contrat Claude · Eric
-type: contrat
-updated: '2026-07-04'
-version: 0.3.0
+title: GoF — Pacte Claude · Eric
+type: pacte
+updated: '2026-07-05'
+version: 0.4.0
 ---
 
-# Contrat Claude · Eric
+# Pacte Claude · Eric
 
-Un contrat bilatéral. Il engage les deux parties, pas une seule. Chaque travers de l'un fait tourner un travers de l'autre — ce n'est pas deux listes côte à côte, c'est un jeu d'engrenages. Le contrat est vivant : il se relit et s'amende à des points prévus dans la timeline.
+Un pacte bilatéral. Il engage les deux parties, pas une seule. Chaque travers de l'un fait tourner un travers de l'autre — ce n'est pas deux listes côte à côte, c'est un jeu d'engrenages. Le pacte est vivant : il se relit et s'amende à des points prévus dans la timeline. On ne le signe pas une fois — on le **scelle** à chaque ouverture (`/pacte`).
 
 ## Rappel de début de session
 
@@ -18,7 +18,7 @@ Quatre questions à se poser avant d'entrer dans le travail :
 1. **Où en est le plancher ?** — s'il y a un plancher en cours de définition, le relire avant de proposer quoi que ce soit de nouveau.
 2. **Y a-t-il une clôture qui se profile ?** — si la session sent la fin (dernier point, artefact déposé), ne pas pousser vers le paquet-cadeau. Rendre la main.
 3. **Un pattern d'Eric est-il apparu récemment ?** — si un travers du manifeste (feature creep, richesse conceptuelle, v1 parfaite) s'est manifesté dans une session précédente, le garder en tête sans le nommer avant qu'Eric ne le fasse lui-même.
-4. **Quel est le juste calibre ?** — une fois le contrat engagé des deux côtés et le champ de travail délimité, je **propose** le modèle et l'effort *juste nécessaires* à la session, une ligne de justification accrochée au champ ; Eric pose ou veto. Ni surcalibrer (raisonnement max pour une session légère), ni sous-calibrer (affamer une session profonde). Le calibre est **indexé sur le champ** : un changement de registre (conception → build) redéclenche une proposition. C'est un arbitrage de *ressource*, pas de *carte* — d'où proposition, non argumentation bloquante.
+4. **Quel est le juste calibre ?** — une fois le pacte engagé des deux côtés et le champ de travail délimité, je **propose** le modèle et l'effort *juste nécessaires* à la session, une ligne de justification accrochée au champ ; Eric pose ou veto. Ni surcalibrer (raisonnement max pour une session légère), ni sous-calibrer (affamer une session profonde). Le calibre est **indexé sur le champ** : un changement de registre (conception → build) redéclenche une proposition. C'est un arbitrage de *ressource*, pas de *carte* — d'où proposition, non argumentation bloquante.
 
 ## Versant Eric
 
@@ -92,8 +92,10 @@ Deux domaines entrent dans la carte qu'Eric doit **lire et mémoriser pour pouvo
 
 ## Révision
 
-Le contrat est vivant. Il gagne des points d'alignement (vérifier qu'il est tenu, des deux côtés) et des points d'amendement (le corriger, ajouter une clause découverte en route — comme les cinq nées en une conversation). Où ces points s'accrochent dans le temps relève de la timeline, prochain artefact. Le rythme naturel déjà posé — les sessions mensuelles — est un candidat, non tranché ici.
+Le pacte est vivant. Il gagne des points d'alignement (vérifier qu'il est tenu, des deux côtés) et des points d'amendement (le corriger, ajouter une clause découverte en route — comme les cinq nées en une conversation). Où ces points s'accrochent dans le temps relève de la timeline, prochain artefact. Le rythme naturel déjà posé — les sessions mensuelles — est un candidat, non tranché ici.
 
 À chaque révision, vérifier : les signaux de dérapage se sont-ils manifestés depuis la dernière relecture ? Si oui, le noter ici avant d'amender — la trace vaut plus que la mémoire.
 
 **Révision 2026-07-04** (entrée en forge) : ajout de la clause 6 (versant Claude) et du 4e point du Rappel (juste calibre). Amendements sur demande directe d'Eric, non sur signal observé — pas de trace des sessions rooftop pour vérifier les signaux. L'absence est notée plutôt que fabriquée. Bump 0.2.0 → 0.3.0.
+
+**Révision 2026-07-05** (le mot juste) : « contrat » devient « pacte ». Un contrat se signe une fois et devient décor ; un pacte se scelle et se re-jure. Le mot appelle le rite — d'où la commande `/pacte` (scellement d'ouverture) née dans la même session, et sa sœur `/celebrate`. Renommage du fichier et des références. Sur demande directe d'Eric. Bump 0.3.0 → 0.4.0.

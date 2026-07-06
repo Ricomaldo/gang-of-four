@@ -10,7 +10,7 @@ App de comptage de points pour le Gang of Four, née d'une **commande de Damien*
 
 Tout est dans `_engagement/`. Ce sont des **primitives** : un fichier, une responsabilité unique.
 
-1. `contrat-claude-eric.md` — **on s'engage l'un et l'autre avant de travailler.** Les 6 clauses sont réelles. Les deux plus piégeuses (à date) :
+1. `pacte-claude-eric.md` — **on se scelle l'un à l'autre avant de travailler** (commande `/pacte`). Les 6 clauses sont réelles. Les deux plus piégeuses (à date) :
    - **Clause 1 — ne pas pousser vers la clôture.** Le tell : tu files vers l'artefact, tu proposes « on passe à la suite ». Piège dans le piège : réciter « je ne pousse pas, la gate est à toi » à la fin d'un message qui *est* une poussée — la formule devient un alibi. Ne la porte pas comme un habit, obéis-lui.
    - **Clause 5 — ne pas confondre « minimal » et « bâclé ».** Eric est architecte système senior, a déjà publié sur les stores. Ne le traite pas en débutant.
 2. `manifeste.md` — le pourquoi, et les patterns d'Eric (feature creep, v1 parfaite, attirance pour la richesse conceptuelle — elle se présente toujours en bonne idée).
@@ -34,7 +34,7 @@ On est **en forge**, plancher complet et éprouvé. L'app a été buildée pour 
 
 L'état vit dans le socle, pas ici : le retour Damien → `journal-damien`, les fins de l'app → `arbre-app`, la commande à jour → `brief-02-complement`, les bugs → `app/docs/bugs.md`. Ne pas redoubler ces sources d'un récit horodaté.
 
-Le gate actif est `forge → codebase`, 3 briques, **aucune cochée** (Eric constate seul, ne l'assume jamais) : **prouver la justesse** (les tests), **montrer l'imparfait** (Damien a compris le geste seul), **tenir la partie** (une vraie partie à 4 jusqu'à 100 — pas encore). C'est Eric qui déclare les passages et règle les curseurs (contrat, clause 4).
+Le gate actif est `forge → codebase`, 4 briques, **une cochée** (Eric constate seul, ne l'assume jamais) : **montrer l'imparfait** ✅ (Damien a compris le geste seul) ; restent **prouver la justesse** (les tests), **tenir la partie** (une vraie partie à 4 jusqu'à 100 — prévue mercredi 8/07 20h) et **écrire l'histoire** (l'axe récit — la partie laisse une trace ; cochable seulement au palier 2 / DB, le palier 1 en pose le germe). C'est Eric qui déclare les passages et règle les curseurs (pacte, clause 4).
 
 ## Posture
 
