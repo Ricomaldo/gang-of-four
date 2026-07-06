@@ -1,8 +1,8 @@
 ---
 title: GoF — Modèle de données
 created: '2026-07-04'
-updated: '2026-07-04'
-version: 0.4.0
+updated: '2026-07-06'
+version: 0.5.0
 status: active
 type: modele-donnees
 ---
@@ -49,10 +49,24 @@ Jaune pur écarté (illisible sur fond crème) → ambre. Les prénoms sont des 
 - `cumul` par joueur = somme des scores dérivés sur toutes les manches
 - fin de partie = au moins un cumul ≥ 100
 - `vainqueur` = cumul le plus bas ; départage niveau 1 (score de la dernière manche) puis niveau 2 (siège le plus proche en horaire du `gagnantManche`)
+- `dernierManche` = joueur avec le plus de cartes ; départage L1 (cumul le plus élevé) puis L2 (siège le plus proche du gagnant en **anti-horaire**)
+- `manchesGagnees` par joueur = compte de `gagnantManche` sur toutes les manches
 
-## Hors modèle (exclu par les specs)
+## Persistance locale (palier 1)
 
-- Pas de persistance cross-session — l'état vit en mémoire le temps de la partie.
+**GameArchive** — snapshot d'une `Partie` clôturée ou interrompue :
+- `archivedAt` : timestamp JS (ms)
+- `players` : les 4 joueurs au moment de l'archivage
+- `rounds` : manches jouées
+- `status` : `'terminee'` ou `'en-cours'` (partie interrompue par « Nouvelle partie »)
+
+**Soiree** — regroupement de parties par date :
+- `date` : `YYYY-MM-DD` avec tolérance nuit (parties terminées avant 5h = veille)
+- `parties` : `GameArchive[]`
+
+Stocké en `AsyncStorage` (clé `'gof:soiree'`). Une seule soirée en mémoire — pas d'historique all-time (palier 2). La `Soiree` est chargée au démarrage de l'app et mise à jour à chaque archivage.
+
+**Point de bascule** : une partie rejoint la `Soiree` au game-over (cumul ≥ 100) ou au lancement d'une nouvelle partie (avant le reset).
 
 ## Démarrage — pas d'écran séparé
 
@@ -62,3 +76,4 @@ La saisie des 4 prénoms n'a pas d'écran dédié : après un splash (dragon, as
 *v0.2 — ajout de `prenom` sur Joueur : omis à tort dans la v0.1 (absent du brief initial), confirmé essentiel par Eric. Implique un écran de démarrage non encore spécifié.*
 *v0.3 — résolution du siège : la position du quadrant à l'écran EST le siège physique (vue proprio, en bas), `id` et siège se confondent, plus de champ `siege` séparé ; le départage niveau 2 dérive de la grille. Le démarrage n'est plus un écran à part : c'est l'écran manche avec pills éditables, précédé d'un splash dragon.*
 *v0.4 — palette « écho du jeu » figée (rouge brique / bleu / vert / ambre), attribuée par position de quadrant.*
+*v0.5 — ajout `dernierManche` (règle maison, 3 niveaux de départage), `manchesGagnees` ; section persistance locale : `GameArchive`, `Soiree`, point de bascule. Amende « zéro persistance ». Hub (ex-CenterDisc) devient le composant-pivot à états.*

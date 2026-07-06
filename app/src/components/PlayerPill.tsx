@@ -1,11 +1,19 @@
 /**
- * Pill d'identité d'un joueur (écran manche & démarrage).
- * Pastille couleur du siège + prénom (secondaire) + score cumulé en très gros
- * (élément dominant). En mode démarrage : pill vide et éditable.
- * Présentationnel — les valeurs viennent en props, aucune logique ici.
+ * PlayerPill — la « zone d'affichage » d'un joueur, à TAILLE FIXE.
+ * Calée sur le pire cas (score 3 chiffres + un espace notif réservé) pour que
+ * toutes les pills soient identiques quel que soit le score ou la présence de notif.
+ *
+ * Structure : carte bordée (pastille + prénom + gros score) surmontant un slot notif
+ * toujours réservé (vide → hauteur conservée). Présentationnel : tout vient en props.
  */
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { palette, shapes } from '../theme/tokens';
+
+/** Notif qui-donne-à-qui, posée sous la carte dans le footprint fixe de la pill. */
+export type PillNotif =
+  | { kind: 'winner' }
+  | { kind: 'giver'; given: boolean; onGive: () => void }
+  | null;
 
 type Props = {
   color: string;
@@ -13,11 +21,23 @@ type Props = {
   score: number;
   editable?: boolean;
   onChangePrenom?: (v: string) => void;
+  onLongPress?: () => void;
+  notif?: PillNotif;
 };
 
-export function PlayerPill({ color, prenom, score, editable = false, onChangePrenom }: Props) {
-  return (
-    <View style={styles.wrap}>
+export const PILL_WIDTH = 150;
+
+export function PlayerPill({
+  color,
+  prenom,
+  score,
+  editable = false,
+  onChangePrenom,
+  onLongPress,
+  notif = null,
+}: Props) {
+  const card = (
+    <View style={styles.card}>
       <View style={styles.idRow}>
         <View style={[styles.dot, { backgroundColor: color }]} />
         {editable ? (
@@ -29,27 +49,62 @@ export function PlayerPill({ color, prenom, score, editable = false, onChangePre
             placeholderTextColor={palette.bordureForte}
           />
         ) : (
-          <Text style={styles.name}>{prenom}</Text>
+          <Text style={styles.name} numberOfLines={1}>{prenom}</Text>
         )}
       </View>
-      {!editable && <Text style={styles.score}>{score}</Text>}
+      {/* Score toujours présent (espace réservé même en saisie) pour figer la hauteur */}
+      <Text style={styles.score}>{editable ? '' : score}</Text>
+    </View>
+  );
+
+  return (
+    <View style={styles.zone}>
+      {!editable && onLongPress ? (
+        <TouchableOpacity onLongPress={onLongPress} delayLongPress={600} activeOpacity={0.8}>
+          {card}
+        </TouchableOpacity>
+      ) : (
+        card
+      )}
+
+      {/* Slot notif — hauteur toujours réservée pour aligner toutes les pills */}
+      <View style={styles.notifSlot}>
+        {notif?.kind === 'winner' && (
+          <Text style={styles.notifWinner}>🏆 gagnant manche préc.</Text>
+        )}
+        {notif?.kind === 'giver' && (
+          <TouchableOpacity onPress={notif.onGive} disabled={notif.given} hitSlop={6}>
+            <Text style={styles.notifGiver}>
+              {notif.given ? 'a donné sa meilleure carte ✓' : 'donne sa meilleure carte'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
+  zone: { width: PILL_WIDTH, alignItems: 'center' },
+  card: {
+    width: PILL_WIDTH,
+    height: 96,
     backgroundColor: palette.fondPill,
     borderRadius: shapes.pillRadius,
     borderWidth: shapes.pillBorder,
-    borderColor: palette.bordure,
-    padding: 12,
+    borderColor: palette.encre,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'center',
+    gap: 2,
   },
-  idRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  dot: { width: 14, height: 14, borderRadius: 7 },
-  name: { color: palette.bordureForte, fontSize: 14 },
-  nameInput: { color: palette.encre, fontSize: 16, minWidth: 90, paddingVertical: 2 },
-  score: { color: palette.score, fontSize: 56, fontWeight: '700' },
+  idRow: { flexDirection: 'row', alignItems: 'center', gap: 6, maxWidth: PILL_WIDTH - 28 },
+  dot: { width: 12, height: 12, borderRadius: 6, borderWidth: 1.5, borderColor: palette.bordureForte },
+  name: { color: palette.bordureForte, fontSize: 12, fontWeight: '700', flexShrink: 1 },
+  nameInput: { color: palette.encre, fontSize: 15, minWidth: 84, paddingVertical: 2, textAlign: 'center' },
+  score: { color: palette.score, fontSize: 42, fontWeight: '700', lineHeight: 46 },
+  notifSlot: { width: PILL_WIDTH, minHeight: 32, marginTop: 6, alignItems: 'center', justifyContent: 'flex-start' },
+  notifWinner: { fontSize: 11, color: palette.bordureForte, textAlign: 'center' },
+  notifGiver: { fontSize: 11, color: palette.encre, textAlign: 'center', textDecorationLine: 'underline' },
 });

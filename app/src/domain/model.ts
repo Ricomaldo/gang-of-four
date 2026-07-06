@@ -43,6 +43,20 @@ export const PLAYER_IDS: readonly PlayerId[] = [0, 1, 2, 3];
 export const MAX_CARDS = 16;
 export const WINNING_THRESHOLD = 100;
 
+/** Partie archivée (terminée ou interrompue). */
+export interface GameArchive {
+  archivedAt: number;
+  players: Record<PlayerId, Player>;
+  rounds: Round[];
+  status: GameStatus;
+}
+
+/** Ensemble de parties regroupées par date (tolérance nuit : avant 5h = veille). */
+export interface Soiree {
+  date: string; // YYYY-MM-DD
+  parties: GameArchive[];
+}
+
 /**
  * Ordre horaire des sièges dérivé de la grille 2×2 (vue du sud, proprio en bas).
  * Sens horaire vu de dessus : HG(0) → HD(1) → BD(3) → BG(2). L'index est le rang horaire.

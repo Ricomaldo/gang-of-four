@@ -58,6 +58,44 @@ export function tiebreakBySeatProximity(
   return best;
 }
 
+/**
+ * Le joueur avec le plus de cartes à cette manche (le "dernier").
+ * En cas d'égalité sur le max de cartes :
+ *   L1 — le plus grand cumul (plus de pts = plus en difficulté)
+ *   L2 — le plus proche du gagnant de la manche en sens ANTI-horaire
+ * Règle maison validée par Eric (2026-07-06).
+ */
+export function roundLastPlace(round: Round, totals: Record<PlayerId, number>, seats: Seats): PlayerId {
+  const maxCount = Math.max(...PLAYER_IDS.map((id) => round.cardCounts[id]));
+  let candidates = PLAYER_IDS.filter((id) => round.cardCounts[id] === maxCount);
+  if (candidates.length === 1) return candidates[0];
+
+  // L1 : le plus grand cumul
+  const maxTotal = Math.max(...candidates.map((id) => totals[id]));
+  candidates = candidates.filter((id) => totals[id] === maxTotal);
+  if (candidates.length === 1) return candidates[0];
+
+  // L2 : le plus proche du gagnant en sens anti-horaire
+  const winner = roundWinner(round);
+  const winnerSeat = seats[winner];
+  const n = PLAYER_IDS.length;
+  const antiDist = (id: PlayerId) => (winnerSeat - seats[id] + n) % n;
+  let best = candidates[0];
+  for (const id of candidates) {
+    if (antiDist(id) < antiDist(best)) best = id;
+  }
+  return best;
+}
+
+/** Nombre de manches gagnées par joueur sur l'ensemble des manches. */
+export function manchesGagnees(rounds: Round[]): Record<PlayerId, number> {
+  const counts = { 0: 0, 1: 0, 2: 0, 3: 0 } as Record<PlayerId, number>;
+  for (const r of rounds) {
+    counts[roundWinner(r)]++;
+  }
+  return counts;
+}
+
 /** Orchestration : totals → arrêt → cumul le plus bas → départage niveau 1 → niveau 2. */
 export function determineWinner(rounds: Round[], seats: Seats): PlayerId {
   const totals = computeTotals(rounds);

@@ -1,13 +1,14 @@
 /**
  * Store de partie — la SEULE source de vérité stockée (Zustand, single device).
- * Ne stocke que le brut : prénoms, cartes saisies par manche, statut.
- * Les scores/cumuls/vainqueur ne vivent PAS ici : ils se dérivent via domain/
- * (branchés à l'étape « Prouver la justesse »). Aucune persistance cross-session.
+ * Ne stocke que le brut : prénoms, cartes saisies par manche, statut, soirée.
+ * Les scores/cumuls/vainqueur ne vivent PAS ici : ils se dérivent via domain/.
+ * La soirée persiste via AsyncStorage (soireeStorage.ts).
  */
 import { create } from 'zustand';
-import type { CardCount, Game, GameStatus, PlayerId, Round } from '../domain/model';
+import type { CardCount, Game, GameStatus, PlayerId, Round, Soiree } from '../domain/model';
 import { PLAYER_IDS } from '../domain/model';
 import { computeTotals, isGameOver } from '../domain/scoring';
+import { appendToSoiree, loadSoiree as loadSoireeFromStorage, saveSoiree } from './soireeStorage';
 
 function initialGame(): Game {
   const players = {} as Game['players'];
@@ -18,25 +19,50 @@ function initialGame(): Game {
 }
 
 interface GameStore extends Game {
-  /** Renseigne le prénom d'un joueur (saisi au démarrage, dans sa pill). */
+  soiree: Soiree | null;
   setPrenom: (id: PlayerId, prenom: string) => void;
-  /** Ajoute une manche (cartes restantes des 4 joueurs). Stockage brut, pas de calcul. */
   addRound: (cardCounts: Record<PlayerId, CardCount>) => void;
-  /** Nouvelle partie — repart de zéro. Précédée d'un confirm côté UI (pas de sauvegarde). */
-  resetGame: () => void;
+  resetGame: (keepPlayers?: boolean) => void;
+  loadSoiree: () => Promise<void>;
 }
 
-export const useGameStore = create<GameStore>((set) => ({
+export const useGameStore = create<GameStore>((set, get) => ({
   ...initialGame(),
+  soiree: null,
+
   setPrenom: (id, prenom) =>
     set((s) => ({ players: { ...s.players, [id]: { ...s.players[id], prenom } } })),
+
   addRound: (cardCounts) =>
     set((s) => {
       const rounds = [...s.rounds, { cardCounts } as Round];
-      // Déclencheur de fin : dès qu'un cumul ≥ 100, la partie se gèle (statut stocké,
-      // dérivé une seule fois à la transition). Le vainqueur, lui, reste dérivé à l'affichage.
       const status: GameStatus = isGameOver(computeTotals(rounds)) ? 'terminee' : s.status;
-      return { rounds, status };
+      let soiree = s.soiree;
+      if (status === 'terminee') {
+        const archive = { archivedAt: Date.now(), players: s.players, rounds, status };
+        soiree = appendToSoiree(soiree, archive);
+        saveSoiree(soiree);
+      }
+      return { rounds, status, soiree };
     }),
-  resetGame: () => set(initialGame()),
+
+  resetGame: (keepPlayers = false) => {
+    const s = get();
+    let soiree = s.soiree;
+    // Partie terminée déjà archivée dans addRound ; on n'archive que l'interrompue.
+    if (s.rounds.length > 0 && s.status !== 'terminee') {
+      const archive = { archivedAt: Date.now(), players: s.players, rounds: s.rounds, status: s.status };
+      soiree = appendToSoiree(soiree, archive);
+      saveSoiree(soiree);
+    }
+    const fresh = initialGame();
+    // « Mêmes joueurs » : on rejoue avec les mêmes prénoms, cartes/statut remis à zéro.
+    const players = keepPlayers ? s.players : fresh.players;
+    set({ ...fresh, players, soiree });
+  },
+
+  loadSoiree: async () => {
+    const soiree = await loadSoireeFromStorage();
+    set({ soiree });
+  },
 }));
