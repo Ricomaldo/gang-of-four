@@ -9,7 +9,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { Direction } from '../domain/model';
 import { palette } from '../theme/tokens';
 
-export type HubState = 'ready' | 'enterScores' | 'roundEnd' | 'gofTriggered';
+export type HubState = 'invite' | 'ready' | 'enterScores' | 'roundEnd' | 'gofTriggered';
 
 type Props = {
   state: HubState;
@@ -42,7 +42,7 @@ export function Hub({ state, direction, gofPlayerName, disabled = false, onPress
       accessibilityLabel={
         state === 'ready'       ? 'Prêt à démarrer' :
         state === 'enterScores' ? 'Saisir les scores' :
-        'Fin de manche'
+        'Finx de manche'
       }
     >
       {/* Couche arc-flèche (miroir horizontal pour le sens horaire) */}

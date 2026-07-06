@@ -13,12 +13,12 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 
 export function SplashScreen({ navigation }: Props) {
   useEffect(() => {
-    const t = setTimeout(() => navigation.replace('Round'), 1400);
+    const t = setTimeout(() => navigation.replace('Setup'), 1400);
     return () => clearTimeout(t);
   }, [navigation]);
 
   return (
-    <Pressable style={styles.wrap} onPress={() => navigation.replace('Round')}>
+    <Pressable style={styles.wrap} onPress={() => navigation.replace('Setup')}>
       <View style={styles.logoStack}>
         <Image source={require('../../assets/official/gang-of-four.webp')} style={styles.logo} />
         <Image

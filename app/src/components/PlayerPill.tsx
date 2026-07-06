@@ -23,6 +23,9 @@ type Props = {
   onChangePrenom?: (v: string) => void;
   onLongPress?: () => void;
   notif?: PillNotif;
+  /** Côté où le slot notif est réservé. 'above' pour les pills du bas → la carte
+   *  hugge le bord bas (symétrie avec les pills du haut) et la notif pointe vers le centre. */
+  notifPosition?: 'below' | 'above';
 };
 
 export const PILL_WIDTH = 150;
@@ -35,6 +38,7 @@ export function PlayerPill({
   onChangePrenom,
   onLongPress,
   notif = null,
+  notifPosition = 'below',
 }: Props) {
   const card = (
     <View style={styles.card}>
@@ -57,29 +61,37 @@ export function PlayerPill({
     </View>
   );
 
+  const cardWrapped =
+    !editable && onLongPress ? (
+      <TouchableOpacity onLongPress={onLongPress} delayLongPress={600} activeOpacity={0.8}>
+        {card}
+      </TouchableOpacity>
+    ) : (
+      card
+    );
+
+  // Slot notif — hauteur toujours réservée pour figer la taille des pills. Placé
+  // dessus ou dessous selon notifPosition (la carte hugge toujours le bord extérieur).
+  const notifSlot = (
+    <View style={[styles.notifSlot, notifPosition === 'above' && styles.notifSlotAbove]}>
+      {notif?.kind === 'winner' && (
+        <Text style={styles.notifWinner}>⭐️ gagnant manche préc.</Text>
+      )}
+      {notif?.kind === 'giver' && (
+        <TouchableOpacity onPress={notif.onGive} disabled={notif.given} hitSlop={6}>
+          <Text style={styles.notifGiver}>
+            {notif.given ? 'a donné sa meilleure carte' : 'donne sa meilleure carte'}
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
   return (
     <View style={styles.zone}>
-      {!editable && onLongPress ? (
-        <TouchableOpacity onLongPress={onLongPress} delayLongPress={600} activeOpacity={0.8}>
-          {card}
-        </TouchableOpacity>
-      ) : (
-        card
-      )}
-
-      {/* Slot notif — hauteur toujours réservée pour aligner toutes les pills */}
-      <View style={styles.notifSlot}>
-        {notif?.kind === 'winner' && (
-          <Text style={styles.notifWinner}>🏆 gagnant manche préc.</Text>
-        )}
-        {notif?.kind === 'giver' && (
-          <TouchableOpacity onPress={notif.onGive} disabled={notif.given} hitSlop={6}>
-            <Text style={styles.notifGiver}>
-              {notif.given ? 'a donné sa meilleure carte ✓' : 'donne sa meilleure carte'}
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      {notifPosition === 'above' && notifSlot}
+      {cardWrapped}
+      {notifPosition === 'below' && notifSlot}
     </View>
   );
 }
@@ -104,7 +116,8 @@ const styles = StyleSheet.create({
   name: { color: palette.bordureForte, fontSize: 12, fontWeight: '700', flexShrink: 1 },
   nameInput: { color: palette.encre, fontSize: 15, minWidth: 84, paddingVertical: 2, textAlign: 'center' },
   score: { color: palette.score, fontSize: 42, fontWeight: '700', lineHeight: 46 },
-  notifSlot: { width: PILL_WIDTH, minHeight: 32, marginTop: 6, alignItems: 'center', justifyContent: 'flex-start' },
+  notifSlot: { width: PILL_WIDTH, minHeight: 32, marginTop: 10, alignItems: 'center', justifyContent: 'flex-start' },
+  notifSlotAbove: { marginTop: 0, marginBottom: 10, justifyContent: 'flex-end' },
   notifWinner: { fontSize: 11, color: palette.bordureForte, textAlign: 'center' },
   notifGiver: { fontSize: 11, color: palette.encre, textAlign: 'center', textDecorationLine: 'underline' },
 });

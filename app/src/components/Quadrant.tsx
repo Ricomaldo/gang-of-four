@@ -12,12 +12,19 @@ import { palette } from '../theme/tokens';
 
 type Props = {
   children: ReactNode;
-  align?: 'center' | 'top';
+  align?: 'center' | 'top' | 'bottom';
+  marginVertical?: number;
 };
+
+const ALIGN = {
+  center: 'center',
+  top: 'flex-start',
+  bottom: 'flex-end',
+} as const;
 
 export function Quadrant({ children, align = 'center' }: Props) {
   return (
-    <View style={[styles.quadrant, align === 'top' ? styles.alignTop : styles.alignCenter]}>
+    <View style={[styles.quadrant, { justifyContent: ALIGN[align] }]}>
       {children}
     </View>
   );
@@ -34,6 +41,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
   },
-  alignCenter: { justifyContent: 'center' },
-  alignTop: { justifyContent: 'flex-start' },
 });

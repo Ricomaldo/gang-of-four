@@ -10,6 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RoundScreen } from './src/screens/RoundScreen';
 import { ScoreEntryScreen } from './src/screens/ScoreEntryScreen';
 import { ScoreGridScreen } from './src/screens/ScoreGridScreen';
+import { SetupScreen } from './src/screens/SetupScreen';
 import { SplashScreen } from './src/screens/SplashScreen';
 import { useGameStore } from './src/store/gameStore';
 import type { RootStackParamList } from './src/navigation/types';
@@ -25,8 +26,12 @@ export default function App() {
       <NavigationContainer>
         <StatusBar style="dark" />
         <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+          {/* Splash → Setup → Round partagent le layout 2×2 : fondu plutôt que
+              push latéral, pour lire comme une continuité (pas une page qui pousse
+              sa jumelle). Les modals gardent leur montée depuis le bas. */}
           <Stack.Screen name="Splash" component={SplashScreen} />
-          <Stack.Screen name="Round" component={RoundScreen} />
+          <Stack.Screen name="Setup" component={SetupScreen} options={{ animation: 'fade' }} />
+          <Stack.Screen name="Round" component={RoundScreen} options={{ animation: 'fade' }} />
           <Stack.Group screenOptions={{ presentation: 'modal' }}>
             <Stack.Screen name="ScoreEntry" component={ScoreEntryScreen} />
             <Stack.Screen name="ScoreGrid" component={ScoreGridScreen} />

@@ -8,6 +8,16 @@
  */
 import { useRef, useState } from 'react';
 import { Animated, PanResponder, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const formatFrenchDate = (value: string) => {
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return new Intl.DateTimeFormat('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+};
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Palmares } from '../components/Palmares';
@@ -37,6 +47,9 @@ export function ScoreGridScreen({ navigation }: Props) {
   const displayArchive = pages[pageIndex] ?? currentArchive;
   const isCurrent = pageIndex === pages.length - 1;
 
+  // Toggle « détails » : révèle le score de chaque manche (+N) dans les cellules.
+  const [showDetails, setShowDetails] = useState(false);
+
   // Glissé HORIZONTAL → changer de partie (le vertical dismisse le modal).
   const slideX = useRef(new Animated.Value(0)).current;
   const panResponder = useRef(
@@ -58,19 +71,25 @@ export function ScoreGridScreen({ navigation }: Props) {
           <Text style={styles.closeX}>✕</Text>
         </TouchableOpacity>
         <View style={styles.topCenter}>
-          <Text style={styles.caption}>1er à 100 déclenche la fin</Text>
+          <Text style={styles.caption}>Soirée du {formatFrenchDate(today)}</Text>
           {pages.length > 1 && (
             <Text style={styles.partyCounter}>
               partie {pageIndex + 1}/{pages.length}{isCurrent ? ' · en cours' : ''}
             </Text>
           )}
         </View>
-        <View style={styles.closeBtn} />
+        <TouchableOpacity
+          onPress={() => setShowDetails((v) => !v)}
+          style={[styles.detailsBtn, showDetails && styles.detailsBtnOn]}
+          hitSlop={8}
+        >
+          <Text style={[styles.detailsTxt, showDetails && styles.detailsTxtOn]}>détails</Text>
+        </TouchableOpacity>
       </View>
 
       <Animated.View style={{ flex: 1, transform: [{ translateX: slideX }] }} {...panResponder.panHandlers}>
         <ScrollView>
-          <ScoreCarnet archive={displayArchive} />
+          <ScoreCarnet archive={displayArchive} showDetails={showDetails} />
           <Palmares archive={displayArchive} />
         </ScrollView>
       </Animated.View>
@@ -89,6 +108,16 @@ const styles = StyleSheet.create({
   topRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12, gap: 8 },
   closeBtn: { width: 36, alignItems: 'center', paddingTop: 2 },
   closeX: { fontSize: 18, color: palette.encre, fontWeight: '400' },
+  detailsBtn: {
+    borderWidth: 1,
+    borderColor: palette.bordureForte,
+    borderRadius: 12,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+  },
+  detailsBtnOn: { backgroundColor: palette.encre, borderColor: palette.encre },
+  detailsTxt: { fontSize: 11, color: palette.bordureForte, fontWeight: '600' },
+  detailsTxtOn: { color: palette.fondCreme },
   topCenter: { flex: 1 },
   caption: { color: palette.bordureForte, fontSize: 13 },
   partyCounter: { color: palette.bordureForte, fontSize: 11, marginTop: 2 },

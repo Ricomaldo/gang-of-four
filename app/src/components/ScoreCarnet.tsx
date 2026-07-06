@@ -1,9 +1,10 @@
 /**
  * ScoreCarnet — la table du carnet officiel (zone « grille »).
  * Colonnes = joueurs (pastille + initiale) ; colonne gauche ombrée = sens de jeu.
- * Chaque cellule = le CUMUL du joueur à cette manche (gros, dominant) + le score de
- * la manche (petit, à gauche). Cellule gagnante (manche à 0) = fond teinté couleur.
- * Ligne TOT = cumul final, fond noir / texte blanc.
+ * Chaque cellule = le CUMUL du joueur à cette manche (gros, dominant). Le score de
+ * la manche (`+N`) n'apparaît que si `showDetails` est actif (toggle « détails »),
+ * pour ne pas surcharger la lecture par défaut. Cellule gagnante (manche à 0) = fond
+ * teinté couleur. Ligne TOT = cumul final, fond noir / texte blanc.
  *
  * Zone présentationnelle : dérive tout de l'archive, ne stocke rien.
  */
@@ -15,7 +16,7 @@ import { computeRoundScore, computeTotals } from '../domain/scoring';
 import { roundWinner } from '../domain/winner';
 import { palette, seatColors } from '../theme/tokens';
 
-export function ScoreCarnet({ archive }: { archive: GameArchive }) {
+export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArchive; showDetails?: boolean }) {
   const { players, rounds } = archive;
   const totals = computeTotals(rounds);
 
@@ -39,7 +40,7 @@ export function ScoreCarnet({ archive }: { archive: GameArchive }) {
           <Text style={styles.headDirText}>↔</Text>
         </View>
         {PLAYER_IDS.map((id) => (
-          <View key={id} style={[styles.cell, styles.headCell]}>
+          <View key={id} style={[styles.cell, styles.headCell, id !== 3 && styles.colDivider]}>
             <View style={[styles.dot, { backgroundColor: seatColors[id] }]} />
             <Text style={styles.headText}>{(players[id].prenom[0] ?? '?').toUpperCase()}</Text>
           </View>
@@ -57,9 +58,15 @@ export function ScoreCarnet({ archive }: { archive: GameArchive }) {
             {row.cells.map((c) => (
               <View
                 key={c.id}
-                style={[styles.cell, c.isWinner && { backgroundColor: seatColors[c.id] + '22' }]}
+                style={[
+                  styles.cell,
+                  c.id !== 3 && styles.colDivider,
+                  c.isWinner && { backgroundColor: seatColors[c.id] + '22' },
+                ]}
               >
-                <Text style={[styles.roundPts, c.isWinner && styles.roundPtsWinner]}>{c.pts}</Text>
+                {showDetails && (
+                  <Text style={[styles.delta, c.isWinner && styles.deltaWinner]}>+{c.pts}</Text>
+                )}
                 <Text style={styles.cumul}>{c.cumul}</Text>
               </View>
             ))}
@@ -69,11 +76,11 @@ export function ScoreCarnet({ archive }: { archive: GameArchive }) {
 
       {/* Ligne TOT — cumul final, fond noir */}
       <View style={[styles.row, styles.totalRow]}>
-        <View style={[styles.dirCell, styles.totalDir]}>
+        <View style={[styles.dirCell, styles.totalDir, styles.colDividerLight]}>
           <Text style={styles.totalDirText}>TOT</Text>
         </View>
         {PLAYER_IDS.map((id) => (
-          <View key={id} style={styles.cell}>
+          <View key={id} style={[styles.cell, id !== 3 && styles.colDividerLight]}>
             <Text style={styles.totalText}>{totals[id]}</Text>
           </View>
         ))}
@@ -87,6 +94,10 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', borderBottomWidth: 1, borderColor: palette.bordure },
   headRow: { borderBottomWidth: 2, borderColor: palette.bordureForte },
 
+  // Séparateurs verticaux de colonnes
+  colDivider: { borderRightWidth: 1, borderRightColor: palette.bordure },
+  colDividerLight: { borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.18)' },
+
   // Colonne sens — ombrée (proto .dircell)
   dirCell: {
     width: 44,
@@ -94,6 +105,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.06)',
     paddingVertical: 10,
+    borderRightWidth: 1,
+    borderRightColor: palette.bordure,
   },
   dirText: { fontSize: 16, color: palette.encre },
   headDir: { borderTopLeftRadius: 4 },
@@ -101,16 +114,14 @@ const styles = StyleSheet.create({
 
   cell: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'baseline',
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
     paddingVertical: 10,
     paddingHorizontal: 2,
   },
-  roundPts: { fontSize: 11, color: palette.bordureForte, minWidth: 14, textAlign: 'right' },
-  roundPtsWinner: { color: palette.encre, fontWeight: '700' },
-  cumul: { fontSize: 20, fontWeight: '700', color: palette.score, minWidth: 26, textAlign: 'left' },
+  delta: { fontSize: 10, color: palette.bordureForte, marginBottom: 1 },
+  deltaWinner: { color: palette.encre, fontWeight: '700' },
+  cumul: { fontSize: 20, fontWeight: '700', color: palette.score, textAlign: 'center' },
 
   headCell: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 12 },
   headText: { fontSize: 18, fontWeight: '700', color: palette.encre },
