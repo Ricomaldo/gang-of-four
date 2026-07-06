@@ -20,7 +20,6 @@ import { Quadrant } from '../components/Quadrant';
 import { QuadrantGrid } from '../components/QuadrantGrid';
 import { PLAYER_IDS } from '../domain/model';
 import type { PlayerId } from '../domain/model';
-import { directionOfPlay } from '../domain/direction';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
 import { palette, seatColors } from '../theme/tokens';
@@ -34,7 +33,7 @@ export function SetupScreen({ navigation }: Props) {
   const namesReady = PLAYER_IDS.every((id) => players[id].prenom.trim().length > 0);
 
   // Cadrans du haut : pills vers le haut ; du bas : pills vers le bas. Les 4 pills
-  // s'écartent vers les bords et laissent l'arc central respirer (compact = shrinked).
+  // s'écartent vers les bords et laissent le hub central respirer (compact = shrinked).
   const cell = (id: PlayerId, align: 'top' | 'bottom') => (
     <Quadrant key={id} align={align}>
       <PlayerPill
@@ -57,7 +56,6 @@ export function SetupScreen({ navigation }: Props) {
           overlay={
             <Hub
               state={namesReady ? 'ready' : 'invite'}
-              direction={directionOfPlay(1)}
               disabled={!namesReady}
               onPress={() => navigation.replace('Round')}
             />

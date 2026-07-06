@@ -53,7 +53,7 @@ export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArc
         rows.map((row) => (
           <View key={row.i} style={styles.row}>
             <View style={styles.dirCell}>
-              <Text style={styles.dirText}>{row.direction === 'anti-horaire' ? '←' : '→'}</Text>
+              <Text style={styles.dirText}>{row.direction === 'anti-horaire' ? '→' : '←'}</Text>
             </View>
             {row.cells.map((c) => (
               <View

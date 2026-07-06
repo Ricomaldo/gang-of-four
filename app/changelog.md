@@ -32,6 +32,11 @@ _Passe palier 01 (handoff `docs/2026-07-06-passe-palier-01.md`) :_
 - **Nouvelle partie** : choix « mêmes joueurs » (rejoue avec les prénoms) ou « nouveaux joueurs » (retour setup).
 - **Transitions en fondu** entre Splash / Setup / Manche (écrans à layout partagé, plutôt qu'un push latéral).
 
+_2e retour Damien (FD-07/09/11/12) :_
+
+- **Sens de jeu — 4 flèches** entre les joueurs, autour du hub, tournant dans le sens du cycle de table (remplace l'arc central, jugé ambigu par Damien — FD-07).
+- **Fin de partie → feuille de score** : bascule automatique sur le carnet à la fin (l'accès aux stats ne se perd plus — FD-12) ; feuille ré-accessible depuis la carte vainqueur.
+
 ### Ossature (refactor)
 - Composants nommés et attrapables pour le polish : `Hub`, `Quadrant`, `QuadrantGrid`, `PlayerPill`, `ScoreCarnet`, `Palmares`.
 - `CenterDisc` → `Hub` (composant-pivot à états).
@@ -39,7 +44,8 @@ _Passe palier 01 (handoff `docs/2026-07-06-passe-palier-01.md`) :_
 
 ### Corrigé
 - **BUG-01** : démarrage figé dès le 4e prénom → prénoms éditables jusqu'à la 1re manche ; disque central « point d'info d'état » (`START GAME ?` / `FIN DE MANCHE`).
-- **BUG-02** : manche sans gagnant acceptée → garde de saisie (voir Ajouté).
+- **BUG-02** : manche sans gagnant acceptée → garde de saisie (voir Ajouté). **Confirmé à l'usage** par Damien (FD-11).
+- **FD-09** : flèche de sens du carnet inversée (manche 1 rendait `←` au lieu de `→`) → glyphe corrigé dans `ScoreCarnet`. Domaine `directionOfPlay` déjà juste, aligné sur la feuille officielle (manche 1 = `→`).
 
 ### Tests
 - 49 tests verts (barème, cumul, arrêt à 100, départage bout-en-bout, garde de saisie ; soirée : `roundLastPlace`, `manchesGagnees`, tolérance nuit, archivage).

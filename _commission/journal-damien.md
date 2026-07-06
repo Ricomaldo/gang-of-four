@@ -10,6 +10,24 @@ Le fil avec le commanditaire. Ce qu'on lui envoie, ce qu'il renvoie. Un log, pas
 
 ---
 
+## 2026-07-06 — 2e retour (test approfondi)
+
+**Canal :** Signal.
+
+**Contexte :** Damien a retesté l'APK, cette fois en manipulant les tableaux et en déroulant une partie. Préambule : « Ok testé. »
+
+**Retour — verbatim, tagué :**
+
+- **FD-07** — « Je suis perturbé par la flèche au milieu. Pour moi pour la première partie c'est "on joue à droite", et là j'ai l'impression que ça tourne à gauche, mon impression, mais je sais bien que le sens est bon. »
+- **FD-08** — « J'aime bien les tableaux. » (positif)
+- **FD-09** — « le sens semble être pas bon dans la 1ère manche (gauche). » (constat sur le tableau)
+- **FD-10** — « Amusant le "a donné sa carte" ! » (positif — FD-03 vu et compris)
+- **FD-11** — « Le blocage quand pas de score à 0 ok. » (confirme la correction de FD-06 / BUG-02)
+- **FD-12** — « A la fin de la partie passer direct sur les stats, sinon on n'y accède plus. »
+- **FD-13** — « Quand on passe à une 2ème partie sans changer les joueurs c'est pas mal de voir la partie précédente. »
+
+---
+
 ## 2026-07-05 — 1er envoi de l'app (APK preview)
 
 **Canal :** Signal.

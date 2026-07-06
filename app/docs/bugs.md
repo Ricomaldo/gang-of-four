@@ -10,9 +10,11 @@ Registre léger. Convention `BUG-NN-{slug}`, statut **ouvert** / **fermé**, plu
 
 ---
 
-## BUG-02-saisie-manche-sans-gagnant — corrigé (à confirmer sur simu)
+## BUG-02-saisie-manche-sans-gagnant — confirmé à l'usage
 
 L'app acceptait une saisie de manche où **aucun joueur n'est à 0 carte** (manche sans gagnant), état impossible par la règle du jeu. `roundWinner` lève une erreur *domaine* si appelé, mais l'**UI ne bloquait pas la saisie** en amont.
+
+_Validation terrain :_ Damien a heurté la garde à la table et l'approuve (« le blocage quand pas de score à 0, ok » — FD-11). Le fix passe de « à confirmer » à confirmé par le commanditaire.
 
 - _Source :_ FD-06 (Damien l'a « accepté » à l'usage ; repéré par Éric, laissé passer pour ne pas casser le flow).
 - _Nature :_ garde de saisie manquante, **pas** bug de calcul — d'où son absence de `cas-reference-score.md` (qui teste la logique, pas la validation d'entrée).

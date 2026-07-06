@@ -12,6 +12,7 @@ import { Alert, PanResponder, StyleSheet, Text, TouchableOpacity, View } from 'r
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Hub } from '../components/Hub';
+import { PlayDirection } from '../components/PlayDirection';
 import { PlayerPill } from '../components/PlayerPill';
 import type { PillNotif } from '../components/PlayerPill';
 import { Quadrant } from '../components/Quadrant';
@@ -49,6 +50,10 @@ export function RoundScreen({ navigation }: Props) {
 
   // Reset de la coche « a donné sa carte » à chaque nouvelle manche.
   useEffect(() => { setCardGiven(false); }, [rounds.length]);
+
+  // Fin de partie → bascule direct sur la feuille de score (retour Damien FD-12).
+  // Ne tire qu'à la transition `over` ; le retour par goBack ne remonte pas l'écran.
+  useEffect(() => { if (over) navigation.navigate('ScoreGrid'); }, [over, navigation]);
 
   const triggerGof = (id: PlayerId) => {
     setGofPlayer(id);
@@ -119,7 +124,6 @@ export function RoundScreen({ navigation }: Props) {
     ) : (
       <Hub
         state={hubState}
-        direction={direction}
         gofPlayerName={gofPlayer !== null ? players[gofPlayer].prenom : undefined}
         onPress={() => {
           setCardGiven(false);
@@ -133,8 +137,16 @@ export function RoundScreen({ navigation }: Props) {
       <View style={styles.flex} {...panResponder.panHandlers}>
         <QuadrantGrid cells={[cell(0, 'top'), cell(1, 'top'), cell(2, 'bottom'), cell(3, 'bottom')]} overlay={overlay} />
 
-        {/* Affordance carnet (discrète, seulement en jeu) */}
-        {inPlay && (
+        {/* Sens de jeu : 4 flèches autour du hub, tant que la partie tourne */}
+        {!over && (
+          <View style={styles.dirLayer} pointerEvents="none">
+            <PlayDirection direction={direction} />
+          </View>
+        )}
+
+        {/* Affordance carnet (discrète) — visible dès qu'une manche existe, y compris
+            en fin de partie pour que la feuille reste ré-accessible (FD-12). */}
+        {rounds.length > 0 && (
           <TouchableOpacity
             style={styles.carnetHint}
             onPress={() => navigation.navigate('ScoreGrid')}
@@ -152,6 +164,7 @@ export function RoundScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: palette.fondCreme },
   flex: { flex: 1 },
+  dirLayer: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },
   carnetHint: { position: 'absolute', bottom: 10, alignSelf: 'center', alignItems: 'center' },
   carnetArrow: { fontSize: 16, color: palette.accentSaisie, lineHeight: 16, fontWeight: '700' },
   carnetLabel: { fontSize: 9, color: palette.accentSaisie, fontWeight: '700', letterSpacing: 1 },
