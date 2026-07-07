@@ -52,9 +52,9 @@ export function RoundScreen({ navigation }: Props) {
   // Reset de la coche « a donné sa carte » à chaque nouvelle manche.
   useEffect(() => { setCardGiven(false); }, [rounds.length]);
 
-  // Fin de partie → bascule direct sur la feuille de score (retour Damien FD-12).
-  // Ne tire qu'à la transition `over` ; le retour par goBack ne remonte pas l'écran.
-  useEffect(() => { if (over) navigation.navigate('ScoreGrid'); }, [over, navigation]);
+  // Fin de partie : on n'ouvre plus la feuille d'office. On annonce le vainqueur sur la
+  // carte de fin, avec un bouton « Voir les scores » (accès feuille FD-12 préservé, à la
+  // demande) — l'annonce vient avant la grille, pas après.
 
   // Déclenche la frime : GofAnimation prend la main jusqu'à onDone (5 s), qui remet à null.
   const triggerGof = (id: PlayerId) => setGofPlayer(id);
@@ -116,6 +116,9 @@ export function RoundScreen({ navigation }: Props) {
     over && winnerId !== null ? (
       <View style={styles.endCard}>
         <Text style={styles.endTitle}>⭐️ {players[winnerId].prenom} gagne</Text>
+        <TouchableOpacity style={styles.seeScores} onPress={() => navigation.navigate('ScoreGrid')}>
+          <Text style={styles.seeScoresText}>Voir les scores</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.newGame} onPress={confirmReset}>
           <Text style={styles.newGameText}>Nouvelle partie</Text>
         </TouchableOpacity>
@@ -183,6 +186,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   endTitle: { fontSize: 22, fontWeight: '700', color: palette.encre },
-  newGame: { backgroundColor: palette.encre, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 20 },
-  newGameText: { color: palette.fondCreme, fontSize: 16, fontWeight: '600' },
+  seeScores: { backgroundColor: palette.encre, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 24 },
+  seeScoresText: { color: palette.fondCreme, fontSize: 16, fontWeight: '600' },
+  newGame: { borderRadius: 12, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1.5, borderColor: palette.bordureForte },
+  newGameText: { color: palette.encre, fontSize: 14, fontWeight: '600' },
 });
