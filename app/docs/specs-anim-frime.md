@@ -9,7 +9,7 @@ type: specs
 
 # GoF — Specs anim frime
 
-L'animation « Gang of Four » déclenchée au tap sur le quadrant d'un joueur. Née du [[brief-01-amorce]] (« animation + son aléatoire au tap »), spécifiée ici après conception avec Eric le 7 juillet.
+L'animation « Gang of Four » déclenchée par **appui long** sur la pill d'un joueur (easter egg, aucun indicateur au repos — cf. [[specs-techniques]]). Née du [[brief-01-amorce]] (« animation + son aléatoire »), spécifiée ici après conception avec Eric le 7 juillet.
 
 ## L'intention — la ligne qui commande tout
 
@@ -17,7 +17,7 @@ Le tap sur son quadrant, c'est un **« GANG OF FOUR ! »** jeté à la table. L'
 
 ## Déclencheur
 
-- Tap sur la zone d'un joueur → lance **simultanément** l'anim + un **son aléatoire** parmi les 3.
+- Appui long sur la pill d'un joueur → lance **simultanément** l'anim + un **son aléatoire** parmi les 3.
 - Durée : **5 s** fixe. Le son joue par-dessus (déborde ou finit avant, sans importance — c'est de la frime, pas de la synchro).
 
 ## Les beats (tous simultanés, dès la 1ʳᵉ frame)
@@ -44,4 +44,4 @@ La frime se joue **avec ces beats exactement**. Tentations à refuser tant que l
 
 ## Implication build
 
-Aucune lib audio installée à ce jour (pas d'`expo-audio` / `expo-av`). La lecture des sons demande un ajout de dépendance → **nouveau build EAS** pour tester en natif. À grouper avec l'implémentation de l'anim, pas à déclencher isolément.
+La lecture des sons passe par **`expo-audio`** (ajouté à l'implémentation ; `expo-av` écarté — retiré des SDK Expo récents, non viable sur Expo 57). Nouvelle dépendance native → **nouveau build EAS** pour tester en natif, à grouper avec l'anim, pas à déclencher isolément. Animation en `Animated` API + `react-native-svg` (déjà présents, aucune dép native ajoutée hors audio).

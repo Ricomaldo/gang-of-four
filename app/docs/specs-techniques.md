@@ -33,6 +33,6 @@ Une action **« nouvelle partie »** existe en V1 : elle repart de zéro, la par
 ## Stack
 
 - Framework : React Native / Expo managed
-- Audio : expo-av
+- Audio : expo-audio (expo-av écarté — retiré des SDK Expo récents, non viable sur Expo 57)
 - Animation : Animated API — pas de dépendance native ajoutée
 - État : local, single device — pas de réseau, pas de persistance cross-session

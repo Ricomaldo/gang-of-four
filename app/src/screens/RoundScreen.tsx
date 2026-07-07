@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, PanResponder, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { GofAnimation } from '../components/GofAnimation';
 import { Hub } from '../components/Hub';
 import { PlayDirection } from '../components/PlayDirection';
 import { PlayerPill } from '../components/PlayerPill';
@@ -55,10 +56,8 @@ export function RoundScreen({ navigation }: Props) {
   // Ne tire qu'à la transition `over` ; le retour par goBack ne remonte pas l'écran.
   useEffect(() => { if (over) navigation.navigate('ScoreGrid'); }, [over, navigation]);
 
-  const triggerGof = (id: PlayerId) => {
-    setGofPlayer(id);
-    setTimeout(() => setGofPlayer(null), 2000);
-  };
+  // Déclenche la frime : GofAnimation prend la main jusqu'à onDone (5 s), qui remet à null.
+  const triggerGof = (id: PlayerId) => setGofPlayer(id);
 
   const confirmReset = () =>
     Alert.alert('Nouvelle partie', 'Rejouer avec qui ?', [
@@ -101,7 +100,7 @@ export function RoundScreen({ navigation }: Props) {
   // Haut : carte contre le bord haut, notif dessous (vers le centre). Bas : carte
   // contre le bord bas, notif dessus (vers le centre). Pills symétriques autour de l'arc.
   const cell = (id: PlayerId, row: 'top' | 'bottom') => (
-    <Quadrant key={id} align={row}>
+    <Quadrant key={id} align={row} recede={gofPlayer !== null && gofPlayer !== id}>
       <PlayerPill
         color={seatColors[id]}
         prenom={players[id].prenom}
@@ -155,6 +154,11 @@ export function RoundScreen({ navigation }: Props) {
             <Text style={styles.carnetArrow}>↑</Text>
             <Text style={styles.carnetLabel}>carnet</Text>
           </TouchableOpacity>
+        )}
+
+        {/* Easter egg « GANG OF FOUR ! » — frime plein écran + son, par-dessus tout. */}
+        {gofPlayer !== null && (
+          <GofAnimation key={gofPlayer} playerId={gofPlayer} onDone={() => setGofPlayer(null)} />
         )}
       </View>
     </SafeAreaView>
