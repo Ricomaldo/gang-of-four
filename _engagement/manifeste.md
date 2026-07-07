@@ -3,8 +3,8 @@ created: '2026-07-02'
 status: active
 title: GoF — Manifeste
 type: manifeste
-updated: '2026-07-06'
-version: 0.5.0
+updated: '2026-07-07'
+version: 0.6.0
 ---
 
 # GoF — Manifeste
@@ -28,3 +28,5 @@ Chaque pattern reconnu en direct — souvent au scellement du [[pacte-claude-eri
 - **Construire de la clarté artificielle pour compenser la fatigue** — 2026-07-05, au premier scellement. Bâtir du cadre (mécanisme, structure, artefact d'engagement) non pour servir l'app mais pour donner à la fatigue une contenance rassurante. Se présente en « bonne idée d'organisation ».
 - **Le modèle inline par défaut — la factorisation se pose, elle ne se génère pas** — 2026-07-06, en supervision de la passe. L'instance de code écrit les écrans ligne par ligne, sans extraire de composants (génération linéaire, aucune friction vécue, aucun coût de maintenance ressenti). Le correctif n'est pas d'espérer mieux : c'est de **poser la règle en amont** — « un écran = un fichier fin qui compose des composants nommés ; toute vue réutilisée ou > ~80 lignes = extraite ». Posée, elle est suivie au quart de tour.
 - **Factoriser n'est pas polir** — 2026-07-06, même passe. L'ossature (composants nommés, propres) est dans le *plancher* ; le rendu fin (arrondis, couleurs, ombres) est *reportable* au bon palier. Confondre les deux, c'est soit bâcler la structure au nom du minimal, soit gonfler le palier au nom du beau. Le discernement : la structure se gate, le polish se situe.
+- **Borner le moment plutôt que forcer la volonté** — 2026-07-07, au scellement. La discipline (ne pas changer en direct pendant la review) ne se tient pas par volonté mais par *conception de séance* : séparer l'install et la review en moments bornés supprime la couture où vit la pulsion — celle qui va de « je vois un défaut » à « je le corrige là ». On ne résiste pas au défaut vu à l'écran ; on ferme l'éditeur avant d'y arriver.
+- **La structure qui émerge sert le minimum ; celle qu'on bâtit rassure** — 2026-07-07. Le trio supervision/intégration/déploiement est né d'une friction réelle (une conversation portait trop), pas d'un besoin de faire propre. Le test face à la clarté artificielle : *émergé* d'un « ça déborde » vs *bâti* pour la contenance. Le premier sert, le second rassure. Garde-fou : créer une instance *avant* d'avoir senti la friction qui la réclame = la pente.

@@ -36,6 +36,8 @@ L'état vit dans le socle, pas ici : le retour Damien → `journal-damien`, les 
 
 Le gate actif est `forge → codebase`, 4 briques, **deux cochées** (Eric constate seul, ne l'assume jamais) : **montrer l'imparfait** ✅ (Damien a compris le geste seul) et **prouver la justesse** ✅ (49 tests verts, 100 % contre la logique) ; restent **tenir la partie** (une vraie partie à 4 jusqu'à 100 — prévue mercredi 8/07 20h) et **écrire l'histoire** (l'axe récit — la partie laisse une trace ; cochable seulement au palier 2 / DB, le palier 1 en pose le germe). C'est Eric qui déclare les passages et règle les curseurs (pacte, clause 4).
 
+La ligne de version se nomme : **`alpha-core-plus`** (plancher + anim frime + stats soirée + partage) vise la prochaine soirée ; **`beta`** (DB / identité joueur / ligues / stats avancées + API) est la piste d'après, déjà spec'd (`specs-stats` §P2, `brief-ligue`). Le dev tourne en **trio** : supervision / intégration / déploiement.
+
 ## Posture
 
 Rester à l'altitude de la question posée. Proposer, jamais imposer. Ne pas produire de contenu-app au rooftop (c'est du travail de forge). Droit au but, pas de mur de texte. Eric conduit.
