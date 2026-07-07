@@ -7,7 +7,9 @@
  * réservé au dismiss du modal). Fermeture : ✕ en haut-gauche.
  */
 import { useRef, useState } from 'react';
-import { Animated, PanResponder, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Animated, PanResponder, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
 
 const formatFrenchDate = (value: string) => {
   const [year, month, day] = value.split('-').map(Number);
@@ -31,6 +33,8 @@ import { palette } from '../theme/tokens';
 type Props = NativeStackScreenProps<RootStackParamList, 'ScoreGrid'>;
 
 export function ScoreGridScreen({ navigation }: Props) {
+  const id = useGameStore((s) => s.id);
+  const leagueId = useGameStore((s) => s.leagueId);
   const players = useGameStore((s) => s.players);
   const rounds = useGameStore((s) => s.rounds);
   const status = useGameStore((s) => s.status);
@@ -39,7 +43,7 @@ export function ScoreGridScreen({ navigation }: Props) {
   const today = soireeDate(Date.now());
   const archivedParties: GameArchive[] = soiree && soiree.date === today ? soiree.parties : [];
 
-  const currentArchive: GameArchive = { archivedAt: Date.now(), players, rounds, status };
+  const currentArchive: GameArchive = { id, leagueId, archivedAt: Date.now(), players, rounds, status };
 
   // Pages du carnet : [parties archivées (ancienne→récente)] + partie en cours.
   const pages: GameArchive[] = [...archivedParties, currentArchive];
@@ -49,6 +53,24 @@ export function ScoreGridScreen({ navigation }: Props) {
 
   // Toggle « détails » : révèle le score de chaque manche (+N) dans les cellules.
   const [showDetails, setShowDetails] = useState(false);
+
+  // Partage : capture le carnet AFFICHÉ (WYSIWYG, respecte showDetails) → feuille système.
+  const carnetRef = useRef<View>(null);
+  const [sharing, setSharing] = useState(false);
+  const onShare = async () => {
+    if (sharing) return;
+    setSharing(true);
+    try {
+      const uri = await captureRef(carnetRef, { format: 'png', quality: 1 });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: 'Feuille de score' });
+      }
+    } catch {
+      // Partage annulé ou indisponible : sans effet, on ne bloque pas l'écran.
+    } finally {
+      setSharing(false);
+    }
+  };
 
   // Glissé HORIZONTAL → changer de partie (le vertical dismisse le modal).
   const slideX = useRef(new Animated.Value(0)).current;
@@ -85,14 +107,26 @@ export function ScoreGridScreen({ navigation }: Props) {
         >
           <Text style={[styles.detailsTxt, showDetails && styles.detailsTxtOn]}>détails</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={onShare} style={styles.shareBtn} hitSlop={8} disabled={sharing}>
+          {sharing ? (
+            <ActivityIndicator size="small" color={palette.encre} />
+          ) : (
+            <Text style={styles.shareTxt}>partager</Text>
+          )}
+        </TouchableOpacity>
       </View>
 
-      <Animated.View style={{ flex: 1, transform: [{ translateX: slideX }] }} {...panResponder.panHandlers}>
-        <ScrollView>
-          <ScoreCarnet archive={displayArchive} showDetails={showDetails} />
-          <Palmares archive={displayArchive} />
-        </ScrollView>
-      </Animated.View>
+      <ScrollView style={{ flex: 1 }}>
+        {/* Le carnet glisse avec la navigation soirée… */}
+        <Animated.View style={{ transform: [{ translateX: slideX }] }} {...panResponder.panHandlers}>
+          {/* Vue capturée par le partage : le carnet seul, sur fond crème. */}
+          <View ref={carnetRef} collapsable={false} style={styles.carnetCapture}>
+            <ScoreCarnet archive={displayArchive} showDetails={showDetails} />
+          </View>
+        </Animated.View>
+        {/* …le palmarès reste fixe : c'est la soirée entière, pas la partie affichée. */}
+        <Palmares parties={archivedParties} />
+      </ScrollView>
 
       {pages.length > 1 && (
         <Text style={styles.swipeHint}>
@@ -118,6 +152,17 @@ const styles = StyleSheet.create({
   detailsBtnOn: { backgroundColor: palette.encre, borderColor: palette.encre },
   detailsTxt: { fontSize: 11, color: palette.bordureForte, fontWeight: '600' },
   detailsTxtOn: { color: palette.fondCreme },
+  shareBtn: {
+    borderWidth: 1,
+    borderColor: palette.bordureForte,
+    borderRadius: 12,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    minWidth: 60,
+    alignItems: 'center',
+  },
+  shareTxt: { fontSize: 11, color: palette.bordureForte, fontWeight: '600' },
+  carnetCapture: { backgroundColor: palette.fondCreme, padding: 12, borderRadius: 4 },
   topCenter: { flex: 1 },
   caption: { color: palette.bordureForte, fontSize: 13 },
   partyCounter: { color: palette.bordureForte, fontSize: 11, marginTop: 2 },

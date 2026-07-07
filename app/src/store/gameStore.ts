@@ -6,7 +6,7 @@
  */
 import { create } from 'zustand';
 import type { CardCount, Game, GameStatus, PlayerId, Round, Soiree } from '../domain/model';
-import { PLAYER_IDS } from '../domain/model';
+import { DEFAULT_LEAGUE_ID, PLAYER_IDS, uuidv4 } from '../domain/model';
 import { computeTotals, isGameOver } from '../domain/scoring';
 import { appendToSoiree, loadSoiree as loadSoireeFromStorage, saveSoiree } from './soireeStorage';
 
@@ -15,7 +15,8 @@ function initialGame(): Game {
   for (const id of PLAYER_IDS) {
     players[id] = { id, prenom: '' };
   }
-  return { players, rounds: [], status: 'en-cours' };
+  // id + leagueId semés ici : une partie interrompue puis reprise garde son id.
+  return { id: uuidv4(), leagueId: DEFAULT_LEAGUE_ID, players, rounds: [], status: 'en-cours' };
 }
 
 interface GameStore extends Game {
@@ -39,7 +40,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const status: GameStatus = isGameOver(computeTotals(rounds)) ? 'terminee' : s.status;
       let soiree = s.soiree;
       if (status === 'terminee') {
-        const archive = { archivedAt: Date.now(), players: s.players, rounds, status };
+        const archive = { id: s.id, leagueId: s.leagueId, archivedAt: Date.now(), players: s.players, rounds, status };
         soiree = appendToSoiree(soiree, archive);
         saveSoiree(soiree);
       }
@@ -51,7 +52,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     let soiree = s.soiree;
     // Partie terminée déjà archivée dans addRound ; on n'archive que l'interrompue.
     if (s.rounds.length > 0 && s.status !== 'terminee') {
-      const archive = { archivedAt: Date.now(), players: s.players, rounds: s.rounds, status: s.status };
+      const archive = { id: s.id, leagueId: s.leagueId, archivedAt: Date.now(), players: s.players, rounds: s.rounds, status: s.status };
       soiree = appendToSoiree(soiree, archive);
       saveSoiree(soiree);
     }

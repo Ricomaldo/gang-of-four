@@ -77,6 +77,8 @@ describe('soireeDate', () => {
 // ──────────────── appendToSoiree ────────────────
 
 const mkArchive = (ts: number): GameArchive => ({
+  id: `game-${ts}`,
+  leagueId: 'proto-ligue',
   archivedAt: ts,
   players: { 0: { id: 0, prenom: 'A' }, 1: { id: 1, prenom: 'B' }, 2: { id: 2, prenom: 'C' }, 3: { id: 3, prenom: 'D' } },
   rounds: [],

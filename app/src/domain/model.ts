@@ -32,8 +32,13 @@ export interface Round {
 
 export type GameStatus = 'en-cours' | 'terminee';
 
-/** Partie — LA source de vérité stockée. Rien de dérivé ici. */
+/**
+ * Partie — LA source de vérité stockée. Rien de dérivé ici.
+ * `id` + `leagueId` = provenance (base du relai P2), semés à la création, jamais dérivés.
+ */
 export interface Game {
+  id: string;
+  leagueId: string;
   players: Record<PlayerId, Player>;
   rounds: Round[];
   status: GameStatus;
@@ -43,8 +48,25 @@ export const PLAYER_IDS: readonly PlayerId[] = [0, 1, 2, 3];
 export const MAX_CARDS = 16;
 export const WINNING_THRESHOLD = 100;
 
-/** Partie archivée (terminée ou interrompue). */
+/** Ligue par défaut — placeholder P1, vrai nom décidé hors-code (cf. brief-ligue). */
+export const DEFAULT_LEAGUE_ID = 'proto-ligue';
+
+/**
+ * uuid v4 pur-JS (Math.random) — aucune dépendance native. Assure l'idempotence de
+ * l'upload P2 (jamais compter deux fois la même partie) ; pas un usage cryptographique.
+ */
+export function uuidv4(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+/** Partie archivée (terminée ou interrompue). Porte la provenance de la partie. */
 export interface GameArchive {
+  id: string;
+  leagueId: string;
   archivedAt: number;
   players: Record<PlayerId, Player>;
   rounds: Round[];

@@ -1,30 +1,60 @@
 /**
- * Palmares — zone « tableau d'honneur », séparée du carnet.
- * Les manches gagnées par joueur : ce n'est pas le carnet (scores), c'est le palmarès.
- * Panneau distinct pour qu'Eric puisse le styler isolément.
+ * Palmares — scoreboard de la SOIRÉE (plus la portée partie).
+ * Agrège par prénom sur les parties terminées : 4 compteurs (⭐️ 💥 🏆 ❌) + 2 titres
+ * à porteur unique (Leader ✌️, Looser 🐌). Zone présentationnelle : dérive tout via
+ * computeSoireeStats, ne stocke rien. La liste est variable (tous les prénoms du soir).
+ *
+ * Pas de couleur par personne : la couleur est liée au SIÈGE, pas au joueur (tokens),
+ * et un même prénom a pu changer de siège entre deux parties. Le prénom est l'identité.
+ *
+ * La mise en forme fine (grille, couronnes) reste le terrain de design d'Eric — ici,
+ * un tableau sobre et juste.
  */
 import { StyleSheet, Text, View } from 'react-native';
-import { PLAYER_IDS } from '../domain/model';
 import type { GameArchive } from '../domain/model';
-import { manchesGagnees } from '../domain/winner';
-import { palette, seatColors } from '../theme/tokens';
+import { computeSoireeStats } from '../domain/stats';
+import { palette } from '../theme/tokens';
 
-export function Palmares({ archive }: { archive: GameArchive }) {
-  const { players, rounds } = archive;
-  const victoires = manchesGagnees(rounds);
+export function Palmares({ parties }: { parties: GameArchive[] }) {
+  const { parPrenom, leader, looser } = computeSoireeStats(parties);
+
+  if (parPrenom.length === 0) {
+    return (
+      <View style={styles.palmares}>
+        <Text style={styles.title}>Palmarès de la soirée</Text>
+        <Text style={styles.empty}>Le palmarès s'ouvre après la première partie 🏆</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.palmares}>
-      <Text style={styles.title}>Palmarès — manches gagnées</Text>
-      <View style={styles.rowItems}>
-        {PLAYER_IDS.map((id) => (
-          <View key={id} style={styles.item}>
-            <View style={[styles.dot, { backgroundColor: seatColors[id] }]} />
-            <Text style={styles.name}>{(players[id].prenom || '?').slice(0, 6)}</Text>
-            <Text style={styles.count}>{victoires[id]}</Text>
-          </View>
-        ))}
+      <Text style={styles.title}>Palmarès de la soirée</Text>
+
+      {/* En-tête colonnes */}
+      <View style={[styles.row, styles.headRow]}>
+        <Text style={[styles.name, styles.headText]} />
+        <Text style={[styles.stat, styles.headText]}>⭐️</Text>
+        <Text style={[styles.stat, styles.headText]}>💥</Text>
+        <Text style={[styles.stat, styles.headText]}>🏆</Text>
+        <Text style={[styles.stat, styles.headText]}>❌</Text>
       </View>
+
+      {parPrenom.map((p) => {
+        const titre = p.prenom === leader ? ' ✌️' : p.prenom === looser ? ' 🐌' : '';
+        return (
+          <View key={p.prenom} style={styles.row}>
+            <Text style={styles.name} numberOfLines={1}>
+              {p.prenom}
+              {titre}
+            </Text>
+            <Text style={styles.stat}>{p.manchesGagnees}</Text>
+            <Text style={styles.stat}>{p.manchesPerdues}</Text>
+            <Text style={styles.stat}>{p.partiesGagnees}</Text>
+            <Text style={styles.stat}>{p.partiesPerdues}</Text>
+          </View>
+        );
+      })}
     </View>
   );
 }
@@ -39,9 +69,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textTransform: 'uppercase',
   },
-  rowItems: { flexDirection: 'row', justifyContent: 'space-around' },
-  item: { alignItems: 'center', gap: 4 },
-  dot: { width: 14, height: 14, borderRadius: 7 },
-  name: { fontSize: 11, color: palette.bordureForte },
-  count: { fontSize: 24, fontWeight: '700', color: palette.encre },
+  row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6 },
+  headRow: { borderBottomWidth: 1, borderColor: palette.bordure, paddingBottom: 8, marginBottom: 2 },
+  name: { flex: 1, fontSize: 15, color: palette.encre, fontWeight: '600' },
+  stat: { width: 44, textAlign: 'center', fontSize: 16, color: palette.encre },
+  headText: { fontSize: 14 },
+  empty: { color: palette.bordureForte, fontSize: 13, paddingVertical: 12, textAlign: 'center' },
 });

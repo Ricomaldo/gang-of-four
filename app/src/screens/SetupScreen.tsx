@@ -11,16 +11,18 @@
  * en attendant. Le Hub porte l'invite « QUI JOUE ? » tant que les 4 prénoms ne sont
  * pas saisis, puis passe à « READY » (actif) : SEUL le tap READY lance la partie.
  */
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Hub } from '../components/Hub';
+import { Palmares } from '../components/Palmares';
 import { PlayerPill } from '../components/PlayerPill';
 import { Quadrant } from '../components/Quadrant';
 import { QuadrantGrid } from '../components/QuadrantGrid';
 import { PLAYER_IDS } from '../domain/model';
-import type { PlayerId } from '../domain/model';
+import type { GameArchive, PlayerId } from '../domain/model';
 import { useGameStore } from '../store/gameStore';
+import { soireeDate } from '../store/soireeStorage';
 import type { RootStackParamList } from '../navigation/types';
 import { palette, seatColors } from '../theme/tokens';
 
@@ -29,6 +31,10 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Setup'>;
 export function SetupScreen({ navigation }: Props) {
   const players = useGameStore((s) => s.players);
   const setPrenom = useGameStore((s) => s.setPrenom);
+  const soiree = useGameStore((s) => s.soiree);
+
+  const today = soireeDate(Date.now());
+  const archivedParties: GameArchive[] = soiree && soiree.date === today ? soiree.parties : [];
 
   const namesReady = PLAYER_IDS.every((id) => players[id].prenom.trim().length > 0);
 
@@ -63,10 +69,10 @@ export function SetupScreen({ navigation }: Props) {
         />
       </View>
 
-      {/* Zone basse — futur emplacement des stats all-time (palier 2) */}
-      <View style={styles.statsZone}>
-        <Text style={styles.statsPlaceholder}>stats à venir</Text>
-      </View>
+      {/* Zone basse — palmarès collectif de la soirée (recouverte par le clavier en saisie) */}
+      <ScrollView style={styles.statsZone} contentContainerStyle={styles.statsContent}>
+        <Palmares parties={archivedParties} />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -76,11 +82,6 @@ const styles = StyleSheet.create({
   // Ratio grille / stats : la grille tient dans le haut (au-dessus d'un clavier ~40 %),
   // la zone stats occupe le reste et sera recouverte par le clavier pendant la saisie.
   gridZone: { flex: 5 },
-  statsZone: { flex: 4, alignItems: 'center', justifyContent: 'center' },
-  statsPlaceholder: {
-    fontSize: 10,
-    color: palette.bordure,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-  },
+  statsZone: { flex: 4 },
+  statsContent: { paddingHorizontal: 20, paddingBottom: 20 },
 });

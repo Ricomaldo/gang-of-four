@@ -96,6 +96,19 @@ export function manchesGagnees(rounds: Round[]): Record<PlayerId, number> {
   return counts;
 }
 
+/** Les joueurs à égalité sur le cumul le plus HAUT (symétrique de lowestTotalCandidates). */
+export function highestTotalCandidates(totals: Record<PlayerId, number>): PlayerId[] {
+  const max = Math.max(...PLAYER_IDS.map((id) => totals[id]));
+  return PLAYER_IDS.filter((id) => totals[id] === max);
+}
+
+/** Départage perdant niveau 1 : parmi les candidats, ceux au plus GRAND score à la dernière manche. */
+export function tiebreakByHighestLastRoundScore(candidates: PlayerId[], lastRound: Round): PlayerId[] {
+  const score = (id: PlayerId) => computeRoundScore(lastRound.cardCounts[id]);
+  const max = Math.max(...candidates.map(score));
+  return candidates.filter((id) => score(id) === max);
+}
+
 /** Orchestration : totals → arrêt → cumul le plus bas → départage niveau 1 → niveau 2. */
 export function determineWinner(rounds: Round[], seats: Seats): PlayerId {
   const totals = computeTotals(rounds);
@@ -110,4 +123,34 @@ export function determineWinner(rounds: Round[], seats: Seats): PlayerId {
   if (candidates.length === 1) return candidates[0];
 
   return tiebreakBySeatProximity(candidates, seats, seats[roundWinner(lastRound)]);
+}
+
+/**
+ * Perdant de la partie = cumul final le plus HAUT. Symétrique de determineWinner :
+ *   L1 — le plus GRAND score à la dernière manche (le plus de cartes ce tour-là)
+ *   L2 — le plus proche du gagnant de la dernière manche en sens ANTI-horaire
+ * Le livret (cas-reference-score.md) ne tranche que le vainqueur ; le départage du
+ * perdant est un défaut symétrique (comme roundLastPlace) — à confirmer par Eric.
+ */
+export function gameLoser(rounds: Round[], seats: Seats): PlayerId {
+  const totals = computeTotals(rounds);
+  if (!isGameOver(totals)) {
+    throw new Error('gameLoser: partie non terminée (aucun cumul ≥ 100)');
+  }
+  let candidates = highestTotalCandidates(totals);
+  if (candidates.length === 1) return candidates[0];
+
+  const lastRound = rounds[rounds.length - 1];
+  candidates = tiebreakByHighestLastRoundScore(candidates, lastRound);
+  if (candidates.length === 1) return candidates[0];
+
+  // L2 : plus proche du gagnant de la dernière manche en sens anti-horaire.
+  const winnerSeat = seats[roundWinner(lastRound)];
+  const n = PLAYER_IDS.length;
+  const antiDist = (id: PlayerId) => (winnerSeat - seats[id] + n) % n;
+  let best = candidates[0];
+  for (const id of candidates) {
+    if (antiDist(id) < antiDist(best)) best = id;
+  }
+  return best;
 }
