@@ -36,7 +36,15 @@ export function SetupScreen({ navigation }: Props) {
   const today = soireeDate(Date.now());
   const archivedParties: GameArchive[] = soiree && soiree.date === today ? soiree.parties : [];
 
-  const namesReady = PLAYER_IDS.every((id) => players[id].prenom.trim().length > 0);
+  const isDuplicate = (id: PlayerId) => {
+    const v = players[id].prenom.trim().toLowerCase();
+    return v.length > 0 &&
+      PLAYER_IDS.filter((x) => players[x].prenom.trim().toLowerCase() === v).length > 1;
+  };
+
+  const namesReady =
+    PLAYER_IDS.every((id) => players[id].prenom.trim().length > 0) &&
+    !PLAYER_IDS.some(isDuplicate);
 
   // Cadrans du haut : pills vers le haut ; du bas : pills vers le bas. Les 4 pills
   // s'écartent vers les bords et laissent le hub central respirer (compact = shrinked).
@@ -47,6 +55,7 @@ export function SetupScreen({ navigation }: Props) {
         prenom={players[id].prenom}
         score={0}
         editable
+        hasError={isDuplicate(id)}
         onChangePrenom={(v) => setPrenom(id, v)}
         notifPosition={align === 'top' ? 'below' : 'above'}
       />
@@ -79,9 +88,9 @@ export function SetupScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: palette.fondCreme },
-  // Ratio grille / stats : la grille tient dans le haut (au-dessus d'un clavier ~40 %),
-  // la zone stats occupe le reste et sera recouverte par le clavier pendant la saisie.
-  gridZone: { flex: 5 },
+  // Ratio grille / stats : la grille est capée à 52 % (maxHeight) pour que son bas reste
+  // au-dessus du clavier (~45-48 % depuis le bas). La zone stats est recouverte pendant la saisie.
+  gridZone: { flex: 5, maxHeight: '52%' },
   statsZone: { flex: 4 },
   statsContent: { paddingHorizontal: 20, paddingBottom: 20 },
 });

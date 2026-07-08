@@ -10,6 +10,37 @@ Registre léger. Convention `BUG-NN-{slug}`, statut **ouvert** / **fermé**, plu
 
 ---
 
+## BUG-06-fleche-sens-couleur-alignement — corrigé
+
+La flèche de sens de jeu était en noir opaque (`palette.encre`) et positionnée trop haut (`top:'73%'`), mal alignée sur les pills du bas.
+
+- _Source :_ review visuelle pre-soirée 2026-07-08.
+- _Résolution :_ `borderLeftColor: palette.bordure` (rgba 0,0,0,0.18 = contour du Hub) ; `top:'78%'` pour tomber sur le centre vertical des pills du bas. (`PlayDirection.tsx`)
+
+## BUG-05-double-splash — corrigé
+
+Au cold launch, deux écrans de démarrage se succédaient : le natif expo-splash-screen (image splash.png sur fond crème) puis le JS (SplashScreen.tsx, 1400 ms).
+
+- _Source :_ review visuelle pre-soirée 2026-07-08.
+- _Résolution :_ retrait des clés `"image"`, `"imageWidth"`, `"resizeMode"` du plugin expo-splash-screen dans `app.json`. Le natif devient fond crème uni, le dragon JS apparaît en continuité. Prend effet au prochain rebuild sim (`npx expo run:ios/android`).
+
+## BUG-04-carnet-inaccessible-manche-0 — corrigé
+
+À la 1re manche (0 rounds), l'affordance carnet n'était pas visible (gate `rounds.length > 0`) — impossible de consulter la soirée précédente dès le départ. Et si on forçait la nav, ScoreCarnet affichait « Aucune manche jouée. » au lieu d'une feuille vide cohérente.
+
+- _Source :_ FD-12 / review pre-soirée 2026-07-08.
+- _Résolution :_ gate retiré → affordance toujours visible (`RoundScreen.tsx l.149`). Placeholder row (`—`) remplace le message vide quand `rows.length === 0`, en conservant l'en-tête et la ligne TOT à 0 (`ScoreCarnet.tsx l.53`).
+
+## BUG-03-pills-sous-clavier-setup — corrigé
+
+En saisie des prénoms (SetupScreen), les pills du bas (joueurs 2 et 3) passaient sous le clavier sur petits écrans — saisie à l'aveugle.
+
+- _Source :_ review visuelle pre-soirée 2026-07-08.
+- _Cause :_ `gridZone: { flex: 5 }` → 55.5 % de l'écran, pills du bas plaquées au bas de la zone, juste à la limite du clavier.
+- _Résolution :_ `gridZone: { flex: 5, maxHeight: '52%' }` → cap à 52 %, les pills restent au-dessus du clavier (~45-48 % depuis le bas). (`SetupScreen.tsx`)
+
+---
+
 ## BUG-02-saisie-manche-sans-gagnant — confirmé à l'usage
 
 L'app acceptait une saisie de manche où **aucun joueur n'est à 0 carte** (manche sans gagnant), état impossible par la règle du jeu. `roundWinner` lève une erreur *domaine* si appelé, mais l'**UI ne bloquait pas la saisie** en amont.

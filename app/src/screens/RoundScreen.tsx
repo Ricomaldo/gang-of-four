@@ -100,7 +100,7 @@ export function RoundScreen({ navigation }: Props) {
   // Haut : carte contre le bord haut, notif dessous (vers le centre). Bas : carte
   // contre le bord bas, notif dessus (vers le centre). Pills symétriques autour de l'arc.
   const cell = (id: PlayerId, row: 'top' | 'bottom') => (
-    <Quadrant key={id} align={row} recede={gofPlayer !== null && gofPlayer !== id}>
+    <Quadrant key={id} align="center" recede={gofPlayer !== null && gofPlayer !== id}>
       <PlayerPill
         color={seatColors[id]}
         prenom={players[id].prenom}
@@ -146,18 +146,11 @@ export function RoundScreen({ navigation }: Props) {
           </View>
         )}
 
-        {/* Affordance carnet (discrète) — visible dès qu'une manche existe, y compris
-            en fin de partie pour que la feuille reste ré-accessible (FD-12). */}
-        {rounds.length > 0 && (
-          <TouchableOpacity
-            style={styles.carnetHint}
-            onPress={() => navigation.navigate('ScoreGrid')}
-            hitSlop={10}
-          >
-            <Text style={styles.carnetArrow}>↑</Text>
-            <Text style={styles.carnetLabel}>carnet</Text>
-          </TouchableOpacity>
-        )}
+        {/* Affordance carnet (discrète) — toujours visible pour permettre de consulter
+            la soirée précédente dès la 1re manche (FD-12). */}
+        <TouchableOpacity style={styles.carnetHint} onPress={() => navigation.navigate('ScoreGrid')} hitSlop={12}>
+          <Text style={styles.carnetLabel}>carnet</Text>
+        </TouchableOpacity>
 
         {/* Easter egg « GANG OF FOUR ! » — frime plein écran + son, par-dessus tout. */}
         {gofPlayer !== null && (
@@ -173,8 +166,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   dirLayer: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },
   carnetHint: { position: 'absolute', bottom: 10, alignSelf: 'center', alignItems: 'center' },
-  carnetArrow: { fontSize: 16, color: palette.accentSaisie, lineHeight: 16, fontWeight: '700' },
-  carnetLabel: { fontSize: 9, color: palette.accentSaisie, fontWeight: '700', letterSpacing: 1 },
+  carnetLabel: { fontSize: 11, color: palette.accentSaisie, fontWeight: '700', letterSpacing: 1 },
   endCard: {
     backgroundColor: palette.fondPill,
     borderRadius: 16,

@@ -26,6 +26,8 @@ type Props = {
   /** Côté où le slot notif est réservé. 'above' pour les pills du bas → la carte
    *  hugge le bord bas (symétrie avec les pills du haut) et la notif pointe vers le centre. */
   notifPosition?: 'below' | 'above';
+  /** Doublon détecté en saisie : bordure accent pour signaler le conflit. */
+  hasError?: boolean;
 };
 
 export const PILL_WIDTH = 150;
@@ -39,9 +41,10 @@ export function PlayerPill({
   onLongPress,
   notif = null,
   notifPosition = 'below',
+  hasError = false,
 }: Props) {
   const card = (
-    <View style={styles.card}>
+    <View style={[styles.card, hasError && styles.cardError]}>
       <View style={styles.idRow}>
         <View style={[styles.dot, { backgroundColor: color }]} />
         {editable ? (
@@ -115,6 +118,7 @@ const styles = StyleSheet.create({
   dot: { width: 12, height: 12, borderRadius: 6, borderWidth: 1.5, borderColor: palette.bordureForte },
   name: { color: palette.bordureForte, fontSize: 12, fontWeight: '700', flexShrink: 1 },
   nameInput: { color: palette.encre, fontSize: 15, minWidth: 84, paddingVertical: 2, textAlign: 'center' },
+  cardError: { borderColor: palette.accentSaisie },
   score: { color: palette.score, fontSize: 42, fontWeight: '700', lineHeight: 46 },
   notifSlot: { width: PILL_WIDTH, minHeight: 32, marginTop: 10, alignItems: 'center', justifyContent: 'flex-start' },
   notifSlotAbove: { marginTop: 0, marginBottom: 10, justifyContent: 'flex-end' },

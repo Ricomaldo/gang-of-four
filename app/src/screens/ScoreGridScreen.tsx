@@ -56,6 +56,8 @@ export function ScoreGridScreen({ navigation }: Props) {
 
   // Partage : capture le carnet AFFICHÉ (WYSIWYG, respecte showDetails) → feuille système.
   const carnetRef = useRef<View>(null);
+  // Ouvre le carnet ancré en bas : TOT visible au premier coup d'œil, scroll vers le haut pour l'historique.
+  const scrollRef = useRef<ScrollView>(null);
   const [sharing, setSharing] = useState(false);
   const onShare = async () => {
     if (sharing) return;
@@ -116,16 +118,24 @@ export function ScoreGridScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={{ flex: 1 }}>
-        {/* Le carnet glisse avec la navigation soirée… */}
-        <Animated.View style={{ transform: [{ translateX: slideX }] }} {...panResponder.panHandlers}>
-          {/* Vue capturée par le partage : le carnet seul, sur fond crème. */}
+      {/* Animated.View à l'intérieur du ScrollView — pattern iOS qui fonctionne :
+          le PanResponder enfant peut capter le swipe horizontal avant que le
+          ScrollView natif s'en empare. Couvre tout le contenu (carnet + palmarès)
+          pour que le swipe soit actif sur toute la page. */}
+      <ScrollView
+        ref={scrollRef}
+        style={{ flex: 1 }}
+        onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}
+      >
+        <Animated.View
+          style={{ transform: [{ translateX: slideX }] }}
+          {...panResponder.panHandlers}
+        >
           <View ref={carnetRef} collapsable={false} style={styles.carnetCapture}>
             <ScoreCarnet archive={displayArchive} showDetails={showDetails} />
           </View>
+          <Palmares parties={archivedParties} />
         </Animated.View>
-        {/* …le palmarès reste fixe : c'est la soirée entière, pas la partie affichée. */}
-        <Palmares parties={archivedParties} />
       </ScrollView>
 
       {pages.length > 1 && (

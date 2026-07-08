@@ -16,7 +16,24 @@ import { computeRoundScore, computeTotals } from '../domain/scoring';
 import { roundWinner } from '../domain/winner';
 import { palette, seatColors } from '../theme/tokens';
 
-export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArchive; showDetails?: boolean }) {
+/** Ligne TOT seule — exportée pour pouvoir être épinglée hors du scroll dans ScoreGridScreen. */
+export function TotRow({ totals }: { totals: Record<PlayerId, number> }) {
+  const lastId = SEAT_ORDER[SEAT_ORDER.length - 1];
+  return (
+    <View style={[styles.row, styles.totalRow]}>
+      <View style={[styles.dirCell, styles.totalDir, styles.colDividerLight]}>
+        <Text style={styles.totalDirText}>TOT</Text>
+      </View>
+      {SEAT_ORDER.map((id) => (
+        <View key={id} style={[styles.cell, id !== lastId && styles.colDividerLight]}>
+          <Text style={styles.totalText}>{totals[id]}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+export function ScoreCarnet({ archive, showDetails = false, hideTot = false }: { archive: GameArchive; showDetails?: boolean; hideTot?: boolean }) {
   const { players, rounds } = archive;
   const totals = computeTotals(rounds);
 
@@ -51,7 +68,17 @@ export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArc
       </View>
 
       {rows.length === 0 ? (
-        <Text style={styles.empty}>Aucune manche jouée.</Text>
+        // Ligne vide — partie entamée mais aucune manche encore saisie
+        <View style={styles.row}>
+          <View style={styles.dirCell}>
+            <Text style={styles.dirText}>{directionOfPlay(1) === 'anti-horaire' ? '→' : '←'}</Text>
+          </View>
+          {SEAT_ORDER.map((id) => (
+            <View key={id} style={[styles.cell, id !== lastId && styles.colDivider]}>
+              <Text style={styles.cumul}>—</Text>
+            </View>
+          ))}
+        </View>
       ) : (
         rows.map((row) => (
           <View key={row.i} style={styles.row}>
@@ -77,17 +104,8 @@ export function ScoreCarnet({ archive, showDetails = false }: { archive: GameArc
         ))
       )}
 
-      {/* Ligne TOT — cumul final, fond noir */}
-      <View style={[styles.row, styles.totalRow]}>
-        <View style={[styles.dirCell, styles.totalDir, styles.colDividerLight]}>
-          <Text style={styles.totalDirText}>TOT</Text>
-        </View>
-        {SEAT_ORDER.map((id) => (
-          <View key={id} style={[styles.cell, id !== lastId && styles.colDividerLight]}>
-            <Text style={styles.totalText}>{totals[id]}</Text>
-          </View>
-        ))}
-      </View>
+      {/* Ligne TOT — cumul final, fond noir. Masquée si le parent l'épingle lui-même. */}
+      {!hideTot && <TotRow totals={totals} />}
     </View>
   );
 }

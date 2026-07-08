@@ -4,8 +4,8 @@
  *
  * Scaffold : saisie libre (append / backspace / re-sélection écrase). La règle
  * d'auto-avance (« 1 » attend un 2e chiffre 0–6 ; 0/2–9 valident et passent au
- * suivant ; max 16 ») et la sélection par défaut sur roundWinner sont notées TODO —
- * elles se branchent avec la logique de comptage.
+ * suivant ; max 16 ») reste TODO. Sélection par défaut : le joueur le plus à
+ * gauche (SEAT_ORDER[0]), départ prévisible gauche→droite.
  */
 import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -14,8 +14,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { NumPad } from '../components/NumPad';
 import { SeatSelectors } from '../components/SeatSelectors';
 import { MAX_CARDS, PLAYER_IDS, SEAT_ORDER } from '../domain/model';
-import type { CardCount, PlayerId, Round } from '../domain/model';
-import { isValidRoundInput, roundWinner } from '../domain/winner';
+import type { CardCount, PlayerId } from '../domain/model';
+import { isValidRoundInput } from '../domain/winner';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
 import { palette, seatColors } from '../theme/tokens';
@@ -24,14 +24,9 @@ type Props = NativeStackScreenProps<RootStackParamList, 'ScoreEntry'>;
 
 const initialValues = (): Record<PlayerId, string> => ({ 0: '', 1: '', 2: '', 3: '' });
 
-/** Manche 1 → 1er sélecteur ; sinon roundWinner de la manche précédente (retombe sur 0 si indéterminé). */
-function defaultActiveId(rounds: Round[]): PlayerId {
-  if (rounds.length === 0) return 0;
-  try {
-    return roundWinner(rounds[rounds.length - 1]);
-  } catch {
-    return 0;
-  }
+/** Défaut : toujours le joueur le plus à gauche (SEAT_ORDER[0]). Départ prévisible, gauche→droite. */
+function defaultActiveId(): PlayerId {
+  return SEAT_ORDER[0];
 }
 
 export function ScoreEntryScreen({ navigation }: Props) {
@@ -39,7 +34,7 @@ export function ScoreEntryScreen({ navigation }: Props) {
   const rounds = useGameStore((s) => s.rounds);
   const addRound = useGameStore((s) => s.addRound);
 
-  const [activeId, setActiveId] = useState<PlayerId>(() => defaultActiveId(rounds));
+  const [activeId, setActiveId] = useState<PlayerId>(defaultActiveId);
   const [values, setValues] = useState<Record<PlayerId, string>>(initialValues);
 
   // Saisie bornée à 16 cartes (Sug A, figée). L'auto-avance (1 attend 0–6 ; 0/2–9 valident) reste TODO.

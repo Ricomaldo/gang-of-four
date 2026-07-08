@@ -22,6 +22,7 @@ const BTN = 88; // bouton central
 export function Hub({ state, gofPlayerName, disabled = false, onPress }: Props) {
   const label =
     state === 'gofTriggered' ? `GANG OF FOUR\n${gofPlayerName ?? ''}` :
+    state === 'invite'       ? 'READY ?' :
     state === 'ready'        ? 'READY' :
     state === 'enterScores'  ? 'ENTRER\nSCORES' :
     'FIN DE\nMANCHE';
