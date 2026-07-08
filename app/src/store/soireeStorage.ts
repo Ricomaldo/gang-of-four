@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { GameArchive, PlayerId, Player, Round, GameStatus, Soiree } from '../domain/model';
+import type { Game, GameArchive, PlayerId, Player, Round, GameStatus, Soiree } from '../domain/model';
 
 const KEY = 'gof:soiree';
+const GAME_KEY = 'gof:game';
 
 /** Retourne YYYY-MM-DD pour un timestamp, avec tolérance nuit (avant 5h = veille). */
 export function soireeDate(ts: number): string {
@@ -28,4 +29,20 @@ export async function loadSoiree(): Promise<Soiree | null> {
   const raw = await AsyncStorage.getItem(KEY);
   if (!raw) return null;
   return JSON.parse(raw) as Soiree;
+}
+
+/** Partie EN COURS — persistée à chaque manche pour survivre à une app tuée (SMS, éviction OS). */
+export async function saveGame(game: Game): Promise<void> {
+  await AsyncStorage.setItem(GAME_KEY, JSON.stringify(game));
+}
+
+export async function loadGame(): Promise<Game | null> {
+  const raw = await AsyncStorage.getItem(GAME_KEY);
+  if (!raw) return null;
+  return JSON.parse(raw) as Game;
+}
+
+/** Partie terminée (archivée dans la soirée) : plus rien à reprendre. */
+export async function clearGame(): Promise<void> {
+  await AsyncStorage.removeItem(GAME_KEY);
 }

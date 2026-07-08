@@ -18,8 +18,8 @@ import type { RootStackParamList } from './src/navigation/types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const loadSoiree = useGameStore((s) => s.loadSoiree);
-  useEffect(() => { loadSoiree(); }, []);
+  const hydrate = useGameStore((s) => s.hydrate);
+  useEffect(() => { hydrate(); }, []);
 
   return (
     <SafeAreaProvider>

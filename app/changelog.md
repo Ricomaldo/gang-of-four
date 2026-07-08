@@ -45,6 +45,7 @@ _Axe frime & stats collectives :_
 
 _Passe review pré-soirée (correctifs + polish + nom) :_
 
+- **Persistance de la partie en cours** : la partie vive est sauvegardée **à chaque manche** (`gof:game`, AsyncStorage) et **reprise au lancement** (Splash → Round si une partie est engagée, sinon Setup). Une app tuée (SMS, éviction OS) ne perd plus les scores — seule une saisie de manche non validée est volatile.
 - **Nom d'app** : « Gang of Four » → **« GoF Companion »** (compteur d'accompagnement, pas le jeu ; prudence marque déposée en vue du store).
 
 ### Modifié
