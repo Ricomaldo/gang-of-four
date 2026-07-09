@@ -30,13 +30,13 @@ Scaffold stable qui survit au voyage `rooftop → forge → codebase → archive
 
 ## Où on en est
 
-On est **en forge**, plancher complet et éprouvé. L'app a été buildée pour Android (EAS, APK preview) et livrée à Damien, qui l'a installée seul et jugée « ça fait le job ». Le fil avec lui est vivant : un 2e retour, après vraie manipulation des tableaux, affine le plancher (bugs de sens corrigés) et pousse tout entier vers l'axe récit — détail dans `journal-damien`.
+On est **en forge**, plancher éprouvé et **alpha `GoF Companion` diffusée** aux potes (APK auto-hébergé, `dev.irimwebforge.com`). La première **vraie partie à 4** — le test du jalon « tenir la partie » — se joue à la première soirée réelle. Le fil avec Damien et la table est vivant ; le détail vit dans le socle (ci-dessous), pas ici.
 
-L'état vit dans le socle, pas ici : le retour Damien → `journal-damien`, les fins de l'app → `arbre-app`, la commande à jour → `brief-02-complement`, les bugs → `app/docs/bugs.md`. Ne pas redoubler ces sources d'un récit horodaté.
+L'état vit dans le socle, pas ici : le retour joueurs → `journal-damien` (verbatim `FD-NN`), les fins de l'app → `arbre-app`, la commande à jour → `brief-02-complement`, les bugs → `app/docs/bugs.md`, les versions produit → `app/changelog.md`, le journal transversal → `~/_cockpit/logs/dev.md`. Cette section est une **passerelle** : elle pointe, elle ne redouble jamais ces sources d'un récit horodaté.
 
-Le gate actif est `forge → codebase`, 4 briques, **deux cochées** (Eric constate seul, ne l'assume jamais) : **montrer l'imparfait** ✅ (Damien a compris le geste seul) et **prouver la justesse** ✅ (49 tests verts, 100 % contre la logique) ; restent **tenir la partie** (une vraie partie à 4 jusqu'à 100 — prévue mercredi 8/07 20h) et **écrire l'histoire** (l'axe récit — la partie laisse une trace ; cochable seulement au palier 2 / DB, le palier 1 en pose le germe). C'est Eric qui déclare les passages et règle les curseurs (pacte, clause 4).
+Le gate actif est `forge → codebase`, 4 briques, **deux cochées** (Eric constate seul, ne l'assume jamais) : **montrer l'imparfait** ✅ (Damien a compris le geste seul) et **prouver la justesse** ✅ (62 tests verts, 100 % contre la logique) ; restent **tenir la partie** (une vraie partie à 4 jusqu'à 100, en conditions réelles — en test à la première soirée) et **écrire l'histoire** (l'axe récit — la partie laisse une trace ; cochable seulement au palier 2 / DB, le palier 1 en pose le germe). C'est Eric qui déclare les passages et règle les curseurs (pacte, clause 4).
 
-La ligne de version se nomme : **`alpha-core-plus`** (plancher + anim frime + stats soirée + partage) vise la prochaine soirée ; **`beta`** (DB / identité joueur / ligues / stats avancées + API) est la piste d'après, déjà spec'd (`specs-stats` §P2, `brief-ligue`). Le dev tourne en **trio** : supervision / intégration / déploiement.
+La ligne de version : **`alpha-core-plus`** (plancher + anim frime + stats soirée + partage + persist) **diffusée** ; **`beta`** (DB / identité joueur / ligues / stats avancées + API) est la piste d'après, déjà spec'd (`specs-stats` §P2, `brief-ligue`). Le dev tourne en **trio** : supervision / intégration / déploiement.
 
 ## Posture
 
