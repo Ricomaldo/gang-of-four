@@ -2,7 +2,7 @@
 title: 'GANG — La frime (pilier 2)'
 created: '2026-07-10'
 updated: '2026-07-10'
-version: 0.1.0
+version: 0.2.1
 status: active
 type: frime
 ---
@@ -19,10 +19,12 @@ type: frime
   l'**amplifie**, elle ne l'invente pas. *Tethered* : écho d'un vrai carré joué,
   **déclenché à la main** (l'app ne modélise pas les cartes — le rugissement est
   forcément humain).
-- **Le bouton : central, tap simple, plus gros**, l'asset *gang of four*
-  visible. Il **sort de l'easter-egg** — le long-press sur un nom était bon pour
-  la 1re soirée mais ne passe pas le filtre d'**affordance** (un inconnu ne le
-  trouve pas). Central = il se trouve seul.
+- **Le bouton — le `Gong`** (nommé et signé, cf. `reshape.md` §3) : central, tap
+  simple, plus gros, l'asset *gang of four* visible. Il **sort de l'easter-egg**
+  — le long-press sur un nom était bon pour la 1re soirée mais ne passe pas le
+  filtre d'**affordance** (un inconnu ne le trouve pas). Central = il se trouve
+  seul. Frappé, il rugit — ici au **carré** ; à l'**entrée** de partie aussi
+  (cf. `langue-ui`, déf. Gong).
 - **~5 secondes.**
 
 ## Le son — la surprise

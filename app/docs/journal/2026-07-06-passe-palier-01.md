@@ -2,7 +2,7 @@
 title: 'Handoff — Passe de dev · Palier 1'
 created: '2026-07-06'
 updated: '2026-07-06'
-version: 0.1.0
+version: 0.1.1
 status: active
 type: handoff-passe
 ---
@@ -27,7 +27,7 @@ La passe **finit et étend** cet existant. Premier geste attendu : lire `ScoreGr
 ## Périmètre — 5 chantiers
 
 ### 1. Grille au niveau du handoff design
-`ScoreGridScreen` existe → l'aligner sur le paquet Claude Design (`app/docs/claude_design/import/`, pistes `4b`/`5b`). Colonnes = joueurs (pastille + initiale), lignes = manches, colonne gauche = sens de jeu alterné, ligne TOTAL = cumul, cellule à 0 = `roundWinner`, en-tête « 1er à 100 déclenche la fin ». Pas de barème affiché. **Consultation seule** — le partage est palier 2.
+`ScoreGridScreen` existe → l'aligner sur le paquet Claude Design (`app/docs/claude_design/1-alpha-core/retour/`, pistes `4b`/`5b`). Colonnes = joueurs (pastille + initiale), lignes = manches, colonne gauche = sens de jeu alterné, ligne TOTAL = cumul, cellule à 0 = `roundWinner`, en-tête « 1er à 100 déclenche la fin ». Pas de barème affiché. **Consultation seule** — le partage est palier 2.
 
 ### 2. Qui-donne-à-qui (FD-03) — dans le quadrant
 Rappel visuel dans le quadrant joueur, **visible pendant le jeu** : qui était 1er / dernier à la manche précédente → qui donne à qui. **Dérivé** : 1er = `roundWinner` (0 carte) ; dernier = plus de cartes restantes à la manche précédente — *définition « dernier » à confirmer avec Eric si le cas d'égalité se pose.* **Jamais** de valeur de carte (l'app ne modélise pas les cartes). ⚠️ Amende le quadrant « une pill et rien d'autre » du handoff — **voulu**.

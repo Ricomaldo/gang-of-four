@@ -2,7 +2,7 @@
 title: GoF — Cas de référence, logique de score
 created: '2026-07-04'
 updated: '2026-07-04'
-version: 0.1.0
+version: 0.1.1
 status: active
 type: cas-reference
 ---

@@ -2,7 +2,7 @@
 title: GoF — Logique de comptage, noms de fonctions
 created: '2026-07-04'
 updated: '2026-07-04'
-version: 0.2.0
+version: 0.1.2
 status: active
 type: logique
 ---

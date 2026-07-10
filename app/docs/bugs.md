@@ -1,5 +1,6 @@
 ---
 created: '2026-07-05'
+version: 0.1.0
 status: active
 title: Bugs — registre
 ---

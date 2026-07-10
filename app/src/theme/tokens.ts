@@ -1,6 +1,6 @@
 /**
  * Design tokens — palette « écho du jeu ».
- * Source de vérité : app/docs/modele-donnees.md v0.4. Ne pas modifier sans MAJ du doc.
+ * Source de vérité : app/docs/specs/modele-donnees.md v0.1.5. Ne pas modifier sans MAJ du doc.
  *
  * Les couleurs joueur sont FIGÉES et liées à la POSITION du quadrant
  * (grille 2×2, propriétaire du téléphone assis en bas), jamais au joueur.

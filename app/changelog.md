@@ -20,7 +20,7 @@ Format : plus récent en haut.
 - **Splash** `game-box` (expo-splash-screen).
 - **Garde de saisie** : une manche sans joueur à 0 est refusée (`isValidRoundInput`).
 
-_Passe palier 01 (handoff `docs/2026-07-06-passe-palier-01.md`) :_
+_Passe palier 01 (handoff `docs/journal/2026-07-06-passe-palier-01.md`) :_
 
 - **Soirée persistante** (AsyncStorage) : les parties du jour s'archivent (fin à 100 ou nouvelle partie) et se regroupent par soirée, avec tolérance nuit (partie finie avant 5h = veille). Navigation entre parties dans la grille.
 - **Qui-donne-à-qui** : en début de manche, notif « gagnant manche préc. » et « donne / a donné sa meilleure carte » (avec coche), posées dans les pills.

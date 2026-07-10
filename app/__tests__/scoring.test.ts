@@ -1,6 +1,6 @@
 /**
  * Contrat de la brique « Prouver la justesse » (grille.md).
- * Cas dérivés de app/docs/cas-reference-score.md — la logique de domain/ doit les
+ * Cas dérivés de app/docs/specs/cas-reference-score.md — la logique de domain/ doit les
  * passer à 100 % avant d'être éprouvée en partie live.
  */
 import { MAX_CARDS, WINNING_THRESHOLD } from '../src/domain/model';

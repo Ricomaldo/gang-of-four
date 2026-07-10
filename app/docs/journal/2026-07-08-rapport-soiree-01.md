@@ -2,7 +2,7 @@
 title: 'Rapport de soirée — Première partie à 4 (test du jalon « tenir la partie »)'
 created: '2026-07-08'
 updated: '2026-07-09'
-version: 0.2.0
+version: 0.1.2
 status: active
 type: rapport-soiree
 ---

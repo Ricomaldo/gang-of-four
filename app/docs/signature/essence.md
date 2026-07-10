@@ -2,7 +2,7 @@
 title: 'GANG — Signature'
 created: '2026-07-10'
 updated: '2026-07-10'
-version: 0.1.0
+version: 0.2.1
 status: active
 type: signature
 ---
@@ -95,9 +95,10 @@ Les nombres et les écrans ne sont pas ici. Ce document tient l'**identité** ; 
 specs (`specs-techniques`, `modele-donnees`…) en découlent. Ancrages déjà signés
 à traduire, en vrac :
 
-- la branlée se déclenche dès **~30 points** distribués sur la manche (deux ×2 —
-  petite branlée, ajustable) ;
-- le loser porte le **💩** (ex-🐌) ;
+- la branlée est **binaire** (branlée ou rien — pas de petite/grosse), déclenchée
+  dès **~30 points** cumulés sur la manche, seuil ajustable ;
+- **💩 = partie perdue** (ex-❌) ; le **🐌** reste le looser du gang (celui qui
+  cumule le plus de 💩) ;
 - le **gang = le roster** (mêmes 4 → même palmarès, inter-parties *et*
   inter-sessions ; un joueur change → autre gang) ;
 - la **session** (temps + lieu, mot interdit en UI) titre la feuille partagée —

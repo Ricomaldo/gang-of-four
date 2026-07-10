@@ -24,11 +24,13 @@ Scaffold stable qui survit au voyage `rooftop → forge → codebase → archive
 - `_commission/` — l'origine, la demande de Damien, et le fil de son usage. `brief-01-amorce` (l'amorce, non retouchée) + `brief-02-complement` (la commande enrichie par le 1er retour) + `regles-jeu.pdf` + `journal-damien` (log de com, verbatim Damien tagué `FD-NN` — un conduit, pas un lieu de traitement). Ce qui est confié **et écouté**.
 - `_engagement/` — les primitives d'Eric, son « oui ». Le bundle de boot.
 - `app/` — le construit, l'app RN / Expo managed. `changelog.md` (versions produit).
-  - `app/docs/` — les specs (source de vérité du build : `specs-techniques`, `modele-donnees`, `logique-comptage`, `cas-reference-score`) et le registre `bugs.md` (`BUG-NN`).
-  - `app/docs/claude_design/export/` — nos briefs envoyés à Claude Design (3 passes). `import/` — le paquet revenu (wireframes), confronté puis consommé.
+  - `app/docs/` — porte d'entrée `README.md`. Les **specs** dans `specs/` (source de vérité du build : `specs-techniques`, `modele-donnees`, `logique-comptage`, `cas-reference-score`…), l'**identité** dans `signature/` (porte : `reshape.md`), les **traces datées** dans `journal/`, et le registre `bugs.md` (`BUG-NN`).
+  - `app/docs/claude_design/` — les commandes wireframes à Claude Design, **un dossier par round** (`1-alpha-core/`, `2-alpha-signature/`…), chacun avec son `brief/` (envoyé) et son `retour/` (revenu, confronté puis consommé).
   - `app/src/` — le code : `domain/` (logique pure, prouvée), `store/` (Zustand, source de vérité stockée), `screens/`, `components/`, `theme/`. `app/__tests__/` — les cas de référence du score. Règle de dépendance : `screens → store → domain`, jamais l'inverse.
 
 ## Où on en est
+
+**Phase courante (10/07) : conception signature — dev gelé.** On est en formation UI/UX et cadre reshape : affirmer l'identité (GANG) post-1re soirée. L'implémentation attend la fin de cette phase ; le versioning des docs marque les ères (**`0.1.x`** = build alpha-core, tag git `v0.1` ; **`0.2.x`** = cette phase). Le détail vit dans `app/docs/signature/` (porte : `reshape.md`).
 
 On est **en forge**, plancher éprouvé et **alpha `GoF Companion` diffusée** aux potes (APK auto-hébergé, `dev.irimwebforge.com`). La première **vraie partie à 4** — le test du jalon « tenir la partie » — se joue à la première soirée réelle. Le fil avec Damien et la table est vivant ; le détail vit dans le socle (ci-dessous), pas ici.
 

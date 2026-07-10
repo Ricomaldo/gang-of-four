@@ -1,6 +1,6 @@
 /**
  * Modèle de données — le socle d'état typé.
- * Source de vérité : app/docs/modele-donnees.md v0.4, app/docs/logique-comptage.md v0.2.
+ * Source de vérité : app/docs/specs/modele-donnees.md v0.1.5, app/docs/specs/logique-comptage.md v0.1.2.
  *
  * Règle cardinale : une SEULE source de vérité stockée (voir {@link Game}).
  * Score, cumul, gagnant de manche, sens de jeu, vainqueur = TOUJOURS dérivés

@@ -2,7 +2,7 @@
 title: GoF — Specs anim frime
 created: 2026-07-07
 updated: 2026-07-07
-version: 0.1.0
+version: 0.1.1
 status: active
 type: specs
 ---

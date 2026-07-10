@@ -1,6 +1,6 @@
 /**
  * GofAnimation — la frime « GANG OF FOUR ! », overlay plein écran, 5 s fixe.
- * Source de vérité : app/docs/specs-anim-frime.md.
+ * Source de vérité : app/docs/specs/specs-anim-frime.md.
  *
  * Frime totale, aucune retenue. Tous les beats démarrent à la 1ʳᵉ frame :
  *  - scale overshoot (part du disque central, dépasse le plein écran, claque en place)

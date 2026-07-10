@@ -2,7 +2,7 @@
 title: GoF — Specs techniques
 created: 2026-07-03
 updated: 2026-07-04
-version: 0.4.0
+version: 0.1.4
 status: active
 type: specs
 ---

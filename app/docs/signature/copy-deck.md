@@ -2,7 +2,7 @@
 title: 'GANG — Copy deck (la voix)'
 created: '2026-07-10'
 updated: '2026-07-10'
-version: 0.1.0
+version: 0.2.1
 status: draft
 type: copy-deck
 ---

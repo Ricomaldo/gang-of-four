@@ -2,7 +2,7 @@
 title: 'Handoff — Nuit signature · identité GANG'
 created: '2026-07-10'
 updated: '2026-07-10'
-version: 0.1.0
+version: 0.2.1
 status: active
 type: handoff-passe
 ---

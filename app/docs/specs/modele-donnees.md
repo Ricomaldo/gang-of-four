@@ -2,7 +2,7 @@
 title: GoF — Modèle de données
 created: '2026-07-04'
 updated: '2026-07-06'
-version: 0.5.0
+version: 0.1.5
 status: active
 type: modele-donnees
 ---
