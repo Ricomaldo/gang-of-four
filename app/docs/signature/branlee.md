@@ -88,6 +88,9 @@ il dit **c'est fait** et *« je les ai enterrés »*, jamais *« ça va péter �
 
 ## Ce qui reste ouvert
 
+- l'**échelle** — le corps du doc pose **binaire** (branlée ou rien) ; Eric
+  rouvre le langage **petite / grosse branlée** (10/07). *Rouvert, non tranché —
+  modélisation à voir.*
 - l'**emoji** de la branlée (💪 candidat, non scellé) ;
 - le **mot** de la cérémonie (copy-deck) ;
 - l'**entrée dans le tie** du palmarès (« on va vers ça » — cf. `palmares.md`).

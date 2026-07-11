@@ -30,7 +30,7 @@ Scaffold stable qui survit au voyage `rooftop → forge → codebase → archive
 
 ## Où on en est
 
-**Phase courante (10/07) : conception signature — dev gelé.** On est en formation UI/UX et cadre reshape : affirmer l'identité (GANG) post-1re soirée. L'implémentation attend la fin de cette phase ; le versioning des docs marque les ères (**`0.1.x`** = build alpha-core, tag git `v0.1` ; **`0.2.x`** = cette phase). Le détail vit dans `app/docs/signature/` (porte : `reshape.md`).
+**Phase courante (11/07) : conception signature (reshape UI) — dev gelé.** Le reshape de GANG est **conçu** post-1re soirée : les **deux mondes** (le cœur = battement de saisie ; le gravé = mémoire du gang), **tous les organes** (la Voix : cartouche + annonce ; la Mémoire : crayon/gravé + cérémonie ; le Gong ; le Mot), sur la **scène** plateau + zone du bas. Tout vit dans `app/docs/signature/reshape.md` — le **hub** (carte · méthode · langue · formes). **Reste** : l'assemblage des écrans (temp 2b, dont l'accès à froid au gravé), quelques mots à cueillir, puis les wireframes (temp 3 → `claude_design/2-alpha-signature/`, Claude Design) et le build au dégel. Versioning par ère : **`0.1.x`** = alpha-core (tag git `v0.1`) · **`0.2.x`** = cette phase.
 
 On est **en forge**, plancher éprouvé et **alpha `GoF Companion` diffusée** aux potes (APK auto-hébergé, `dev.irimwebforge.com`). La première **vraie partie à 4** — le test du jalon « tenir la partie » — se joue à la première soirée réelle. Le fil avec Damien et la table est vivant ; le détail vit dans le socle (ci-dessous), pas ici.
 

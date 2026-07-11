@@ -46,6 +46,11 @@ Bruyante dans l'instant, impitoyable dans la mémoire. Tout le reste en découle
 
 ## Les cinq piliers
 
+> **Handles** (poignées de travail — le mantra reste l'âme, signés 11/07) :
+> 1 · **Le Mot** · 2 · **La Frime** · 3 · **La Voix** · 4 · **La Mémoire** ·
+> 5 · **Le Gang**. Chaque pilier a une *incarnation transversale* (cf.
+> `reshape.md` §2, temp 2a).
+
 ### 1. Le mot dit tout.
 
 GANG, c'est la boîte, le carré et les 4 — trois sens dans un mot. La hiérarchie,
