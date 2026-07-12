@@ -60,11 +60,11 @@ comment traduire → `ecrans/` sont les livrables, un par écran.*
 | **2 · La Frime** (le Gong) | ✅ mûr | 🟢 langue OK (`Gong` ✅) → forme = **2a** |
 | **3 · La Voix** (cartouche + annonce) | 🟡 posé (copy-deck) | 🟢 langue OK (cartouche ✅ ; annonce concept nailé) → forme = **2a** |
 | **4 · La Mémoire** (crayon/gravé) | ✅ conçue | 🟡 crayon/gravé posé → forme = **2a** |
-| **5 · Le Gang** (carnet + vue gang) | ✅ conçue | 🟢 modèle réglé (vrac=carnet, vue gang, roster-scoped) → forme = **2a** |
+| **5 · Le Gang** (carnet + stèle) | ✅ conçue | 🟢 modèle réglé (vrac=carnet, stèle, roster-scoped) → forme = **2a** |
 
 **Lecture honnête (11/07) :** la **passe UX est posée** ; la **langue (temp 1)
 est quasi bouclée** — signés `Gong`, `cartouche`, `carnet` ; concepts nailés pour
-l'annonce et la vue gang (mots cueillables en 2a). On **entre en temp 2**.
+l'annonce (mot cueillable) ; la **stèle** signée (11/07). On **entre en temp 2**.
 
 ## Temp 2 — tracker (les formes)
 
@@ -79,9 +79,9 @@ Donc 2a et 2b avancent **ensemble**, pas en séquence. Coché = *fait*.
 **Le gravé — la mémoire du gang** *(cf. §2)*
 - ✅ l'**après-partie** (porte : scelle → revanche / consulter)
 - ✅ la **revanche** (reboucle sur ①, mêmes 4)
-- ✅ la **vue gang / palmarès** (2 trônes ✌️/🐌 + détail · monde étrange)
+- ✅ la **stèle / palmarès** (2 trônes ✌️/🐌 + détail · monde étrange)
 - ✅ la **feuille** (crayon/gravé, la branlée pèse)
-- ☐ l'**accès à froid** (depuis l'accueil : trouver un gang) → *phase écrans*
+- ✅ l'**accès à froid** (accueil → **tes gangs** / rosters → **stèle** = la maison du gang)
 
 **Les organes — formes transversales**
 - ✅ le **cartouche** (La Voix) · ✅ le **crayon/gravé** (La Mémoire — feuille + cérémonie) · ✅ la **cérémonie**
@@ -89,8 +89,10 @@ Donc 2a et 2b avancent **ensemble**, pas en séquence. Coché = *fait*.
 - ✅ le **Gong** (La Frime) — objet-voix central : **un objet, deux tailles** (porte *dominante* · plateau *partagé*), **même geste** (frappe → rugit, tethered)
 - ✅ le **wordmark** (Le Mot) — le mot, **typographique, jamais illustré** (porte + titre gravé)
 
-**Puis les écrans** *(assemblage — ils composent les organes)*
-- ☐ accueil · ☐ Setup · ☐ Round · ☐ gravé (l'accès)
+**Les écrans — 4 fiches wireframe posées** *(dans `ecrans/`, moule homogène, prêtes pour Claude Design)*
+- ✅ `01-accueil` (le hub) · ✅ `02-round` (l'écran de jeu) · ✅ `03-stele` (le palmarès) · ✅ `04-feuille` (modale)
+- *(Setup dissous dans le Round.)*
+- **reste : le brief Claude Design (temp 3)** — empaqueter les 4 fiches + l'identité → `claude_design/2-alpha-signature/`.
 
 ---
 
@@ -104,7 +106,7 @@ Donc 2a et 2b avancent **ensemble**, pas en séquence. Coché = *fait*.
 
 **🎯 Objectif — traduire la langue en formes, transversal d'abord :**
 - **2a · formes transversales** = donner sa forme à chaque *pilier incarné*, **hors
-  de tout écran**. Les 2 mots restants (annonce, vue gang) s'y cueillent.
+  de tout écran**. Le mot restant (l'annonce) s'y cueille — la **stèle** signée.
 - **2b · formes d'écran** = chaque écran **compose** les transversaux + son
   spécifique. Assemblages, pas inventions.
 
@@ -116,7 +118,7 @@ Donc 2a et 2b avancent **ensemble**, pas en séquence. Coché = *fait*.
 | 2 | **La Frime** | le **Gong** |
 | 3 | **La Voix** | le **cartouche** + l'**annonce** |
 | 4 | **La Mémoire** | le **crayon / gravé** |
-| 5 | **Le Gang** | le **carnet** + la **vue gang** |
+| 5 | **Le Gang** | le **carnet** + la **stèle** |
 
 **🛠 Règles :** séquence (forme depuis le pilier d'abord, **code fermé**) → tag
 (hérité/reshapé/neuf) → un reshape *remplace*. Gabarit strict (Rôle · Forme ·
@@ -194,6 +196,36 @@ Clause 4 du pacte appliquée *au livrable* : « ce qui ne doit pas manquer », p
 | **ScoreEntry** | numpad + sélecteurs + Valider ; cérémonie absente | la **cérémonie** branlée au calcul |
 | **ScoreGrid** | carnet + palmarès ; neutre, ❌ | **gravé** (crayon/gravé) ; palmarès → gang |
 
+## L'IA des écrans — la carte de navigation *(validée 11/07)*
+
+**Deux niveaux à ne jamais confondre :**
+- **Les écrans** (pages entières) : l'**accueil** · le **Round** (l'écran de jeu) ·
+  la **stèle** (palmarès d'un gang). Plus **une modale** : la **feuille** (grille
+  d'une partie ; monte par glissé, se referme).
+- **Les conteneurs** (*dans* un écran) : le **plateau** (quadrants + disque +
+  pills) · la **zone du bas** · le **cartouche**. Ex : Round = cartouche + plateau
+  + zone du bas. *« la table » = image du plateau, **pas un terme** (retiré).*
+
+**Le Round absorbe** (plus d'écran/modale séparés) : **nommer** (ex-`Setup`, pills
+vides) · **jouer** (le battement) · **saisir** (ex-`ScoreEntry`, numpad dans la
+zone du bas) · **annonce / cérémonie / fin** (surdominants). Un seul écran de jeu
+qui *est* la table, du 1er prénom au dernier point.
+
+**Navigation = hub-and-spoke** — l'**accueil est le moyeu**, chaque écran un rayon
+qui y revient. **Tout passe par l'accueil** ; pas de lien direct écran↔écran.
+- accueil → *(Gong / revanche)* → Round → *(fin)* → revanche · consulter (→ stèle) · accueil ;
+- accueil → *(tap un roster)* → stèle → revanche (→ Round) · voir une feuille ;
+- Round *ou* stèle → *glissé haut* → feuille (modale).
+
+**Anti-enfermement** *(la hantise du « flow enfermant »)* : l'accueil est toujours
+à un geste, et une partie en cours est **en pause, jamais perdue** (état *reprise*).
+La liberté vient de **la pause**, pas d'un labyrinthe de raccourcis.
+
+**Les 3 issues d'une partie** : **en cours** (pause → reprendre) · **annulée**
+(jetée, pour un imprévu ; confirm légère à l'accueil ; **jamais dans le gravé**) ·
+**terminée** (à 100 → scellée → entre au carnet). *Seules les terminées entrent
+dans la mémoire ; aucune ne traîne à moitié.*
+
 ## L'architecture cible — le plateau + la zone du bas *(11/07)*
 
 Le point qui débloque la Voix : les écrans pleins (Round / saisie / carnet) se
@@ -226,7 +258,7 @@ révélé que le plein-écran devait sauter.*
 ## Le gravé — la mémoire du gang *(11/07, en cours)*
 
 Le territoire **d'après le cœur** : ce qui reste des parties, inter-sessions.
-Modèle en §3 (vrac = carnet · vue gang · roster-scoped, zéro id individuel).
+Modèle en §3 (vrac = carnet · stèle · roster-scoped, zéro id individuel).
 
 - **L'après-partie** *(porte du gravé — forme validée)* : le final retombe → la
   **feuille se scelle** (entre dans le carnet du gang) → **deux portes,
@@ -236,7 +268,7 @@ Modèle en §3 (vrac = carnet · vue gang · roster-scoped, zéro id individuel)
   voir (plateau ?).*
 - **La revanche** = quasi triviale : nouvelle partie, même roster, retour au
   battement.
-- **La vue gang / le palmarès** (consulter) *(base validée)* : le tableau
+- **La stèle / le palmarès** (consulter) *(base validée)* : le tableau
   d'honneur du gang, il **pèse** (gravé). **Deux trônes en tête** — ✌️ champion /
   🐌 looser, miroir permanent — + le **détail** par joueur (🏆 💩 ⭐️ 💥, branlées).
   Le **monde étrange** (même joueur = les 2 trônes) est **proclamé**, pas caché.
@@ -247,6 +279,12 @@ Modèle en §3 (vrac = carnet · vue gang · roster-scoped, zéro id individuel)
   (lourd, scellé : les branlées en direct, toute la feuille après la fin). **La
   branlée pèse** (relief, marque). C'est **La Mémoire (crayon/gravé) rendue
   visible** — le rendu fin (l'épaisseur exacte) plus tard.
+- **L'accès à froid** (depuis l'accueil) *(conçu 11/07)* : le bas de l'accueil =
+  **tes gangs** — les rosters joués, chacun montré par ses **4 prénoms** (pas de
+  nom, pas de baptême ; dérivés du vrac). Tap un roster → sa **stèle**. Donc la
+  **stèle = la maison du gang**, atteinte **à froid** (accueil) *ou* **à chaud**
+  (fin de partie, « consulter ») — une destination, deux chemins. *« Étagère »
+  abandonné : une vue, pas un objet rangé.*
 
 ## Le battement de saisie (le cœur) *(11/07)*
 
@@ -280,8 +318,7 @@ Modèle en §3 (vrac = carnet · vue gang · roster-scoped, zéro id individuel)
 (projecteur sur la manche) → **dialogue à 2 sorties** : *corriger* (le **crayon**,
 réversible) / **graver** (le **gravé**, scellé, irréversible). C'est le point de
 rencontre **La Voix ∩ La Mémoire** (l'annonce *et* le passage crayon → gravé,
-pilier 4). Mot du bouton « graver » = **provisoire** (à cueillir avec *annonce* et
-*vue gang*).
+pilier 4). Mot du bouton « graver » = **provisoire** (à cueillir avec l'*annonce*).
 
 **La fin de partie (④, le final) — forme validée :** quelqu'un touche **100**
 (`cas-reference-score`) → la partie se **fige**, le final prend **tout le plateau**
@@ -325,7 +362,7 @@ maximal** (le carré → « GANG ! », la frime).
 | le contenant (**la table**) | **le plateau** | **✅ signé** | contient les **quadrants** + le **disque** + les **pills** ; UI clairement stylé ; en haut ~50 %, persistant (cf. archi §2) |
 | la grille des joueurs | *les quadrants* | layout | les 4 cellules 2×2, **dans le plateau** |
 | la zone sous le plateau | *la zone du bas* | à nommer | ~40 % ; **swappe** (numpad · clavier noms · feuille · palmarès — idées ouvertes) |
-| le gravé (mémoire du gang) | *le vrac + la vue gang* | modèle (« étagère » **abandonné**) | **le vrac** = toutes les feuilles (= « carnet » ✅) ; **la vue gang** = un filtre « les 4 mêmes » (une *vue*, pas un objet) |
+| le gravé (mémoire du gang) | *le vrac + la **stèle*** | **✅ signé** | **le vrac** = toutes les feuilles (= « carnet ») ; **la stèle** = le **palmarès gravé du gang** (le monument : produit en filtrant « les 4 mêmes » sur le vrac) |
 
 *« La gueule » (pilier 2 ; colonne) est **garée** — réutilisable ailleurs.*
 
@@ -359,16 +396,94 @@ joueur** (la curiosité) :
 dans le crayon, pendant le jeu). Le seul éclat qui **passe au gravé**, c'est la
 **branlée** (pilier 4) — le pont d'un axe à l'autre.
 
+## La direction de style — le placard *(retenue passe 2, 12/07)*
+
+**Le « placard »** = le registre **bold, grosse affiche** (bandes noires, typo
+énorme, inverse, une touche de rouge). La passe 2 l'a **confirmé** : c'est lui qui
+a la **cohérence** à travers les écrans — les traitements « pierre » séparés
+(calcaire/basalte) sont beaux mais **jurent** avec. Donc **placard partout**, y
+compris la stèle (= le **placard-monument**, l'affiche taillée dans la dalle). Il
+prolonge la dualité-mère (bold/gravé pour proclamer & se souvenir, plus sobre pour
+jouer). *(Le mot « placard » ne parle pas à Eric — dire « l'affiche » au besoin.)*
+
+**BILAN — round Claude Design CLOS (12/07, 4 passes, convergé).** Retenus :
+accueil **4b/4c** (disque-GANG — le mot dans le disque, départage au build) ·
+Round **3e + chaleur 4d/4f** (structure 70/30 à re-spec, intensité aux tokens) ·
+stèle **3f** (monolithe) · feuille **3h**. Planches figées dans
+`claude_design/2-alpha-signature/retour/`. Les restes sont de l'**ingénierie
+d'écran** (chez nous, pas chez CD) : la **flèche sens de jeu** à réintégrer · la
+**zone du bas à hauteur d'état** (clavier natif · pavé 3×4 — le 70/30 des rendus
+ne tient pas la saisie) · l'**aperçu feuille ≥ 2 manches + vierge**. → Suite :
+**passe specs 0.2 ✅ (12/07, 8 specs à 0.2.1 dont `specs-ecrans` née) → tag des
+écrans réels ✅ + plan d'intégration ✅ (`journal/2026-07-12-plan-integration.md`,
+5 lots) — le build attend le dégel (Eric déclare).**
+
+## Fourches tranchées par Eric — passe specs 0.2 *(12/07)*
+
+1. **Le gravé = palier 1, local only** (AsyncStorage étendu — possible car zéro id
+   joueur). La DB (P2) devient une *migration*, pas un prérequis.
+2. **« En titre reste » = dérivé par rejeu** de l'historique (le vrac est complet
+   et ordonné) — aucun état stocké, la règle « tout dérivé » survit.
+3. **Tap-saisie = les pills uniquement.** La ligne vierge de la feuille = écho
+   visuel, pas une cible.
+4. **Cellules de la feuille = scores de manche** (on « voit quand on s'est losé »,
+   FD-05 ; la branlée pèse). Le cumul vit sur TOT et les pills.
+5. **Tokens couleurs à retravailler** — nouvelle palette cohérente avec le
+   placard (noir/crème + chaleurs du logo) ; les 4 couleurs de siège actuelles ne
+   sont ni gardées telles quelles ni supprimées : **redessinées**.
+6. **Les GOF sont comptés** — global par partie (jamais par joueur) → une mention
+   (ex. « N gang-of-four pendant cette partie », feuille/stèle, rendu à caler).
+7. **La ligue est morte.** Pas de couture d'id joueur, **pas d'UI orientée
+   single player** — le collectif est l'objet, point.
+8. **Branlée : petite ≥ ~30 · grosse ≥ ~45** (ajustables à la récolte).
+9. **Liste des gangs : temps relatif gros grain** (« hier · 8 j · 1 mois… ») —
+   gardé, au service du récit ; le mot « session » reste interdit.
+
+*2e salve (12/07, après confrontation aux docs fondateurs de la 0.2) :*
+
+10. **Disque-GANG de l'accueil = 4c** (crème, mot noir énorme coupé aux bords).
+11. **Renommer un joueur en partie = appui long sur sa pill** (tap = saisie,
+    appui long = identité — le long-press est libre depuis le Gong central).
+12. **Effacer un gang = le masquer** (les feuilles restent au vrac — « n'oublie
+    rien ») ; démasquage : **en rejouant** (le gang renaît de lui-même) ou ligne
+    discrète « + N gangs masqués ».
+13. **Le partage couvre les deux artefacts, à tout moment** : la feuille ET la
+    stèle (périmètre B du partage entre en jeu).
+14. **‡ rejeté définitivement** pour la branlée (croix de Lorraine) — la marque
+    reste à signer.
+
+**État après passe 3 (12/07) — variantes retenues : 3b (accueil) · 3e (Round) ·
+3f (stèle-monolithe) · 3h (feuille) :**
+- **le logo vs le mot** *(tranché)* : le logo `gang-of-four.webp` = la marque du
+  **JEU** → sa place est **sur la table** (le disque du **Round**, grand, il
+  règne). Le mot **GANG** = l'identité de l'**APP** → sa place est **à la porte**
+  (accueil). Sur l'accueil, le logo dans le disque **rivalisait** avec le wordmark
+  (deux « GANG », typos qui se cognent) → à l'accueil, le disque porte **GANG sur
+  deux lignes, massif** (idée d'Eric) ; le logo n'apparaît **que** sur le Round.
+- le **Round un cran plus chaud** *(réserve posée par Claude, partagée par Eric)* :
+  quand tout crie, plus rien ne crie — le live (crayon) doit respirer sous la
+  gueule. Levier : **les rouge/jaune du logo** en accents chauds sur la table.
+- **accueil multi-gangs** ✅ (3b : liste navigable, manchette crie / liste murmure).
+- les **marques typo** (ex-emojis) : **gardées** (☞ looser · ▲▼) — la marque **branlée reste à signer** (‡ REJETÉ 12/07 : croix de Lorraine, Eric est alsacien).
+- copies fixées en 3h : « gagne la manche » · « petite branlée de Franz ! »
+  (grosse ≥ ~45, seuil proposé par CD — à valider).
+
+*Findings passe 1 (dans leurs maisons) : copy « on rejoue ? » (copy-deck) · stèle =
+pierre gravée, pas mode nuit (fiche 03) · emojis → marques (palmares) · Round vide
+(fiche 02). Findings passe 2 : « gagne la manche » (pas « plie ») · branlée =
+**petite/grosse** (échelle, branlee.md) · looser = « le looser », pas « le pointé ».*
+
 ## Reste à signer
 
-- *Signés : **`Gong`** (objet) · **le cartouche** (statut).*
+- *Signés : **`Gong`** (objet) · **le cartouche** (statut) · **la stèle** (le monument gravé du gang).*
 - **l'annonce** — **concept nailé** (le flash-jugement, miroir gloire/honte,
   asymétrie du son) ; **le mot se cueille plus tard.** Pas un blocage.
 - **le gravé — modèle** *(réglé 11/07)* : « étagère » **abandonné** (on ne range
   pas des *vues*). **le vrac** = toutes les feuilles = le **carnet** ✅
-  (`ScoreCarnet` → *feuille*). La **vue gang** = filtre « les 4 mêmes » (une vue).
+  (`ScoreCarnet` → *feuille*). La **stèle** = le **palmarès gravé du gang** (une
+  vue produite en filtrant « les 4 mêmes » sur le vrac — pas un objet rangé).
   **Identité = A** : le gang = **un ensemble de prénoms**, zéro id individuel — le
   palmarès est **roster-scoped**, donc un joueur sous deux surnoms dans deux
   rosters = deux gangs distincts, **aucune réconciliation** (non-problème, fidèle
-  au 08/07 : le collectif est l'unité, l'individu n'existe pas). *Reste : le mot
-  de la vue gang — cueillable plus tard.*
+  au 08/07 : le collectif est l'unité, l'individu n'existe pas). *La **stèle** est
+  signée (11/07).*

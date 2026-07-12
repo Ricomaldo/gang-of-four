@@ -1,24 +1,29 @@
 ---
-title: GoF — Specs anim frime
+title: GANG — Specs anim frime
 created: 2026-07-07
-updated: 2026-07-07
-version: 0.1.1
+updated: '2026-07-12'
+version: 0.2.1
 status: active
 type: specs
 ---
 
-# GoF — Specs anim frime
+# GANG — Specs anim frime
 
-L'animation « Gang of Four » déclenchée par **appui long** sur la pill d'un joueur (easter egg, aucun indicateur au repos — cf. [[specs-techniques]]). Née du [[brief-01-amorce]] (« animation + son aléatoire »), spécifiée ici après conception avec Eric le 7 juillet.
+L'animation « Gang of Four » déclenchée par **tap sur le Gong central** (cf. [[specs-techniques]], signature/frime.md). Née du [[brief-01-amorce]] (« animation + son aléatoire »), spécifiée le 7 juillet, révisée le 12/07 (le Gong remplace le long-press).
 
 ## L'intention — la ligne qui commande tout
 
-Le tap sur son quadrant, c'est un **« GANG OF FOUR ! »** jeté à la table. L'anim doit donner envie de se lever. **Frime totale, aucune retenue** — celui qui appuie se met à danser, exaltation intérieure intense. Tout ce qui sert cette intention entre, tout ce qui la dilue sort.
+La frappe du Gong, c'est un **« GANG OF FOUR ! »** jeté à la table. L'anim doit donner envie de se lever. **Frime totale, aucune retenue** — celui qui frappe se met à danser, exaltation intérieure intense. Tout ce qui sert cette intention entre, tout ce qui la dilue sort.
 
 ## Déclencheur
 
-- Appui long sur la pill d'un joueur → lance **simultanément** l'anim + un **son aléatoire** parmi les 3.
+- **Tap sur le Gong central** — visible, gros, l'asset `gang-of-four.webp` (cf. signature/frime.md : sorti de l'easter-egg, le long-press sur une pill est abandonné — affordance). Lance **simultanément** l'anim + un **son aléatoire** parmi les 3.
+- La frime **n'est pas associée à un joueur** (prix assumé, cf. signature/frime.md §prix assumé). Compté : le **nb de GOF global par partie** (`gofCount`, [[modele-donnees]]) — jamais par joueur.
 - Durée : **5 s** fixe. Le son joue par-dessus (déborde ou finit avant, sans importance — c'est de la frime, pas de la synchro).
+
+## Le rugissement d'entrée
+
+Le **même geste rugit aussi à l'entrée en partie** — il marque *un gang complet qui prend la table* (cf. signature/frime.md, fiche 01-accueil) : **immédiat pour une revanche**, **après les prénoms pour un roster neuf**, **jamais à la reprise** d'une partie en pause. Non compté dans `gofCount` (ce n'est pas un carré).
 
 ## Les beats (tous simultanés, dès la 1ʳᵉ frame)
 
@@ -27,11 +32,14 @@ Assets : image `assets/official/gang-of-four.webp` (fond transparent), sons `ass
 - **Scale overshoot** — l'image part du **disque central**, grandit jusqu'à **dépasser** le plein écran, puis **claque** en place. Arrogant, pas propre.
 - **Jitter de rotation** — micro-tremblement en rotation (±3°). L'image ne tremble pas de peur, elle **vibre d'énergie**. Démarre tout de suite, pas après le scale.
 - **Respiration** — pulse de scale par-dessus le shake (gonfle/dégonfle vite), « halète d'exaltation ».
-- **Fond plein spectre, cuts durs** — coupures franches entre couleurs saturées (rouge / vert / cyan / magenta…), mode disco, **criard assumé**. L'image transparente flashe dessus.
-- **Biais couleur joueur** — le spectre penche vers la **couleur du joueur qui a tapé** : sa couleur revient plus souvent, c'est *sa* victoire qui repeint l'écran.
+- **Fond plein spectre, cuts durs** — coupures franches entre couleurs saturées (rouge / vert / cyan / magenta…), mode disco, **criard assumé**. L'image transparente flashe dessus. *(Plus de biais couleur joueur — la frime n'est associée à aucun joueur.)*
 - **Rayons de gloire** — sunburst tournant lentement derrière l'image (traitement « star »).
-- **Board qui recule** — pendant l'anim, les 3 autres quadrants **s'assombrissent / se ratatinent**. Le gagnant prend toute la lumière.
+- **Board qui recule** — pendant l'anim, **le plateau entier s'assombrit / se ratatine** (pas de quadrant déclencheur — le geste vient du Gong). Le rugissement prend toute la lumière.
 - **Freeze triomphal** — à la dernière frame, tout se **fige ~0,5 s** sur une pose héroïque avant de rendre la main au plateau.
+
+## La variance narrative — délégué, critère assets
+
+**Multiplier les anims** pour la surprise, et **mapper chaque anim à un son** (les apparier, les reconnaître) — cf. signature/frime.md §visuel. Il y a celle qu'on préfère et celle qui fait un peu flop — le flop **participe à la narration**. Production des sons **déléguée** (potes monteurs audio), **intégration gardée** : le critère est aux **assets**, pas au code.
 
 ## Périmètre — ce qui reste dehors
 

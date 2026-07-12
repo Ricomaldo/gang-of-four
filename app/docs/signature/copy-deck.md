@@ -38,15 +38,24 @@ Label **plat + ✌️**. Pas de titre malin. Le ✌️ et le ton portent la swag
 | Qui mène la partie (continu) | partie | permanent · calme | **{prénom} mène** |
 | Égalité en tête | partie | permanent · calme | *ex æquo* |
 | Carré joué (anim frime) | manche | ponctuel · fort | **GANG !** *(cri de la table, en écho)* |
-| Manche pliée | manche | ponctuel · fort | **{prénom} plie la manche** |
-| Branlée (≥30 sur la manche) | manche | ponctuel · fort | **{prénom} colle une branlée** |
+| Manche gagnée | manche | ponctuel · fort | **{prénom} gagne la manche** *(jamais « plie » — 12/07)* |
+| Branlée | manche | ponctuel · fort | **petite / grosse branlée de {prénom} !** *(l'échelle — cf. `branlee.md`)* |
 | Le trône change | partie | ponctuel · fort | **{prénom} passe devant** |
 | Fin de partie — vainqueur | partie | ponctuel · fort | **{prénom} gagne la partie** |
 | Fin de partie — dernier | partie | ponctuel · fort | **{prénom} ramasse le 💩** |
 | Palmarès — champion | gang | — | **le gang est à {prénom}** |
 | Palmarès — looser | gang | — | **{prénom} traîne le 🐌** |
+| Invite à rejouer (accueil) | partie / gang | permanent · calme | **on rejoue ?** *(ou « on s'en refait une ? »)* |
 
 ## Notes
+
+- *« revanche » = **jeté** (12/07, finding passe 1 Claude Design). C'était un mot
+  d'**app**, pas de pote. La voix, c'est **la langue de la bande** — « on rejoue ? »,
+  jamais du vocabulaire d'interface. À repasser sur toutes les chaînes.*
+- *Findings passe 2 (12/07) : « plie » → **« gagne la manche »** (on ne dit jamais
+  « plie ») · la branlée a une **échelle** — « petite / grosse branlée de {prénom} ! »
+  (cf. `branlee.md`) · le label du looser = **« le looser »** (le mot) ; le doigt
+  👉 est le **geste**/la marque, **pas** le mot « le pointé ».*
 
 - *« le gang est à {prénom} »* = **gang scope uniquement** (jamais la fin d'une
   partie — le vainqueur d'un soir n'a pas le gang).

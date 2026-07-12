@@ -74,4 +74,9 @@ cérémonie, gravé, POV — vit dans **`branlee.md`** (pilier 4).
 ## Ouvert
 
 - l'**emoji** de la branlée : 💪 candidat (POV donneur), **non scellé** ;
-- le **mot** de la cérémonie (copy-deck).
+- le **mot** de la cérémonie (copy-deck) ;
+- **rendu des marques** — *finding passe 1 (Claude Design, 12/07)* : posés seuls,
+  les **emojis stock font cheap**. Les traiter en **marques dessinées dans le
+  style** (ou de la typo), **intégrées** — pas des emojis flottants. La signature
+  est typographique (frotte avec pilier 1, « jamais illustré ») : ✌️ / 🐌 / 💩 /
+  💪 sont des **marques à concevoir**, pas des stickers.

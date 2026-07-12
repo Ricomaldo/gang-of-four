@@ -1,13 +1,13 @@
 ---
-title: GoF — Cas de référence, logique de score
+title: GANG — Cas de référence, logique de score
 created: '2026-07-04'
-updated: '2026-07-04'
-version: 0.1.1
+updated: '2026-07-12'
+version: 0.2.1
 status: active
 type: cas-reference
 ---
 
-# GoF — Cas de référence, logique de score
+# GANG — Cas de référence, logique de score
 
 Jeu de cas dérivés des règles ([[../../_commission/regles-jeu.pdf]]) et d'une règle maison d'Eric (départage, absente du livret). Sert de contrat pour la brique **Prouver la justesse** ([[../../_engagement/grille]]) : la logique de score doit passer ces cas à 100 % avant d'être éprouvée en partie live.
 
@@ -93,3 +93,32 @@ J3 sort ce tour (0 carte, gagnant de la manche) mais n'est pas dans l'égalité 
 | Cumul final | 88 | 88 | 95 | 100 |
 
 J4 déclenche l'arrêt (100). Égalité à 88 entre J1 et J2 — même cumul, même score de manche (18 = 18), niveau 1 ne tranche pas. Niveau 2 : en sens horaire depuis le gagnant de la manche (J3) → J4, puis J1, puis J2. J1 est plus proche de J3 que J2 → **J1 gagne**.
+
+## Cas de référence — branlée
+
+Contrat de `detectBranlee(round)` ([[logique-comptage]]) : le verdict se calcule sur le **total distribué de la manche** (somme des **scores de manche** des 4 joueurs). **Bornes inclusives : total ≥ 30 → petite · total ≥ 45 → grosse** (la grosse absorbe la petite). Seuils ~ajustables à la récolte (signature/reshape.md §fourches 12/07, pt 8). Le **donneur = le joueur à 0** (celui qui a plié).
+
+| Cartes restantes (J1/J2/J3/J4) | Scores de manche | Total distribué | Verdict | Donneur |
+|---|---|---|---|---|
+| 0 / 9 / 2 / 5 | 0 / 18 / 2 / 5 | 25 | **rien** (< 30) | — |
+| 0 / 8 / 9 / 1 | 0 / 16 / 18 / 1 | 35 | **petite** | J1 |
+| 0 / 13 / 7 / 2 | 0 / 39 / 7 / 2 | 48 | **grosse** | J1 |
+| 0 / 9 / 7 / 5 | 0 / 18 / 7 / 5 | **30** | **petite** — borne basse inclusive | J1 |
+| 0 / 10 / 9 / 7 | 0 / 20 / 18 / 7 | **45** | **grosse** — borne inclusive (pas petite) | J1 |
+
+## Cas — titres miroirs (✌️ / 🐌 indépendants)
+
+Contrat des fonctions de titres ([[logique-comptage]], signature/palmares.md) : ✌️ sur les 🏆 seuls, 🐌 sur les 💩 seuls — **jamais de croisement des pôles**. Le **monde étrange** (même joueur sur les deux trônes) est un résultat **attendu**, pas un bug.
+
+Un gang, 4 parties terminées :
+
+| | Marc | Léa | Tom | Zoé |
+|---|---|---|---|---|
+| 🏆 parties gagnées | 2 | 2 | 0 | 0 |
+| 💩 parties perdues | 2 | 0 | 1 | 1 |
+| ⭐️ manches gagnées | 9 | 6 | 3 | 2 |
+
+- **✌️** : égalité 🏆 (Marc 2 = Léa 2) → départage ⭐️ : Marc 9 > Léa 6 → **Marc champion**. Ses 2 💩 ne le pénalisent **jamais**.
+- **🐌** : le plus de 💩 → Marc (2) → **Marc looser**. Ses 2 🏆 ne le rachètent **jamais**.
+- **Monde étrange** : Marc tient **les deux trônes** — le all-in haute-variance. Résultat attendu.
+- *Contre-exemple de l'ancien code croisé (`stats.ts`, à corriger)* : ✌️ départagé par « moins de 💩 » aurait donné Léa — **faux** désormais.

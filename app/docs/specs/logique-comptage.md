@@ -1,13 +1,13 @@
 ---
-title: GoF — Logique de comptage, noms de fonctions
+title: GANG — Logique de comptage, noms de fonctions
 created: '2026-07-04'
-updated: '2026-07-04'
-version: 0.1.2
+updated: '2026-07-12'
+version: 0.2.1
 status: active
 type: logique
 ---
 
-# GoF — Logique de comptage, noms de fonctions
+# GANG — Logique de comptage, noms de fonctions
 
 Le *comment* du score, posé en fonctions avant le scaffold — pour appropriation avant implémentation. Chaque fonction est pure (pas d'effet de bord, pas d'état caché), testable isolément contre [[cas-reference-score]]. S'appuie sur les entités de [[modele-donnees]].
 
@@ -69,3 +69,29 @@ Compose les fonctions précédentes, dans l'ordre :
 5. sinon `tiebreakBySeatProximity(candidates, seats, roundWinner(dernière manche))` — tranche toujours
 
 C'est la seule fonction à effet visible côté app (elle répond à « qui a gagné ? ») ; toutes les autres sont des briques internes.
+
+## Fonctions du pôle perdant — existant `src/domain/winner.ts` (retard spec/code résorbé)
+
+Ces fonctions **existent déjà dans le code** (implémentées pour la passe stats) ; la spec les documente a posteriori.
+
+**`roundLastPlace(round: Round, totals: Record<PlayerId, number>, seats: Seats): PlayerId`**
+Le joueur avec le **plus de cartes** à cette manche (le « dernier », 💥). Départage : L1 — le plus grand **cumul** ; L2 — le plus proche du gagnant de la manche en sens **anti-horaire**. Règle maison validée par Eric (06/07).
+
+**`gameLoser(rounds: Round[], seats: Seats): PlayerId`**
+Le perdant de la partie (💩) = **cumul final le plus haut**. Symétrique de `determineWinner` : L1 — le plus **grand** score à la dernière manche (`tiebreakByHighestLastRoundScore`) ; L2 — le plus proche du gagnant de la dernière manche en sens **anti-horaire**. S'appuie sur `highestTotalCandidates` (symétrique de `lowestTotalCandidates`).
+
+## Détection de la branlée
+
+**`detectBranlee(round: Round): null | 'petite' | 'grosse'`**
+Sur le **total distribué de la manche** (somme des scores de manche des 4 joueurs) : **≥ ~45 → `'grosse'`**, sinon **≥ ~30 → `'petite'`**, sinon `null`. Seuils ajustables à la récolte (cf. signature/reshape.md §fourches tranchées 12/07, pt 8). Le **donneur = le joueur à 0** (`roundWinner`). Détectée **à la validation de la manche** — au point de calcul (cf. signature/branlee.md).
+→ doit satisfaire : la section « Cas de référence — branlée » de [[cas-reference-score]].
+
+## Fonctions de titres — miroirs indépendants
+
+Les titres ✌️/🐌 sont **deux classements indépendants, en miroir** (cf. signature/palmares.md) — **dérivés par rejeu** de l'historique complet du vrac, rien de stocké :
+
+- **✌️ (champion)** — calculé sur les **🏆 seuls** ; départage : 🏆 → ⭐️ manches → **branlées données** → **le tenant reste** (dérivé par rejeu : à égalité totale, on ne détrône pas). **Jamais le 💩.**
+- **🐌 (looser, miroir strict)** — calculé sur les **💩 seuls** ; départage : 💩 → 💥 manches perdues → **branlées prises** → **le tenant reste** (par rejeu). **Jamais le 🏆.**
+
+⚠️ **`stats.ts` actuel croise les pôles** (✌️ départagé par « moins de 💩 », 🐌 par « moins de 🏆 ») → **à corriger** pour l'indépendance miroir, sinon le monde étrange (même joueur ✌️ *et* 🐌) reste interdit.
+→ doit satisfaire : la section « Cas — titres miroirs » de [[cas-reference-score]].

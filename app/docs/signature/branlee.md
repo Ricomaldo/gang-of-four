@@ -88,9 +88,13 @@ il dit **c'est fait** et *« je les ai enterrés »*, jamais *« ça va péter �
 
 ## Ce qui reste ouvert
 
-- l'**échelle** — le corps du doc pose **binaire** (branlée ou rien) ; Eric
-  rouvre le langage **petite / grosse branlée** (10/07). *Rouvert, non tranché —
-  modélisation à voir.*
-- l'**emoji** de la branlée (💪 candidat, non scellé) ;
+- l'**échelle** — **tranchée le 12/07 : petite / grosse branlée** (confirmé par la
+  copy *« petite / grosse branlée de {prénom} ! »*). Le corps du doc, qui posait
+  *binaire*, est **caduc** sur ce point. **Seuils validés par Eric : petite ≥ ~30 ·
+  grosse ≥ ~45** — ajustables à la récolte.
+- la **marque** de la branlée — toujours ouverte, **deux rejets fermes** : 💪
+  écarté (emoji stock, cheap) ; **‡ REJETÉ définitivement** (12/07 — c'est la
+  croix de Lorraine, et Eric est alsacien). Critère inchangé : elle dit *« c'est
+  fait, je les ai enterrés »*, jamais *« ça va péter »* ni *« je suis fort »* ;
 - le **mot** de la cérémonie (copy-deck) ;
 - l'**entrée dans le tie** du palmarès (« on va vers ça » — cf. `palmares.md`).
