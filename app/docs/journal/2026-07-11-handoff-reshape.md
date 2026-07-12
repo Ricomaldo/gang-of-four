@@ -3,7 +3,7 @@ title: 'Handoff — reprise reshape UI (temp 2b)'
 created: '2026-07-11'
 updated: '2026-07-11'
 version: 0.2.1
-status: active
+status: consommé
 type: handoff-passe
 ---
 
