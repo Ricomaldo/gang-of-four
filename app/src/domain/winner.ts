@@ -1,3 +1,7 @@
+/* ═══ RESHAPE 0.2 · TAG [H] hérité ═══
+ * Cible : intouché — le cœur prouvé (62 tests).
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Gagnant de manche & vainqueur de partie — fonctions pures.
  * Départage : règle maison d'Eric (absente du livret), 2 niveaux, voir cas-reference-score.md.

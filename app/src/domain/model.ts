@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : +gofCount (stocké), statut 3 issues (en-cours/annulée/terminée), session = date + lieu optionnel.
+ * Lot : lot 0 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Modèle de données — le socle d'état typé.
  * Source de vérité : app/docs/specs/modele-donnees.md v0.1.5, app/docs/specs/logique-comptage.md v0.1.2.

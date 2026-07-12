@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [†] supprimé ═══
+ * Cible : éclaté : la FEUILLE (modale) [N] + la STÈLE [N].
+ * Lot : lot 3 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Écran grille de score — assemble deux zones nommées : <ScoreCarnet> (la table) et
  * <Palmares> (le tableau d'honneur), + le chrome (fermeture, navigation soirée).

@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : miroirs ✌️/🐌 INDÉPENDANTS (décroiser les pôles), portée gang (filtrage du vrac), branlées, tenant par rejeu.
+ * Lot : lot 0 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Stats de soirée — module PUR (aucun état, aucun stockage).
  * Agrège sur les parties `terminee` d'une soirée, CLÉ = prénom (jamais le siège :

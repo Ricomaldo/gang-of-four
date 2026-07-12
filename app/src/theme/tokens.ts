@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : palette placard : noir/crème + chaleurs du logo ; 4 couleurs de siège À REDESSINER ; marques typo.
+ * Lot : lot 1 (ossature) + lot 4 (polish) — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Design tokens — palette « écho du jeu ».
  * Source de vérité : app/docs/specs/modele-donnees.md v0.1.5. Ne pas modifier sans MAJ du doc.

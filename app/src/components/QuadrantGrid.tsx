@@ -1,3 +1,7 @@
+/* ═══ RESHAPE 0.2 · TAG [H] hérité ═══
+ * Cible : le plateau.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * QuadrantGrid — l'assemblage 2×2 partagé par l'écran de setup et l'écran de manche.
  * Deux rangées de cadrans + un overlay centré (le Hub, ou la carte de fin de partie)

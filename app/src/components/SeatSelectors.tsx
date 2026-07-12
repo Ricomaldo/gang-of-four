@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [†] supprimé ═══
+ * Cible : les pills du plateau sont la cible de saisie.
+ * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Rangée horizontale de 4 sélecteurs (écran de saisie), gauche → droite dans
  * l'ordre des sièges : pastille couleur + initiale seule (B / D / F / J).

@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : LE ROUND : cartouche + plateau + zone du bas à états ; keepAwake ; l'alert « Rejouer avec qui ? » supprimée (retour accueil).
+ * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Écran de manche (ambient) — jeu + fin de partie uniquement.
  * La saisie des prénoms vit désormais dans SetupScreen ; ici les prénoms sont acquis.

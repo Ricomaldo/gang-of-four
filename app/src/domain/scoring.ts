@@ -1,3 +1,7 @@
+/* ═══ RESHAPE 0.2 · TAG [H] hérité ═══
+ * Cible : intouché — le cœur prouvé (62 tests).
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Score & cumul — fonctions pures, testables isolément contre cas-reference-score.md.
  * Barème (livret p.10) : 0 → 0 · 1–7 ×1 · 8–10 ×2 · 11–13 ×3 · 14–15 ×4 · 16 = 80.

@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [†] supprimé ═══
+ * Cible : remplacé par L'ACCUEIL [N] (manchette · disque-GANG 4c · tes gangs).
+ * Lot : lot 3 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Splash — ouverture de marque, dragon plein écran (asset fourni par Eric).
  * Court, enchaîne directement sur l'écran manche/démarrage. Un tap peut le sauter.

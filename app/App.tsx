@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : stack hub-and-spoke : accueil · Round · stèle + feuille (modale).
+ * Lot : lot 3 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Racine de l'app — container de navigation + stack unique.
  * Splash → Round (écran manche / démarrage). ScoreEntry et ScoreGrid en modals.

@@ -1,3 +1,7 @@
+/* ═══ RESHAPE 0.2 · TAG [H] hérité ═══
+ * Cible : RÉINTÉGRÉ autour du Gong (absent des planches CD — il ne disparaît pas).
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * PlayDirection — le sens de jeu montré par UNE flèche, dans le gap du bas (entre
  * les deux joueurs du bas), lue à l'endroit par le proprio du téléphone qui note.

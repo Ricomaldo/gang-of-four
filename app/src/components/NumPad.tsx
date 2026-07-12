@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : numpad-calculette 3×4 : 0-9 · del · « = » (actif à 4/4, un seul 0).
+ * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Pavé numérique unique (écran de saisie de fin de manche).
  * Chiffres 1–9, 0, effacer (⌫). La règle d'auto-avance (1 attend un 2e chiffre,

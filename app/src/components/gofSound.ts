@@ -1,3 +1,7 @@
+/* ═══ RESHAPE 0.2 · TAG [H] hérité ═══
+ * Cible : + sons à venir (délégués, critère assets).
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Tirage du son de la frime GoF. Logique pure (aucun asset importé ici) → testable sans natif.
  *

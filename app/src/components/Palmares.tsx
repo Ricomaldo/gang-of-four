@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : absorbé par LA STÈLE : 2 trônes + détail + branlées + mention GOF + partager.
+ * Lot : lot 3 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Palmares — scoreboard de la SOIRÉE (plus la portée partie).
  * Agrège par prénom sur les parties terminées : 4 compteurs (⭐️ 💥 🏆 ❌) + 2 titres

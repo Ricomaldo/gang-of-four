@@ -1,3 +1,7 @@
+/* ═══ RESHAPE 0.2 · TAG [H] hérité ═══
+ * Cible : le plateau.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Quadrant — l'ossature répétée de l'écran de manche : un cadran bordé à coins
  * ronds (proto Claude Design) qui accueille en son sein une zone d'affichage (PlayerPill).

@@ -1,3 +1,7 @@
+/* ═══ RESHAPE 0.2 · TAG [H] hérité ═══
+ * Cible : intouché — le sens de jeu (PlayDirection réintégré autour du Gong).
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Sens de jeu — dérivé du numéro de manche, display seul (aucun impact score).
  * Livret p.12 : manche 1 = anti-horaire, puis alternance stricte.

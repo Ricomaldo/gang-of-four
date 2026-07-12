@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : tap = saisie (s'allume) · appui long = renommer · notif « donne sa meilleure carte » GARDÉE.
+ * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * PlayerPill — la « zone d'affichage » d'un joueur, à TAILLE FIXE.
  * Calée sur le pire cas (score 3 chiffres + un espace notif réservé) pour que

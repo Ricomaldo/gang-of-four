@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [†] supprimé ═══
+ * Cible : dissous dans le Round (état NOMMER — clavier en zone du bas).
+ * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * SetupScreen — saisie des 4 prénoms avant la partie.
  *

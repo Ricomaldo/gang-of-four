@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : 3 issues (l'annulée n'est JAMAIS archivée), pause/reprise.
+ * Lot : lot 0 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Store de partie — la SEULE source de vérité stockée (Zustand, single device).
  * Ne stocke que le brut : prénoms, cartes saisies par manche, statut, soirée.

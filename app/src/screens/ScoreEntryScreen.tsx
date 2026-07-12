@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [†] supprimé ═══
+ * Cible : dissous dans le Round (état SAISIR — numpad en zone du bas).
+ * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Saisie de fin de manche — pavé unique + rangée de 4 sélecteurs + Valider.
  * Header = prénom complet du joueur actif. Valider actif seulement à 4/4.

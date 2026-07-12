@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [†] supprimé ═══
+ * Cible : remplacé par le GONG [N] — 2 tailles, asset logo, tap → frime / rugissement d'entrée.
+ * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 /**
  * Hub — composant-pivot à états, posé à l'intersection des 4 quadrants.
  * Le bouton central seul : label d'état. Le sens de jeu vit désormais dans

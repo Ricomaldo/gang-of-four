@@ -1,3 +1,8 @@
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+ * Cible : soirée-unique → LE VRAC (terminées, inter-sessions, local P1) + migration de clé gof:soiree (schemaVersion).
+ * Lot : lot 0 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * ═══════════════════════════════ */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Game, GameArchive, PlayerId, Player, Round, GameStatus, Soiree } from '../domain/model';
 
