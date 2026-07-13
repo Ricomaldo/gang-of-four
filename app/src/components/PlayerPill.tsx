@@ -11,8 +11,12 @@
  *
  * Structure : carte bordée (pastille + prénom + gros score) surmontant un slot notif
  * toujours réservé (vide → hauteur conservée). Présentationnel : tout vient en props.
+ *
+ * + `pulse` (lot 2, brief 2026-07-13) : le discret de l'échelle des annonces —
+ * la pill du gagnant de manche respire, une fois par manche. Ossature, non gaté.
  */
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { palette, shapes, typography } from '../theme/tokens';
 
 /** Notif qui-donne-à-qui, posée sous la carte dans le footprint fixe de la pill. */
@@ -39,6 +43,10 @@ type Props = {
   notifPosition?: 'below' | 'above';
   /** Doublon détecté en saisie : bordure accent pour signaler le conflit. */
   hasError?: boolean;
+  /** Le discret de l'échelle (lot 2) : la pill du gagnant de manche respire. Ossature — pas gaté. */
+  pulse?: boolean;
+  /** Ne relance le pulse qu'au changement de manche (sinon `pulse` reste vrai sans re-déclencher). */
+  pulseKey?: number;
 };
 
 export const PILL_WIDTH = 150;
@@ -55,11 +63,24 @@ export function PlayerPill({
   notif = null,
   notifPosition = 'below',
   hasError = false,
+  pulse = false,
+  pulseKey,
 }: Props) {
   const displayScore = editable ? '' : inputValue !== undefined ? inputValue || '–' : String(score);
 
+  // Le discret (échelle, lot 2) : un pulse ponctuel, une fois par manche.
+  const scale = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (!pulse) return;
+    Animated.sequence([
+      Animated.timing(scale, { toValue: 1.05, duration: 160, useNativeDriver: true }),
+      Animated.timing(scale, { toValue: 1, duration: 160, useNativeDriver: true }),
+    ]).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pulse, pulseKey]);
+
   const card = (
-    <View style={[styles.card, hasError && styles.cardError, active && styles.cardActive]}>
+    <Animated.View style={[styles.card, hasError && styles.cardError, active && styles.cardActive, { transform: [{ scale }] }]}>
       <View style={styles.idRow}>
         <View style={[styles.dot, { backgroundColor: color }]} />
         {editable ? (
@@ -76,7 +97,7 @@ export function PlayerPill({
       </View>
       {/* Score toujours présent (espace réservé même en saisie) pour figer la hauteur */}
       <Text style={[styles.score, active && styles.scoreActive]}>{displayScore}</Text>
-    </View>
+    </Animated.View>
   );
 
   const cardWrapped =
