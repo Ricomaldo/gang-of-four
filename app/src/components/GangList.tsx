@@ -12,8 +12,8 @@
  * d'écran de gestion, pas de toggle par gang.
  */
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import type { GangSummary } from '../store/soireeStorage';
-import { relativeLabel } from '../store/soireeStorage';
+import type { GangSummary } from '../store/vracStorage';
+import { relativeLabel } from '../store/vracStorage';
 import { SEAT_ORDER } from '../domain/model';
 import { palette, typography } from '../theme/tokens';
 

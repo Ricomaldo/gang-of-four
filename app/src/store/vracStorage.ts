@@ -10,6 +10,9 @@
  * + `findArchive` / `sumGofCount` (lot 3b, brief 2026-07-13) : dérivés triviaux
  * pour la stèle (ouvrir une feuille passée par id · la mention GOF du gang) —
  * rien de neuf stocké, pas de touche au domaine (stats.ts reste [H] intouché).
+ *
+ * Renommé `soireeStorage.ts` → `vracStorage.ts` (lot 3c, brief 2026-07-13) : le
+ * fichier EST le vrac + ses dérivations, le nom le dit enfin.
  * ═══════════════════════════════ */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Game, GameArchive, PlayerId, Player, Round, GameStatus, Soiree, Vrac } from '../domain/model';

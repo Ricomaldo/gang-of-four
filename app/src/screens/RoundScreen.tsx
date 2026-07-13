@@ -29,6 +29,13 @@
  * La feuille (lot 3b, brief 2026-07-13) : en état `jouer`, l'aperçu-feuille
  * (FeuilleApercu ci-dessous) est tappable → ouvre la feuille complète
  * (modale, sans archiveId = cette partie en cours).
+ *
+ * L'undo crayon (lot 3c, brief 2026-07-13) : si la dernière manche est du
+ * crayon (non-branlée), sa ligne dans l'aperçu-feuille porte une affordance
+ * « corriger » distincte du tap qui ouvre la feuille complète (nested
+ * TouchableOpacity — RN route le geste au plus imbriqué, pas de conflit).
+ * Ré-ouvre la saisie pré-remplie des 4 valeurs de cette manche ; « = »
+ * recommite via le battement existant.
  */
 import { useEffect, useRef, useState } from 'react';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
@@ -77,6 +84,7 @@ export function RoundScreen({ navigation }: Props) {
   const status = useGameStore((s) => s.status);
   const addRound = useGameStore((s) => s.addRound);
   const resetGame = useGameStore((s) => s.resetGame);
+  const uncommitLastRound = useGameStore((s) => s.uncommitLastRound);
 
   const [cardGiven, setCardGiven] = useState(false);
   const [activeId, setActiveId] = useState<PlayerId | null>(null);
@@ -189,6 +197,18 @@ export function RoundScreen({ navigation }: Props) {
     setActiveId(null);
   };
 
+  // corriger la dernière manche (le crayon, lot 3c) : retire la manche du
+  // store, ré-ouvre la saisie pré-remplie de ses 4 valeurs — l'utilisateur
+  // édite ce qu'il veut puis « = » recommite.
+  const onCorrigerDerniere = () => {
+    const counts = uncommitLastRound();
+    if (!counts) return;
+    const nextEntry = {} as Record<PlayerId, string>;
+    for (const id of PLAYER_IDS) nextEntry[id] = String(counts[id]);
+    setEntry(nextEntry);
+    setActiveId(SEAT_ORDER[0]);
+  };
+
   const notifFor = (id: PlayerId): PillNotif => {
     if (state !== 'jouer' && state !== 'saisir') return null;
     if (rounds.length === 0) return null;
@@ -275,7 +295,7 @@ export function RoundScreen({ navigation }: Props) {
             onPress={() => navigation.navigate('Feuille')}
             accessibilityLabel="Voir la feuille complète"
           >
-            <FeuilleApercu rounds={rounds} />
+            <FeuilleApercu rounds={rounds} onCorrigerDerniere={onCorrigerDerniere} />
           </TouchableOpacity>
         )}
         {state === 'saisir' && !ceremonie && (
@@ -291,9 +311,14 @@ export function RoundScreen({ navigation }: Props) {
  * + une ligne vierge (écho visuel, pas une cible — le tap-saisie ne vit que sur
  * les pills, cf. fourche 3). Cellules = scores de manche (fourche 4), le cumul
  * vit sur les pills. PAS la feuille modale complète (lot 3b).
+ *
+ * La ligne de la DERNIÈRE manche porte en plus l'affordance « corriger » (lot
+ * 3c) si et seulement si elle est du crayon (non-branlée) — un
+ * TouchableOpacity imbriqué dans celui, plus large, qui ouvre la feuille.
  */
-function FeuilleApercu({ rounds }: { rounds: Round[] }) {
+function FeuilleApercu({ rounds, onCorrigerDerniere }: { rounds: Round[]; onCorrigerDerniere: () => void }) {
   const lastRounds = rounds.slice(-2);
+  const correctable = rounds.length > 0 && detectBranlee(rounds[rounds.length - 1]) === null;
   return (
     <View style={styles.feuille}>
       <View style={styles.feuilleRow}>
@@ -301,13 +326,26 @@ function FeuilleApercu({ rounds }: { rounds: Round[] }) {
           <View key={id} style={[styles.feuilleDot, { backgroundColor: seatColors[id] }]} />
         ))}
       </View>
-      {lastRounds.map((round, i) => (
-        <View key={i} style={styles.feuilleRow}>
-          {SEAT_ORDER.map((id) => (
-            <Text key={id} style={styles.feuilleCell}>{computeRoundScore(round.cardCounts[id])}</Text>
-          ))}
-        </View>
-      ))}
+      {lastRounds.map((round, i) => {
+        const isLast = i === lastRounds.length - 1;
+        const wrapped = isLast && correctable;
+        const cells = (
+          <View style={[styles.feuilleRow, wrapped && styles.feuilleRowFlex]}>
+            {SEAT_ORDER.map((id) => (
+              <Text key={id} style={styles.feuilleCell}>{computeRoundScore(round.cardCounts[id])}</Text>
+            ))}
+          </View>
+        );
+        if (!wrapped) return <View key={i}>{cells}</View>;
+        return (
+          <View key={i} style={styles.feuilleRowWrap}>
+            {cells}
+            <TouchableOpacity onPress={onCorrigerDerniere} hitSlop={8} accessibilityLabel="Corriger la dernière manche">
+              <Text style={styles.corrigerTxt}>corriger</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      })}
       <View style={styles.feuilleRow}>
         {SEAT_ORDER.map((id) => (
           <Text key={id} style={styles.feuilleCellVierge}>–</Text>
@@ -329,7 +367,10 @@ const styles = StyleSheet.create({
 
   feuille: { paddingHorizontal: 24, gap: 10 },
   feuilleRow: { flexDirection: 'row', justifyContent: 'space-around' },
+  feuilleRowWrap: { flexDirection: 'row', alignItems: 'center' },
+  feuilleRowFlex: { flex: 1 },
   feuilleDot: { width: 10, height: 10, borderRadius: 5 },
   feuilleCell: { ...typography.chrome, fontSize: 16, color: palette.encre, minWidth: 28, textAlign: 'center' },
   feuilleCellVierge: { ...typography.chrome, fontSize: 16, color: palette.bordure, minWidth: 28, textAlign: 'center' },
+  corrigerTxt: { ...typography.chrome, fontSize: 11, color: palette.accentSaisie, fontWeight: '600', paddingLeft: 10 },
 });

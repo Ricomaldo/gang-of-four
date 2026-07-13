@@ -58,6 +58,7 @@ const mkArchive = (
   players,
   rounds,
   status,
+  gofCount: 0,
 });
 
 // Partie de référence : Alice (j0) gagne les 3 manches (0 carte) et la partie (cumul 0) ;
@@ -134,7 +135,7 @@ const mkGame = (
   rounds: Round[],
   archivedAt: number,
   id: string,
-): GameArchive => ({ id, leagueId: 'proto-ligue', archivedAt, players, rounds, status: 'terminee' });
+): GameArchive => ({ id, leagueId: 'proto-ligue', archivedAt, players, rounds, status: 'terminee', gofCount: 0 });
 
 // Motif A — 2 manches, le siège 0 gagne (0 carte), le siège 3 perd (cumul → 100 pile).
 // Une seule branlée (r1, grosse) : donneur = siège 0, preneurs = sièges 1/2/3.

@@ -3,7 +3,7 @@
  * Prouve le câblage store → domain (isGameOver ∘ computeTotals) hors UI.
  */
 import { useGameStore } from '../src/store/gameStore';
-import { gangKey } from '../src/store/soireeStorage';
+import { gangKey } from '../src/store/vracStorage';
 
 const g = () => useGameStore.getState();
 
@@ -83,5 +83,41 @@ describe('gameStore — masquer/démasquer un gang (lot 3a, tes gangs)', () => {
     g().addRound({ 0: 0, 1: 10, 2: 10, 3: 10 }); // atteint 100 → archive
     expect(g().status).toBe('terminee');
     expect(g().masked).not.toContain(key);
+  });
+});
+
+describe('gameStore — undo crayon (brief lot 3c)', () => {
+  it('corrige la dernière manche non-branlée : la retire, rend ses valeurs, garde en-cours', () => {
+    g().addRound({ 0: 0, 1: 5, 2: 9, 3: 2 });
+    const counts = g().uncommitLastRound();
+    expect(counts).toEqual({ 0: 0, 1: 5, 2: 9, 3: 2 });
+    expect(g().rounds).toHaveLength(0);
+    expect(g().status).toBe('en-cours');
+  });
+
+  it('refuse une branlée gravée : retourne null, ne retire rien', () => {
+    g().addRound({ 0: 0, 1: 16, 2: 16, 3: 16 }); // total 240 → grosse branlée
+    const before = g().rounds.length;
+    expect(g().uncommitLastRound()).toBeNull();
+    expect(g().rounds).toHaveLength(before);
+  });
+
+  it('refuse quand il n’y a aucune manche à corriger', () => {
+    expect(g().rounds).toHaveLength(0);
+    expect(g().uncommitLastRound()).toBeNull();
+  });
+
+  it('rebascule terminee → en-cours et désarchive du vrac quand la manche corrigée avait fini la partie', () => {
+    const before = g().vrac.parties.length;
+    g().addRound({ 0: 0, 1: 16, 2: 16, 3: 16 }); // branlée grosse gravée, hors scope undo — cumuls 0/80/80/80
+    g().addRound({ 0: 0, 1: 10, 2: 0, 3: 0 }); // +0/20/0/0 (manche = 20, pas branlée) → joueur 1 atteint 100
+    expect(g().status).toBe('terminee');
+    expect(g().vrac.parties).toHaveLength(before + 1);
+
+    const counts = g().uncommitLastRound();
+    expect(counts).toEqual({ 0: 0, 1: 10, 2: 0, 3: 0 });
+    expect(g().status).toBe('en-cours');
+    expect(g().rounds).toHaveLength(1);
+    expect(g().vrac.parties).toHaveLength(before); // désarchivée, plus rien à montrer comme scellé
   });
 });

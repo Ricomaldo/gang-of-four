@@ -21,7 +21,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Feuille } from '../components/Feuille';
 import type { GameArchive } from '../domain/model';
 import { useGameStore } from '../store/gameStore';
-import { findArchive } from '../store/soireeStorage';
+import { findArchive } from '../store/vracStorage';
 import type { RootStackParamList } from '../navigation/types';
 import { palette, typography } from '../theme/tokens';
 
@@ -51,7 +51,7 @@ export function FeuilleScreen({ navigation, route }: Props) {
       players,
       rounds,
       status,
-      gofCount: gofCount ?? 0,
+      gofCount,
     };
   // Sealed dès que status === 'terminee' (au vrac, ou en mémoire juste après le
   // final — cf. gameStore.addRound) : plus de matière crayon à afficher.

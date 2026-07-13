@@ -24,7 +24,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Cartouche } from '../components/Cartouche';
 import { GangList } from '../components/GangList';
 import { PLAYER_IDS } from '../domain/model';
-import { deriveGangs } from '../store/soireeStorage';
+import { deriveGangs } from '../store/vracStorage';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
 import { palette, typography } from '../theme/tokens';

@@ -27,7 +27,7 @@ import { PLAYER_IDS, SEAT_ORDER } from '../domain/model';
 import type { GameArchive } from '../domain/model';
 import { computeSoireeStats } from '../domain/stats';
 import type { PrenomStats } from '../domain/stats';
-import { filterByGang, groupBySoiree, relativeLabel, sumGofCount } from '../store/soireeStorage';
+import { filterByGang, groupBySoiree, relativeLabel, sumGofCount } from '../store/vracStorage';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
 import { palette, typography } from '../theme/tokens';

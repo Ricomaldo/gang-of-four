@@ -41,9 +41,6 @@ export type GameStatus = 'en-cours' | 'annulee' | 'terminee';
 /**
  * Partie — LA source de vérité stockée. Rien de dérivé ici.
  * `id` + `leagueId` = provenance (base du relai P2), semés à la création, jamais dérivés.
- * `gofCount` optionnel en type (défaut runtime 0, semé par le store) — un site
- * d'affichage hérité (ScoreGridScreen, gelé) construit encore un GameArchive sans
- * ce champ ; le rendre requis y casserait tsc sans toucher d'UI. Cf. handoff lot 0.
  */
 export interface Game {
   id: string;
@@ -51,7 +48,7 @@ export interface Game {
   players: Record<PlayerId, Player>;
   rounds: Round[];
   status: GameStatus;
-  gofCount?: number;
+  gofCount: number;
 }
 
 export const PLAYER_IDS: readonly PlayerId[] = [0, 1, 2, 3];
@@ -81,7 +78,7 @@ export interface GameArchive {
   players: Record<PlayerId, Player>;
   rounds: Round[];
   status: GameStatus;
-  gofCount?: number;
+  gofCount: number;
 }
 
 /** Ensemble de parties regroupées par date (tolérance nuit : avant 5h = veille) — dérivé, jamais stocké tel quel. */

@@ -18,7 +18,7 @@ import {
   loadMasked,
   saveMasked,
   relativeLabel,
-} from '../src/store/soireeStorage';
+} from '../src/store/vracStorage';
 import type { Round, GameArchive, Vrac } from '../src/domain/model';
 import { TABLE_SEATS } from '../src/domain/model';
 
@@ -104,6 +104,7 @@ const mkArchive = (ts: number, prenoms: [string, string, string, string] = ['A',
   },
   rounds: [],
   status: 'terminee',
+  gofCount: 0,
 });
 
 const emptyVrac = (): Vrac => ({ schemaVersion: 1, parties: [] });
