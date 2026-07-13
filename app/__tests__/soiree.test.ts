@@ -11,6 +11,8 @@ import {
   saveVrac,
   gangKey,
   filterByGang,
+  findArchive,
+  sumGofCount,
   groupBySoiree,
   deriveGangs,
   loadMasked,
@@ -158,6 +160,30 @@ describe('gangKey / filterByGang — dérivation gang (4 prénoms triés)', () =
     const autreGang = mkArchive(2, ['Eve', 'Franz', 'Gina', 'Hugo']);
     const filtered = filterByGang([legang, autreGang], gangKey(legang.players));
     expect(filtered).toEqual([legang]);
+  });
+});
+
+describe('findArchive — retrouve une partie du vrac par id (stèle → feuille passée)', () => {
+  it('retourne la partie dont l’id correspond', () => {
+    const a = mkArchive(1);
+    const b = mkArchive(2);
+    expect(findArchive([a, b], b.id)).toBe(b);
+  });
+
+  it('undefined si aucun id ne correspond', () => {
+    expect(findArchive([mkArchive(1)], 'inconnu')).toBeUndefined();
+  });
+});
+
+describe('sumGofCount — la mention GOF du gang (stèle)', () => {
+  it('somme les gofCount du gang, 0 par défaut si absent', () => {
+    const withGof: GameArchive = { ...mkArchive(1), gofCount: 2 };
+    const withoutGof = mkArchive(2);
+    expect(sumGofCount([withGof, withoutGof])).toBe(2);
+  });
+
+  it('0 pour un vrac vide', () => {
+    expect(sumGofCount([])).toBe(0);
   });
 });
 

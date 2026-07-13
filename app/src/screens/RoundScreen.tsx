@@ -25,10 +25,14 @@
  * geste natif de la pile. Appui long sur une pill = renommer ce joueur en
  * cours de partie (fourche 11) : bascule la pill en `editable` (TextInput),
  * câblé à `setPrenom`, quitte au blur.
+ *
+ * La feuille (lot 3b, brief 2026-07-13) : en état `jouer`, l'aperçu-feuille
+ * (FeuilleApercu ci-dessous) est tappable → ouvre la feuille complète
+ * (modale, sans archiveId = cette partie en cours).
  */
 import { useEffect, useRef, useState } from 'react';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Annonce } from '../components/Annonce';
@@ -66,7 +70,7 @@ const isDuplicate = (players: Record<PlayerId, { prenom: string }>, id: PlayerId
   return v.length > 0 && PLAYER_IDS.filter((x) => players[x].prenom.trim().toLowerCase() === v).length > 1;
 };
 
-export function RoundScreen(_props: Props) {
+export function RoundScreen({ navigation }: Props) {
   const players = useGameStore((s) => s.players);
   const setPrenom = useGameStore((s) => s.setPrenom);
   const rounds = useGameStore((s) => s.rounds);
@@ -265,7 +269,15 @@ export function RoundScreen(_props: Props) {
       </View>
 
       <View style={styles.zoneBas}>
-        {state === 'jouer' && <FeuilleApercu rounds={rounds} />}
+        {state === 'jouer' && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('Feuille')}
+            accessibilityLabel="Voir la feuille complète"
+          >
+            <FeuilleApercu rounds={rounds} />
+          </TouchableOpacity>
+        )}
         {state === 'saisir' && !ceremonie && (
           <NumPad onDigit={onDigit} onBackspace={onBackspace} onValidate={onValidate} canValidate={canValidate} />
         )}

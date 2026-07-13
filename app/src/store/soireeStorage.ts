@@ -6,6 +6,10 @@
  * + `deriveGangs` / `loadMasked` / `saveMasked` / `relativeLabel` (lot 3a, brief
  * 2026-07-13) : la dérivation « tes gangs » de l'accueil — toujours dérivé du
  * vrac, rien de neuf stocké hors la liste des gangKeys masqués.
+ *
+ * + `findArchive` / `sumGofCount` (lot 3b, brief 2026-07-13) : dérivés triviaux
+ * pour la stèle (ouvrir une feuille passée par id · la mention GOF du gang) —
+ * rien de neuf stocké, pas de touche au domaine (stats.ts reste [H] intouché).
  * ═══════════════════════════════ */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Game, GameArchive, PlayerId, Player, Round, GameStatus, Soiree, Vrac } from '../domain/model';
@@ -48,6 +52,16 @@ export function gangKey(players: Record<PlayerId, Player>): string {
 /** Filtre le vrac sur un gang précis (mêmes 4 prénoms triés) — aucune réconciliation entre rosters. */
 export function filterByGang(parties: GameArchive[], key: string): GameArchive[] {
   return parties.filter((p) => gangKey(p.players) === key);
+}
+
+/** Retrouve une partie du vrac par id — la stèle ouvre une feuille passée ainsi. */
+export function findArchive(parties: GameArchive[], id: string): GameArchive | undefined {
+  return parties.find((p) => p.id === id);
+}
+
+/** La mention GOF du gang (stèle) : somme des gofCount du gang, jamais par joueur. */
+export function sumGofCount(parties: GameArchive[]): number {
+  return parties.reduce((n, p) => n + (p.gofCount ?? 0), 0);
 }
 
 /** Groupe des parties par soirée dérivée (soireeDate), sans regroupement stocké. Ordre = première apparition. */
