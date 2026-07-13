@@ -5,7 +5,7 @@
  */
 import { MAX_CARDS, WINNING_THRESHOLD } from '../src/domain/model';
 import type { PlayerId, Round, Seats } from '../src/domain/model';
-import { computeRoundScore, computeTotals, isGameOver } from '../src/domain/scoring';
+import { computeRoundScore, computeTotals, detectBranlee, isGameOver } from '../src/domain/scoring';
 import { directionOfPlay } from '../src/domain/direction';
 import {
   determineWinner,
@@ -123,6 +123,29 @@ describe('tiebreak — briques de départage', () => {
   it('niveau 2 : le plus proche en horaire du gagnant de manche', () => {
     // gagnant de manche = J3 (siège 2) ; candidats J1(0)/J2(1) → J1 plus proche
     expect(tiebreakBySeatProximity([0, 1], SEATS, SEATS[2])).toBe(0);
+  });
+});
+
+describe('detectBranlee — cas de référence (cas-reference-score §branlée)', () => {
+  it('rien sous 30', () => {
+    expect(detectBranlee(round(0, 9, 2, 5))).toBeNull(); // total 25
+  });
+  it('petite entre 30 et 44', () => {
+    expect(detectBranlee(round(0, 8, 9, 1))).toBe('petite'); // total 35
+  });
+  it('grosse à 45+', () => {
+    expect(detectBranlee(round(0, 13, 7, 2))).toBe('grosse'); // total 48
+  });
+  it('borne basse inclusive : 30 pile → petite', () => {
+    expect(detectBranlee(round(0, 9, 7, 5))).toBe('petite'); // total 30
+  });
+  it('borne haute inclusive : 45 pile → grosse (pas petite)', () => {
+    expect(detectBranlee(round(0, 10, 9, 7))).toBe('grosse'); // total 45
+  });
+  it('retourne seulement la sévérité — le donneur se lit via roundWinner côté appelant', () => {
+    const r = round(0, 13, 7, 2);
+    expect(detectBranlee(r)).toBe('grosse');
+    expect(roundWinner(r)).toBe(0); // J1, le joueur à 0 carte
   });
 });
 

@@ -37,3 +37,18 @@ export function computeTotals(rounds: Round[]): Record<PlayerId, number> {
 export function isGameOver(totals: Record<PlayerId, number>): boolean {
   return PLAYER_IDS.some((id) => totals[id] >= WINNING_THRESHOLD);
 }
+
+/**
+ * Détection de la branlée (lot 0, brief 2026-07-13) — ajoutée sans toucher au
+ * cœur hérité ci-dessus. Sur le total distribué de la manche (somme des scores
+ * de manche des 4 joueurs) : ≥ 45 → grosse (absorbe la petite) · ≥ 30 → petite ·
+ * sinon rien. Bornes inclusives. Le donneur (roundWinner) est géré côté appelant.
+ * Source : logique-comptage §Détection de la branlée · cas-reference-score §branlée.
+ */
+export function detectBranlee(round: Round): null | 'petite' | 'grosse' {
+  let total = 0;
+  for (const id of PLAYER_IDS) total += computeRoundScore(round.cardCounts[id]);
+  if (total >= 45) return 'grosse';
+  if (total >= 30) return 'petite';
+  return null;
+}

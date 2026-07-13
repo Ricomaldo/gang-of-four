@@ -118,3 +118,94 @@ describe('computeSoireeStats', () => {
     expect(stats.parPrenom.some((p) => p.prenom.trim() === '')).toBe(false);
   });
 });
+
+// ──────────────── titres miroirs — décroisement, monde étrange, branlées ────────────────
+// Cf. cas-reference-score.md §titres miroirs (Marc tient les 2 trônes) + signature/palmares.md.
+
+const mkPlayers = (prenoms: [string, string, string, string]): Record<PlayerId, { id: PlayerId; prenom: string }> => ({
+  0: { id: 0, prenom: prenoms[0] },
+  1: { id: 1, prenom: prenoms[1] },
+  2: { id: 2, prenom: prenoms[2] },
+  3: { id: 3, prenom: prenoms[3] },
+});
+
+const mkGame = (
+  players: Record<PlayerId, { id: PlayerId; prenom: string }>,
+  rounds: Round[],
+  archivedAt: number,
+  id: string,
+): GameArchive => ({ id, leagueId: 'proto-ligue', archivedAt, players, rounds, status: 'terminee' });
+
+// Motif A — 2 manches, le siège 0 gagne (0 carte), le siège 3 perd (cumul → 100 pile).
+// Une seule branlée (r1, grosse) : donneur = siège 0, preneurs = sièges 1/2/3.
+const patternA = (): Round[] => [mkRound([0, 3, 4, 16]), mkRound([0, 2, 3, 10])];
+
+// Motif B — 3 manches, le siège 0 gagne (0 carte) toutes les manches, le siège 3 perd
+// (cumul → 112). Reprend exactement le motif de `partieRef` ci-dessus (déjà prouvé).
+// Chaque manche est une branlée (grosse) : donneur = siège 0.
+const patternB = (): Round[] => [mkRound([0, 5, 8, 16]), mkRound([0, 8, 8, 8]), mkRound([0, 8, 8, 8])];
+
+describe('computeSoireeStats — miroirs décroisés, monde étrange, contre-exemple du code croisé', () => {
+  it('✌️ et 🐌 peuvent tenir le même joueur (monde étrange), sans croisement des pôles', () => {
+    // Marc gagne 2 parties (motif B, 3⭐️/partie) ; Léa en gagne 2 aussi (motif A, 2⭐️/partie).
+    // Égalité 🏆 (2=2) tranchée par ⭐️ : Marc (6) > Léa (4) → Marc champion.
+    // Marc perd aussi 2 parties (motif A, en face de Léa) → 2💩, seul en tête des perdants → Marc looser.
+    // L'ancien code croisé aurait départagé ✌️ par « moins de 💩 » → Léa (0💩 < 2💩) : FAUX désormais.
+    const g1 = mkGame(mkPlayers(['Marc', 'Léa', 'Zoé', 'Tom']), patternB(), 1, 'g1'); // Marc gagne, Tom perd
+    const g2 = mkGame(mkPlayers(['Marc', 'Tom', 'Léa', 'Zoé']), patternB(), 2, 'g2'); // Marc gagne, Zoé perd
+    const g3 = mkGame(mkPlayers(['Léa', 'Tom', 'Zoé', 'Marc']), patternA(), 3, 'g3'); // Léa gagne, Marc perd
+    const g4 = mkGame(mkPlayers(['Léa', 'Zoé', 'Tom', 'Marc']), patternA(), 4, 'g4'); // Léa gagne, Marc perd
+
+    const stats = computeSoireeStats([g1, g2, g3, g4]);
+
+    const marc = stats.parPrenom.find((p) => p.prenom === 'Marc')!;
+    const lea = stats.parPrenom.find((p) => p.prenom === 'Léa')!;
+    expect(marc.partiesGagnees).toBe(2);
+    expect(marc.partiesPerdues).toBe(2);
+    expect(lea.partiesGagnees).toBe(2);
+    expect(lea.partiesPerdues).toBe(0);
+    expect(marc.manchesGagnees).toBe(6); // 3+3, motif B
+    expect(lea.manchesGagnees).toBe(4); // 2+2, motif A
+
+    expect(stats.leader).toBe('Marc'); // pas Léa — le 💩 de Marc ne le pénalise jamais
+    expect(stats.looser).toBe('Marc'); // le 🏆 de Marc ne le rachète jamais
+  });
+
+  it('compteurs branlées : +1 au donneur (0 carte), +1 aux 3 preneurs par déduction', () => {
+    const g = mkGame(mkPlayers(['Alice', 'Bob', 'Chloé', 'David']), patternA(), 1, 'g1');
+    const stats = computeSoireeStats([g]);
+    const find = (p: string) => stats.parPrenom.find((s) => s.prenom === p)!;
+
+    expect(find('Alice').brancheesDonnees).toBe(1); // donneur, r1 seule branlée du motif A
+    expect(find('Bob').brancheesPrises).toBe(1);
+    expect(find('Chloé').brancheesPrises).toBe(1);
+    expect(find('David').brancheesPrises).toBe(1); // aussi 💩 de la partie — double rôle, cohérent
+  });
+});
+
+describe('computeSoireeStats — départage final « tenant reste » (par rejeu chronologique)', () => {
+  // Alice décroche ✌️ seule après g1. Bob la détrône à g2 (strictement meilleur : 3⭐️ > 2⭐️
+  // à 🏆 égal). Carol rejoint Bob à égalité totale (1🏆/3⭐️/3 branlées) à g3 : le tenant (Bob)
+  // reste, il ne suffit pas de l'égaler. Une lecture « premier vu » se ferait piéger : Carol
+  // est insérée dans les compteurs avant Bob (branlée prise dès g1), donc un départage par
+  // ordre d'apparition donnerait Carol à tort — seule la mémoire du tenant donne Bob.
+  const g1 = mkGame(mkPlayers(['Alice', 'Bob', 'Dave', 'Carol']), patternA(), 1000, 'g1'); // Alice gagne, Carol perd
+  const g2 = mkGame(mkPlayers(['Bob', 'Alice', 'Carol', 'Dave']), patternB(), 2000, 'g2'); // Bob gagne, Dave perd
+  const g3 = mkGame(mkPlayers(['Carol', 'Alice', 'Bob', 'Dave']), patternB(), 3000, 'g3'); // Carol gagne, Dave perd
+
+  it('champion unique après la 1ʳᵉ partie', () => {
+    expect(computeSoireeStats([g1]).leader).toBe('Alice');
+  });
+
+  it('détrôné par un challenger strictement meilleur (pas seulement à égalité)', () => {
+    expect(computeSoireeStats([g1, g2]).leader).toBe('Bob');
+  });
+
+  it('le tenant reste à égalité totale — il faut le battre, pas l’égaler', () => {
+    expect(computeSoireeStats([g1, g2, g3]).leader).toBe('Bob');
+  });
+
+  it('rejoue par ordre chronologique (archivedAt), pas par ordre du tableau reçu', () => {
+    expect(computeSoireeStats([g3, g1, g2]).leader).toBe('Bob');
+  });
+});

@@ -2,7 +2,7 @@
 title: GANG — Cas de référence, logique de score
 created: '2026-07-04'
 updated: '2026-07-13'
-version: 0.2.2
+version: 0.2.3
 status: active
 type: cas-reference
 ---
@@ -122,3 +122,25 @@ Un gang, 4 parties terminées :
 - **🐌** : le plus de 💩 → Marc (2) → **Marc looser**. Ses 2 🏆 ne le rachètent **jamais**.
 - **Monde étrange** : Marc tient **les deux trônes** — le all-in haute-variance. Résultat attendu.
 - *Contre-exemple de l'ancien code croisé (`stats.ts`, à corriger)* : ✌️ départagé par « moins de 💩 » aurait donné Léa — **faux** désormais.
+
+## Cas — le tenant reste (départage « par rejeu »)
+
+Contrat de la dérivation des titres par rejeu ([[logique-comptage]] §titres,
+`stats.ts` `updateTenant`) : on **rejoue le vrac dans l'ordre chronologique**
+(`archivedAt`). Le **premier** à atteindre le sommet d'un pôle prend le titre et le
+**garde tant qu'on ne le bat pas strictement** — **l'égaler ne détrône pas** (« il
+faut le battre », signature/palmares.md §départage). *Ratifié par Eric le 13/07 —
+remplace « premier vu l'emporte ».*
+
+Un gang, 2 parties terminées, dans l'ordre (⭐️ et encoches à égalité entre Marc et
+Léa, pour forcer la pleine égalité sur la chaîne) :
+
+| ordre | vainqueur | après rejeu |
+|---|---|---|
+| **P1** *(archivée en 1er)* | Marc | Marc 1🏆 → **Marc ✌️** (premier au sommet) |
+| **P2** *(archivée après)* | Léa | Marc 1🏆 = Léa 1🏆, pleine égalité → **Marc reste ✌️** (Léa égale, ne bat pas) |
+
+- **Résultat : champion = Marc.** Le tenant tient l'égalité.
+- **Bascule** : si Léa gagnait une **3ᵉ** partie (2🏆 > 1🏆), elle **battrait** Marc
+  → **Léa** deviendrait championne.
+- **Miroir strict** côté 🐌 : le looser en titre reste de même, sur les 💩 seuls.

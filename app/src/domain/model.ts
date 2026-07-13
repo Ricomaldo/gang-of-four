@@ -35,11 +35,15 @@ export interface Round {
   cardCounts: Record<PlayerId, CardCount>;
 }
 
-export type GameStatus = 'en-cours' | 'terminee';
+/** Les 3 issues (reshape 0.2) : en-cours (pause, reprenable) · annulee (jetée, jamais archivée) · terminee (scellée → vrac). */
+export type GameStatus = 'en-cours' | 'annulee' | 'terminee';
 
 /**
  * Partie — LA source de vérité stockée. Rien de dérivé ici.
  * `id` + `leagueId` = provenance (base du relai P2), semés à la création, jamais dérivés.
+ * `gofCount` optionnel en type (défaut runtime 0, semé par le store) — un site
+ * d'affichage hérité (ScoreGridScreen, gelé) construit encore un GameArchive sans
+ * ce champ ; le rendre requis y casserait tsc sans toucher d'UI. Cf. handoff lot 0.
  */
 export interface Game {
   id: string;
@@ -47,6 +51,7 @@ export interface Game {
   players: Record<PlayerId, Player>;
   rounds: Round[];
   status: GameStatus;
+  gofCount?: number;
 }
 
 export const PLAYER_IDS: readonly PlayerId[] = [0, 1, 2, 3];
@@ -68,7 +73,7 @@ export function uuidv4(): string {
   });
 }
 
-/** Partie archivée (terminée ou interrompue). Porte la provenance de la partie. */
+/** Partie archivée (terminée). Seule la terminée est archivée — l'annulée ne l'est jamais. Porte la provenance de la partie. */
 export interface GameArchive {
   id: string;
   leagueId: string;
@@ -76,11 +81,18 @@ export interface GameArchive {
   players: Record<PlayerId, Player>;
   rounds: Round[];
   status: GameStatus;
+  gofCount?: number;
 }
 
-/** Ensemble de parties regroupées par date (tolérance nuit : avant 5h = veille). */
+/** Ensemble de parties regroupées par date (tolérance nuit : avant 5h = veille) — dérivé, jamais stocké tel quel. */
 export interface Soiree {
   date: string; // YYYY-MM-DD
+  parties: GameArchive[];
+}
+
+/** Le vrac — LE stockage neuf (lot 0) : toutes les GameArchive terminées, à plat, inter-sessions (P1 local). */
+export interface Vrac {
+  schemaVersion: number;
   parties: GameArchive[];
 }
 

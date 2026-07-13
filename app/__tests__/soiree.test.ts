@@ -1,9 +1,19 @@
 /**
- * Tests des dérivés palier 1 : roundLastPlace, manchesGagnees, soireeDate, appendToSoiree.
+ * Tests des dérivés palier 1 : roundLastPlace, manchesGagnees, soireeDate, le vrac
+ * (round-trip save/load, appendToVrac, dérivation gang et sessions — brief lot 0).
  */
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { roundLastPlace, manchesGagnees } from '../src/domain/winner';
-import { soireeDate, appendToSoiree } from '../src/store/soireeStorage';
-import type { Round, Soiree, GameArchive } from '../src/domain/model';
+import {
+  soireeDate,
+  appendToVrac,
+  loadVrac,
+  saveVrac,
+  gangKey,
+  filterByGang,
+  groupBySoiree,
+} from '../src/store/soireeStorage';
+import type { Round, GameArchive, Vrac } from '../src/domain/model';
 import { TABLE_SEATS } from '../src/domain/model';
 
 // ──────────────── roundLastPlace ────────────────
@@ -74,45 +84,99 @@ describe('soireeDate', () => {
   });
 });
 
-// ──────────────── appendToSoiree ────────────────
+// ──────────────── le vrac ────────────────
 
-const mkArchive = (ts: number): GameArchive => ({
-  id: `game-${ts}`,
+const mkArchive = (ts: number, prenoms: [string, string, string, string] = ['A', 'B', 'C', 'D']): GameArchive => ({
+  id: `game-${ts}-${prenoms.join('')}`,
   leagueId: 'proto-ligue',
   archivedAt: ts,
-  players: { 0: { id: 0, prenom: 'A' }, 1: { id: 1, prenom: 'B' }, 2: { id: 2, prenom: 'C' }, 3: { id: 3, prenom: 'D' } },
+  players: {
+    0: { id: 0, prenom: prenoms[0] },
+    1: { id: 1, prenom: prenoms[1] },
+    2: { id: 2, prenom: prenoms[2] },
+    3: { id: 3, prenom: prenoms[3] },
+  },
   rounds: [],
   status: 'terminee',
 });
 
-describe('appendToSoiree', () => {
-  it('crée une nouvelle soirée si soiree est null', () => {
+const emptyVrac = (): Vrac => ({ schemaVersion: 1, parties: [] });
+
+describe('appendToVrac', () => {
+  it('ajoute à un vrac vide', () => {
     const ts = new Date('2026-07-06T20:00:00').getTime();
-    const result = appendToSoiree(null, mkArchive(ts));
-    expect(result.date).toBe('2026-07-06');
+    const result = appendToVrac(emptyVrac(), mkArchive(ts));
     expect(result.parties).toHaveLength(1);
+    expect(result.schemaVersion).toBe(1);
   });
 
-  it('ajoute à la soirée existante si même date', () => {
-    const ts1 = new Date('2026-07-06T20:00:00').getTime();
-    const ts2 = new Date('2026-07-06T22:00:00').getTime();
-    const soiree: Soiree = { date: '2026-07-06', parties: [mkArchive(ts1)] };
-    const result = appendToSoiree(soiree, mkArchive(ts2));
-    expect(result.parties).toHaveLength(2);
-  });
-
-  it('crée une nouvelle soirée si le jour est différent', () => {
+  it('empile à plat, sans regroupement par date (le vrac est inter-sessions)', () => {
     const ts1 = new Date('2026-07-05T20:00:00').getTime();
     const ts2 = new Date('2026-07-06T20:00:00').getTime();
-    const soiree: Soiree = { date: '2026-07-05', parties: [mkArchive(ts1)] };
-    const result = appendToSoiree(soiree, mkArchive(ts2));
-    expect(result.date).toBe('2026-07-06');
-    expect(result.parties).toHaveLength(1);
+    let vrac = appendToVrac(emptyVrac(), mkArchive(ts1));
+    vrac = appendToVrac(vrac, mkArchive(ts2));
+    expect(vrac.parties).toHaveLength(2);
+  });
+});
+
+describe('loadVrac / saveVrac — round-trip', () => {
+  beforeEach(() => AsyncStorage.clear());
+
+  it('retourne un vrac vide si rien en storage (pas de legacy — build neuf)', async () => {
+    const vrac = await loadVrac();
+    expect(vrac).toEqual({ schemaVersion: 1, parties: [] });
   });
 
-  it('applique la tolérance nuit (2h30 → veille)', () => {
+  it('round-trip save → load', async () => {
+    const ts = new Date('2026-07-06T20:00:00').getTime();
+    const vrac = appendToVrac(emptyVrac(), mkArchive(ts));
+    await saveVrac(vrac);
+    const loaded = await loadVrac();
+    expect(loaded).toEqual(vrac);
+  });
+});
+
+describe('gangKey / filterByGang — dérivation gang (4 prénoms triés)', () => {
+  it("clé stable quel que soit l'ordre des sièges", () => {
+    const g1 = mkArchive(1, ['Alice', 'Bob', 'Chloé', 'David']);
+    const g2 = mkArchive(2, ['David', 'Chloé', 'Bob', 'Alice']);
+    expect(gangKey(g1.players)).toBe(gangKey(g2.players));
+  });
+
+  it('normalise trim + casse (« Marc » = «  marc  » — même gang, Identité = A)', () => {
+    const g1 = mkArchive(1, ['Marc', 'Léa', 'Tom', 'Zoé']);
+    const g2 = mkArchive(2, ['  marc ', 'LÉA', 'tom', 'ZOÉ']);
+    expect(gangKey(g1.players)).toBe(gangKey(g2.players));
+  });
+
+  it('filtre le vrac sur un gang précis, ignore les autres rosters', () => {
+    const legang = mkArchive(1, ['Alice', 'Bob', 'Chloé', 'David']);
+    const autreGang = mkArchive(2, ['Eve', 'Franz', 'Gina', 'Hugo']);
+    const filtered = filterByGang([legang, autreGang], gangKey(legang.players));
+    expect(filtered).toEqual([legang]);
+  });
+});
+
+describe('groupBySoiree — sessions dérivées, groupées par date', () => {
+  it('groupe deux parties de la même soirée ensemble', () => {
+    const ts1 = new Date('2026-07-06T20:00:00').getTime();
+    const ts2 = new Date('2026-07-06T22:00:00').getTime();
+    const sessions = groupBySoiree([mkArchive(ts1), mkArchive(ts2)]);
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0].date).toBe('2026-07-06');
+    expect(sessions[0].parties).toHaveLength(2);
+  });
+
+  it('sépare deux soirées distinctes', () => {
+    const ts1 = new Date('2026-07-05T20:00:00').getTime();
+    const ts2 = new Date('2026-07-06T20:00:00').getTime();
+    const sessions = groupBySoiree([mkArchive(ts1), mkArchive(ts2)]);
+    expect(sessions.map((s) => s.date).sort()).toEqual(['2026-07-05', '2026-07-06']);
+  });
+
+  it('applique la tolérance nuit (2h30 → veille) au groupement', () => {
     const ts = new Date('2026-07-07T02:30:00').getTime();
-    const result = appendToSoiree(null, mkArchive(ts));
-    expect(result.date).toBe('2026-07-06');
+    const sessions = groupBySoiree([mkArchive(ts)]);
+    expect(sessions[0].date).toBe('2026-07-06');
   });
 });

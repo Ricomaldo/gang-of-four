@@ -3,7 +3,7 @@ title: 'GANG — Relecture critique de la conception 0.2 (temps 1)'
 created: '2026-07-12'
 updated: '2026-07-12'
 version: 0.2.1
-status: active
+status: consommé
 type: relecture
 ---
 
