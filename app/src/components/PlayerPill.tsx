@@ -2,7 +2,7 @@
  * Cible : tap = saisie (s'allume) · notif « donne sa meilleure carte » GARDÉE.
  * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
- * PAS le long-press renommer (lot 3a) ; le long-press GOF de l'ancien code disparaît (le GOF vivra au Gong, lot 4).
+ * Long-press renommer câblé au lot 3a ; le long-press GOF de l'ancien code disparaît (le GOF vivra au Gong, lot 4).
  * ═══════════════════════════════ */
 /**
  * PlayerPill — la « zone d'affichage » d'un joueur, à TAILLE FIXE.
@@ -14,6 +14,10 @@
  *
  * + `pulse` (lot 2, brief 2026-07-13) : le discret de l'échelle des annonces —
  * la pill du gagnant de manche respire, une fois par manche. Ossature, non gaté.
+ *
+ * + `onLongPress`/`onBlur` (lot 3a, brief 2026-07-13) : appui long sur une pill
+ * = renommer ce joueur en cours de partie. Réutilise le rendu `editable`
+ * (TextInput) déjà bâti pour nommer — RoundScreen pilote qui est en renommage.
  */
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -33,6 +37,10 @@ type Props = {
   onChangePrenom?: (v: string) => void;
   /** Tap = seule cible de saisie (le battement) — sélectionne ce joueur pour le numpad. */
   onPress?: () => void;
+  /** Appui long = renommer (identité), libre depuis que le GOF vit au Gong. */
+  onLongPress?: () => void;
+  /** Quitte le renommage (perte du focus du TextInput) — pas d'autre confirmation. */
+  onBlur?: () => void;
   /** La pill s'allume : c'est le joueur actif de la saisie en cours. */
   active?: boolean;
   /** Pendant la saisie : les chiffres tapés s'affichent ici, à la place du score total. */
@@ -58,6 +66,8 @@ export function PlayerPill({
   editable = false,
   onChangePrenom,
   onPress,
+  onLongPress,
+  onBlur,
   active = false,
   inputValue,
   notif = null,
@@ -88,6 +98,8 @@ export function PlayerPill({
             style={styles.nameInput}
             value={prenom}
             onChangeText={onChangePrenom}
+            onBlur={onBlur}
+            autoFocus={active}
             placeholder="prénom"
             placeholderTextColor={palette.bordureForte}
           />
@@ -101,8 +113,8 @@ export function PlayerPill({
   );
 
   const cardWrapped =
-    !editable && onPress ? (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
+    !editable && (onPress || onLongPress) ? (
+      <TouchableOpacity onPress={onPress} onLongPress={onLongPress} activeOpacity={0.8}>
         {card}
       </TouchableOpacity>
     ) : (

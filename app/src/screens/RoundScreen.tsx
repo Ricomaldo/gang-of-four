@@ -19,6 +19,12 @@
  * lot 1). Le discret (pill qui respire) et le flash léger (passe devant) sont
  * l'ossature de l'échelle, non gatés. Le long-press GOF disparaît (il vivra
  * au Gong, lot 4).
+ *
+ * La nav (lot 3a, brief 2026-07-13) : Round n'est plus l'écran initial, atteint
+ * depuis l'accueil (le moyeu) — rien à câbler ici, le retour se fait par le
+ * geste natif de la pile. Appui long sur une pill = renommer ce joueur en
+ * cours de partie (fourche 11) : bascule la pill en `editable` (TextInput),
+ * câblé à `setPrenom`, quitte au blur.
  */
 import { useEffect, useRef, useState } from 'react';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
@@ -71,6 +77,12 @@ export function RoundScreen(_props: Props) {
   const [cardGiven, setCardGiven] = useState(false);
   const [activeId, setActiveId] = useState<PlayerId | null>(null);
   const [entry, setEntry] = useState<Record<PlayerId, string>>(blankEntry);
+  // Renommer (fourche 11) : appui long sur une pill, en cours de partie (jouer/saisir).
+  // `renamePrevRef` : le prénom au moment d'entrer en renommage — si le champ est
+  // quitté vide (effacé puis abandonné), on restaure plutôt que de basculer tout
+  // le plateau en 'nommer' (namesReady dépend des 4 prénoms non-vides).
+  const [renamingId, setRenamingId] = useState<PlayerId | null>(null);
+  const renamePrevRef = useRef('');
   // La cérémonie (branlée) : la manche calculée mais différée — rien n'est
   // commité (addRound) tant que ce n'est pas null. corriger l'efface (retour
   // saisie, entry/activeId intacts) ; graver commite puis l'efface.
@@ -183,25 +195,41 @@ export function RoundScreen(_props: Props) {
 
   // Haut : carte contre le bord haut, notif dessous (vers le centre). Bas : carte
   // contre le bord bas, notif dessus (vers le centre). Pills symétriques autour de l'arc.
-  const cell = (id: PlayerId, row: 'top' | 'bottom') => (
-    <Quadrant key={id} align="center">
-      <PlayerPill
-        color={seatColors[id]}
-        prenom={players[id].prenom}
-        score={totals[id]}
-        editable={state === 'nommer'}
-        hasError={state === 'nommer' && isDuplicate(players, id)}
-        onChangePrenom={(v) => setPrenom(id, v)}
-        onPress={state === 'jouer' || state === 'saisir' ? () => selectPlayer(id) : undefined}
-        active={state === 'saisir' && activeId === id}
-        inputValue={state === 'saisir' ? entry[id] : undefined}
-        notif={notifFor(id)}
-        notifPosition={row === 'top' ? 'below' : 'above'}
-        pulse={id === prevWinner}
-        pulseKey={rounds.length}
-      />
-    </Quadrant>
-  );
+  const cell = (id: PlayerId, row: 'top' | 'bottom') => {
+    const isRenaming = renamingId === id;
+    return (
+      <Quadrant key={id} align="center">
+        <PlayerPill
+          color={seatColors[id]}
+          prenom={players[id].prenom}
+          score={totals[id]}
+          editable={state === 'nommer' || isRenaming}
+          hasError={state === 'nommer' && isDuplicate(players, id)}
+          onChangePrenom={(v) => setPrenom(id, v)}
+          onPress={!isRenaming && (state === 'jouer' || state === 'saisir') ? () => selectPlayer(id) : undefined}
+          onLongPress={
+            state === 'jouer' || state === 'saisir'
+              ? () => { renamePrevRef.current = players[id].prenom; setRenamingId(id); }
+              : undefined
+          }
+          onBlur={
+            isRenaming
+              ? () => {
+                  if (players[id].prenom.trim().length === 0) setPrenom(id, renamePrevRef.current);
+                  setRenamingId(null);
+                }
+              : undefined
+          }
+          active={(state === 'saisir' && activeId === id) || isRenaming}
+          inputValue={state === 'saisir' ? entry[id] : undefined}
+          notif={notifFor(id)}
+          notifPosition={row === 'top' ? 'below' : 'above'}
+          pulse={id === prevWinner}
+          pulseKey={rounds.length}
+        />
+      </Quadrant>
+    );
+  };
 
   const cartoucheText = state === 'nommer' ? '' : leaderId !== null ? `${players[leaderId].prenom} mène` : '';
 

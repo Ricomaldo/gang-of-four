@@ -12,6 +12,10 @@ import {
   gangKey,
   filterByGang,
   groupBySoiree,
+  deriveGangs,
+  loadMasked,
+  saveMasked,
+  relativeLabel,
 } from '../src/store/soireeStorage';
 import type { Round, GameArchive, Vrac } from '../src/domain/model';
 import { TABLE_SEATS } from '../src/domain/model';
@@ -178,5 +182,71 @@ describe('groupBySoiree — sessions dérivées, groupées par date', () => {
     const ts = new Date('2026-07-07T02:30:00').getTime();
     const sessions = groupBySoiree([mkArchive(ts)]);
     expect(sessions[0].date).toBe('2026-07-06');
+  });
+});
+
+// ──────────────── deriveGangs — « tes gangs » (accueil, lot 3a) ────────────────
+
+describe('deriveGangs', () => {
+  it('un gang par gangKey, triés du plus récent au plus ancien', () => {
+    const ts1 = new Date('2026-07-05T20:00:00').getTime();
+    const ts2 = new Date('2026-07-06T20:00:00').getTime();
+    const gangA = mkArchive(ts1, ['Alice', 'Bob', 'Chloé', 'David']);
+    const gangB = mkArchive(ts2, ['Eve', 'Franz', 'Gina', 'Hugo']);
+    const gangs = deriveGangs([gangA, gangB]);
+    expect(gangs).toHaveLength(2);
+    expect(gangs[0].key).toBe(gangKey(gangB.players)); // le plus récent en tête
+    expect(gangs[1].key).toBe(gangKey(gangA.players));
+  });
+
+  it('regroupe deux parties du même gang sous une seule entrée, garde le roster le plus récent', () => {
+    const ts1 = new Date('2026-07-05T20:00:00').getTime();
+    const ts2 = new Date('2026-07-06T20:00:00').getTime();
+    const first = mkArchive(ts1, ['Alice', 'Bob', 'Chloé', 'David']);
+    const second = mkArchive(ts2, ['Alice', 'Bob', 'Chloé', 'David']);
+    const gangs = deriveGangs([first, second]);
+    expect(gangs).toHaveLength(1);
+    expect(gangs[0].lastPlayedAt).toBe(ts2);
+  });
+
+  it('retourne une liste vide pour un vrac vide', () => {
+    expect(deriveGangs([])).toEqual([]);
+  });
+});
+
+// ──────────────── masquage — gangKeys masqués, round-trip storage ────────────────
+
+describe('loadMasked / saveMasked — round-trip', () => {
+  beforeEach(() => AsyncStorage.clear());
+
+  it('retourne une liste vide si rien en storage', async () => {
+    expect(await loadMasked()).toEqual([]);
+  });
+
+  it('round-trip save → load', async () => {
+    await saveMasked(['alice|bob|chloe|david']);
+    expect(await loadMasked()).toEqual(['alice|bob|chloe|david']);
+  });
+});
+
+// ──────────────── relativeLabel — temps relatif gros grain ────────────────
+
+describe('relativeLabel', () => {
+  const now = new Date('2026-07-13T20:00:00').getTime();
+
+  it("aujourd'hui pour un timestamp du jour même", () => {
+    expect(relativeLabel(now, now)).toBe("aujourd'hui");
+  });
+
+  it('hier pour un timestamp de la veille (1 jour)', () => {
+    expect(relativeLabel(now - 1 * 86_400_000, now)).toBe('hier');
+  });
+
+  it('en jours sous 30 jours', () => {
+    expect(relativeLabel(now - 8 * 86_400_000, now)).toBe('8 j');
+  });
+
+  it('en mois au-delà de 30 jours', () => {
+    expect(relativeLabel(now - 45 * 86_400_000, now)).toBe('1 mois');
   });
 });

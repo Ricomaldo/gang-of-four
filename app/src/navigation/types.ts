@@ -1,13 +1,16 @@
-/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé — hub-and-spoke (lot 3a) ═══
  * Cible : routes hub-and-spoke (accueil/Round/stèle/feuille).
- * Lot : lot 3 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+ * Lot : lot 3a — plan : app/docs/journal/2026-07-12-plan-integration.md.
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
  * ═══════════════════════════════ */
-/** Contrat de navigation — stack unique (React Navigation, native-stack). */
+/**
+ * Contrat de navigation — stack unique (React Navigation, native-stack).
+ * Tout passe par l'accueil (le moyeu) ; pas de lien direct écran↔écran.
+ * Stele/Feuille sont déclarées ici mais leurs écrans réels = lot 3b (stubs pour l'instant).
+ */
 export type RootStackParamList = {
-  Splash: undefined;
-  Setup: undefined; // saisie des 4 prénoms (grille 2×2 réutilisée, clavier géré)
-  Round: undefined; // écran manche (jeu + fin de partie)
-  ScoreEntry: undefined; // saisie de fin de manche (présentée en modal)
-  ScoreGrid: undefined; // carnet de score (présenté en modal)
+  Accueil: undefined; // le moyeu — porte + carrefour (jouer / consulter)
+  Round: undefined; // écran manche (nommer/jouer/saisir/fin, en états)
+  Stele: { gangKey: string }; // le palmarès d'un gang — stub lot 3a, écran réel lot 3b
+  Feuille: undefined; // modale — la grille d'une partie — stub lot 3a, écran réel lot 3b
 };

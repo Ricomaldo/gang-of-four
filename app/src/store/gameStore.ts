@@ -2,6 +2,10 @@
  * Cible : 3 issues (l'annulée n'est JAMAIS archivée), pause/reprise.
  * Lot : lot 0 — plan : app/docs/journal/2026-07-12-plan-integration.md.
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ *
+ * + `masked` / `maskGang` / `unmaskAllGangs` (lot 3a, brief 2026-07-13) : les
+ * gangKeys masqués de « tes gangs » (accueil). Le geste démasque de lui-même —
+ * si le gang masqué archive une nouvelle partie, il renaît dans la liste.
  * ═══════════════════════════════ */
 /**
  * Store de partie — la SEULE source de vérité stockée (Zustand, single device).
@@ -19,10 +23,13 @@ import { computeTotals, isGameOver } from '../domain/scoring';
 import {
   appendToVrac,
   clearGame,
+  gangKey,
   groupBySoiree,
   loadGame as loadGameFromStorage,
+  loadMasked,
   loadVrac as loadVracFromStorage,
   saveGame,
+  saveMasked,
   saveVrac,
   soireeDate,
 } from './soireeStorage';
@@ -49,9 +56,10 @@ function gameOf(s: Game): Game {
 }
 
 /**
- * Vue de compat pour l'UI gelée (SetupScreen/ScoreGridScreen, [†] au reshape mais
- * vivante aujourd'hui) : elle lit encore `soiree.date`/`soiree.parties` (soirée du
- * jour uniquement). Dérivée du vrac à chaque mutation — rien de stocké sous ce nom.
+ * Vue de compat pour l'UI gelée (ScoreGridScreen, [†] au reshape mais non
+ * routée aujourd'hui, gardée jusqu'à son éclatement en stèle/feuille lot 3b) :
+ * elle lit encore `soiree.date`/`soiree.parties` (soirée du jour uniquement).
+ * Dérivée du vrac à chaque mutation — rien de stocké sous ce nom.
  */
 function todaySoiree(vrac: Vrac): Soiree | null {
   const today = soireeDate(Date.now());
@@ -61,10 +69,13 @@ function todaySoiree(vrac: Vrac): Soiree | null {
 interface GameStore extends Game {
   vrac: Vrac;
   soiree: Soiree | null;
+  masked: string[];
   setPrenom: (id: PlayerId, prenom: string) => void;
   addRound: (cardCounts: Record<PlayerId, CardCount>) => void;
   resetGame: (keepPlayers?: boolean) => void;
   cancelGame: () => void;
+  maskGang: (key: string) => void;
+  unmaskAllGangs: () => void;
   hydrate: () => Promise<void>;
 }
 
@@ -72,6 +83,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   ...initialGame(),
   vrac: { schemaVersion: 1, parties: [] },
   soiree: null,
+  masked: [],
 
   setPrenom: (id, prenom) => {
     set((s) => ({ players: { ...s.players, [id]: { ...s.players[id], prenom } } }));
@@ -84,6 +96,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const status: GameStatus = isGameOver(computeTotals(rounds)) ? 'terminee' : s.status;
       let vrac = s.vrac;
       let soiree = s.soiree;
+      let masked = s.masked;
       if (status === 'terminee') {
         const archive: GameArchive = {
           id: s.id,
@@ -97,8 +110,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
         vrac = appendToVrac(vrac, archive);
         saveVrac(vrac);
         soiree = todaySoiree(vrac);
+        // Le geste : un gang masqué qui rejoue renaît de lui-même dans « tes gangs ».
+        const key = gangKey(s.players);
+        if (masked.includes(key)) {
+          masked = masked.filter((k) => k !== key);
+          saveMasked(masked);
+        }
       }
-      return { rounds, status, vrac, soiree };
+      return { rounds, status, vrac, soiree, masked };
     });
     // Partie finie → archivée dans le vrac, plus rien à reprendre ; sinon on persiste la partie vive.
     if (get().status === 'terminee') clearGame();
@@ -124,9 +143,29 @@ export const useGameStore = create<GameStore>((set, get) => ({
     get().resetGame(false);
   },
 
-  // Au boot : recharge le vrac + la partie en cours (si l'app avait été tuée en jeu).
+  // Masquer un roster (accueil) : retiré de « tes gangs », ses feuilles restent au vrac.
+  maskGang: (key) => {
+    set((s) => {
+      if (s.masked.includes(key)) return {};
+      const masked = [...s.masked, key];
+      saveMasked(masked);
+      return { masked };
+    });
+  },
+
+  // Démasquage par consultation (« + N gangs masqués ») : révèle tout, pas d'écran de gestion.
+  unmaskAllGangs: () => {
+    set({ masked: [] });
+    saveMasked([]);
+  },
+
+  // Au boot : recharge le vrac + la partie en cours (si l'app avait été tuée en jeu) + les masqués.
   hydrate: async () => {
-    const [vrac, game] = await Promise.all([loadVracFromStorage(), loadGameFromStorage()]);
-    set({ vrac, soiree: todaySoiree(vrac), ...(game ?? {}) });
+    const [vrac, game, masked] = await Promise.all([
+      loadVracFromStorage(),
+      loadGameFromStorage(),
+      loadMasked(),
+    ]);
+    set({ vrac, soiree: todaySoiree(vrac), masked, ...(game ?? {}) });
   },
 }));

@@ -3,6 +3,7 @@
  * Prouve le câblage store → domain (isGameOver ∘ computeTotals) hors UI.
  */
 import { useGameStore } from '../src/store/gameStore';
+import { gangKey } from '../src/store/soireeStorage';
 
 const g = () => useGameStore.getState();
 
@@ -53,5 +54,34 @@ describe('gameStore — annuler ≠ archiver (brief lot 0, chantier 4)', () => {
     expect(g().vrac.parties).toHaveLength(before);
     expect(g().rounds).toHaveLength(0);
     expect(g().status).toBe('en-cours'); // fraîche, prête à rejouer
+  });
+});
+
+describe('gameStore — masquer/démasquer un gang (lot 3a, tes gangs)', () => {
+  it('maskGang ajoute la clé, unmaskAllGangs vide tout', () => {
+    g().maskGang('a|b|c|d');
+    expect(g().masked).toContain('a|b|c|d');
+    g().unmaskAllGangs();
+    expect(g().masked).toHaveLength(0);
+  });
+
+  it('maskGang est idempotent (pas de doublon)', () => {
+    g().maskGang('a|b|c|d');
+    g().maskGang('a|b|c|d');
+    expect(g().masked.filter((k) => k === 'a|b|c|d')).toHaveLength(1);
+    g().unmaskAllGangs();
+  });
+
+  it('le geste : un gang masqué qui archive une nouvelle partie renaît de lui-même', () => {
+    // Ce roster (prénoms vides par défaut dans ces tests) partage la même
+    // gangKey — masquer puis terminer une partie doit la faire disparaître du masqué.
+    g().resetGame();
+    const key = gangKey(g().players);
+    g().maskGang(key);
+    expect(g().masked).toContain(key);
+    g().addRound({ 0: 0, 1: 16, 2: 16, 3: 16 });
+    g().addRound({ 0: 0, 1: 10, 2: 10, 3: 10 }); // atteint 100 → archive
+    expect(g().status).toBe('terminee');
+    expect(g().masked).not.toContain(key);
   });
 });

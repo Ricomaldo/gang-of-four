@@ -2,7 +2,7 @@
 title: 'GANG — Écran : l''accueil (la porte / le moyeu)'
 created: '2026-07-10'
 updated: '2026-07-13'
-version: 0.2.2
+version: 0.2.3
 status: draft
 type: fiche-ecran
 ---
@@ -11,6 +11,14 @@ type: fiche-ecran
 
 > **Fiche-écran niveau wireframe — pour le brief Claude Design.** Design source :
 > `reshape.md` (l'IA, les organes). Remplace le `SplashScreen` (2 logos passifs).
+>
+> **⚠️ Superseded (13/07) sur le centre & les états** — wireframe antérieur.
+> `specs/specs-ecrans.md §L'accueil` **fait foi** : le centre = le **disque-GANG**
+> (le mot, typographique, coupé aux bords — **pas** le Gong/logo, qui ne vit qu'au
+> Round) ; les états = **vierge · invite · reprise** (le « revanche » ci-dessous est
+> dépassé) ; le tap du disque est **binaire** (jouer si aucune partie / reprendre si
+> en cours) — la **relance ciblée d'un roster** vit à la **stèle** (« on rejoue ? »),
+> pas ici. Le schéma « Gong + wordmark séparé + revanche » n'est plus la cible.
 
 ## Rôle
 

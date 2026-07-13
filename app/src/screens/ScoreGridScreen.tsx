@@ -32,10 +32,13 @@ import { ScoreCarnet } from '../components/ScoreCarnet';
 import type { GameArchive } from '../domain/model';
 import { useGameStore } from '../store/gameStore';
 import { soireeDate } from '../store/soireeStorage';
-import type { RootStackParamList } from '../navigation/types';
 import { palette } from '../theme/tokens';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'ScoreGrid'>;
+// Écran gelé, non routé (lot 3a a retiré 'ScoreGrid' de RootStackParamList —
+// cet écran s'éclate en stèle/feuille au lot 3b). Type de nav local, détaché
+// du contrat live, juste pour rester tsc-clean en attendant.
+type LocalParamList = { ScoreGrid: undefined };
+type Props = NativeStackScreenProps<LocalParamList, 'ScoreGrid'>;
 
 export function ScoreGridScreen({ navigation }: Props) {
   const id = useGameStore((s) => s.id);
