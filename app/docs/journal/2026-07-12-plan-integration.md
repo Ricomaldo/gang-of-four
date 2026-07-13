@@ -2,7 +2,7 @@
 title: 'GANG — Plan d''intégration du reshape (alpha-signature)'
 created: '2026-07-12'
 updated: '2026-07-13'
-version: 0.2.2
+version: 0.2.3
 status: active
 type: plan
 ---
@@ -27,7 +27,7 @@ type: plan
 | `domain/stats.ts` | **[R]** | miroirs indépendants (décroiser les pôles), portée gang, branlée, tenant par rejeu |
 | `domain/` *(nouveau)* | **[N]** | `detectBranlee(round)` → `null\|'petite'\|'grosse'` |
 | `store/gameStore.ts` | **[R]** | 3 issues (annulée ≠ archivée), pause/reprise |
-| `store/soireeStorage.ts` | **[R]** | soirée-unique → **le vrac** (terminées, inter-sessions, local P1) + migration de clé `gof:soiree` (schemaVersion) |
+| `store/soireeStorage.ts` | **[R]** | soirée-unique → **le vrac** (terminées, inter-sessions, local P1) — **stockage neuf, repart à zéro** (rien à migrer ; contrat clé/forme/`schemaVersion` au brief lot 0) |
 | `App.tsx` | **[R]** | stack : accueil · Round · stèle + feuille (modale) — hub-and-spoke |
 | `navigation/types.ts` | **[R]** | routes hub-and-spoke (accueil/Round/stèle/feuille) |
 | `screens/SplashScreen.tsx` | **[†]** | remplacé par **l'accueil** [N] |
@@ -52,7 +52,8 @@ type: plan
 **Lot 0 · le domaine (pur, prouvé d'abord)** — *comme alpha-core : la logique
 avant l'UI.*
 `detectBranlee` + miroirs `stats.ts` + `gofCount`/3 issues au modèle + le vrac
-(`soireeStorage` + migration de clé). **Gate : les tests étendus verts**
+(`soireeStorage` — **stockage neuf, repart à zéro** ; contrat spec'd dans ce
+brief). **Gate : les tests étendus verts**
 (cas-reference 0.2 : branlée bornes 30/45, titres miroirs, monde étrange) +
 les 62 existants intacts. Zéro UI touchée.
 
@@ -68,11 +69,16 @@ léger, **cérémonie branlée** (2 sorties corriger/graver), **final** plein
 plateau (miroir gloire/💩). Dépend des lots 0+1. **Gate : une branlée saisie
 déclenche la cérémonie ; une partie finie déclenche le final.**
 
-**Lot 3 · le gravé** — l'accueil (disque-GANG **4c**, tes gangs + temps relatif,
-**masquer/démasquer** un roster, 3 états dont annuler) · la stèle (2 trônes,
-détail, mention GOF, on rejoue ?, **partager**) · la feuille (modale, scores de
-manche, crayon/gravé, partager à tout moment) · **appui long sur pill =
-renommer** · la nav hub-and-spoke complète (`App.tsx`). **Gate : « écrire
+**Lot 3a · rentrer chez soi** — la nav hub-and-spoke complète (`App.tsx` +
+`navigation/types`) · l'accueil (disque-GANG **4c**, tes gangs + temps relatif,
+**masquer/démasquer** un roster, 3 états dont annuler) · **appui long sur pill =
+renommer**. Dépend des lots 0+1. **Gate : l'app se navigue depuis l'accueil (le
+moyeu) — tes gangs s'affichent, une partie en cours se reprend ou s'annule.**
+
+**Lot 3b · lire la mémoire** — la stèle (2 trônes, détail, mention GOF, **ouvrir
+une feuille passée**, on rejoue ?, **partager**) · la feuille (modale, scores de
+manche, crayon/gravé, **l'encoche `/` `//` qui pèse**, partager à tout moment).
+Dépend du lot 3a (la nav) + du lot 0 (le vrac dérivé). **Gate : « écrire
 l'histoire » testable — une partie d'hier se rouvre, le palmarès du gang tient
 inter-sessions.**
 
@@ -84,8 +90,9 @@ dev.irimwebforge.com). **Gate : la table réelle — prochaine soirée.**
 
 ## Risques nommés
 
-- **La migration du vrac** (clé `gof:soiree` → nouveau schéma) : seule opération
-  destructrice possible — schemaVersion + garde, test de reprise obligatoire.
+- **Le contrat du vrac** (N1) : **repart à zéro** (stockage neuf, nouveau build) →
+  **pas de migration, pas d'opération destructrice**. Reste à spécifier sa clé, sa
+  forme et son `schemaVersion` — dans le **brief du lot 0**.
 - **Le clavier natif** (état *nommer*) : la contrainte plateau-visible est
   spec'd (`specs-ecrans`) mais à éprouver sur device tôt (lot 1).
 - **L'irréversible** (branlée gravée) vs l'esprit clément : la cérémonie est le
