@@ -4,22 +4,24 @@
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
  * ═══════════════════════════════ */
 /**
- * Pavé numérique unique (écran de saisie de fin de manche).
- * Chiffres 1–9, 0, effacer (⌫). La règle d'auto-avance (1 attend un 2e chiffre,
- * 0/2–9 valident direct) vit dans l'écran de saisie, pas ici : ce composant
- * ne fait qu'émettre les touches.
+ * Pavé numérique-calculette (zone du bas, état SAISIR). Chiffres 1–9, del, 0, « = ».
+ * Le « = » EST le valider : il déclenche le calcul, actif seulement à 4/4 saisis
+ * (garde d'entrée déléguée à l'appelant via `canValidate`, cf. domain/winner
+ * isValidRoundInput). Ce composant n'émet que les touches, aucune règle ici.
  */
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { palette } from '../theme/tokens';
+import { palette, typography } from '../theme/tokens';
 
 type Props = {
   onDigit: (d: number) => void;
   onBackspace: () => void;
+  onValidate: () => void;
+  canValidate: boolean;
 };
 
 const KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
-export function NumPad({ onDigit, onBackspace }: Props) {
+export function NumPad({ onDigit, onBackspace, onValidate, canValidate }: Props) {
   return (
     <View style={styles.grid}>
       {KEYS.map((k) => (
@@ -27,12 +29,18 @@ export function NumPad({ onDigit, onBackspace }: Props) {
           <Text style={styles.label}>{k}</Text>
         </TouchableOpacity>
       ))}
-      <View style={styles.key} />
+      <TouchableOpacity style={styles.key} onPress={onBackspace}>
+        <Text style={styles.label}>⌫</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.key} onPress={() => onDigit(0)}>
         <Text style={styles.label}>0</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.key} onPress={onBackspace}>
-        <Text style={styles.label}>⌫</Text>
+      <TouchableOpacity
+        style={[styles.key, styles.equals, !canValidate && styles.equalsOff]}
+        onPress={onValidate}
+        disabled={!canValidate}
+      >
+        <Text style={[styles.label, styles.equalsLabel]}>=</Text>
       </TouchableOpacity>
     </View>
   );
@@ -51,4 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: { fontSize: 30, color: palette.encre },
+  equals: { backgroundColor: palette.encre, borderColor: palette.encre },
+  equalsOff: { opacity: 0.3 },
+  equalsLabel: { ...typography.proclaim, color: palette.fondCreme },
 });

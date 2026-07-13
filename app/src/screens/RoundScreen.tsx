@@ -4,99 +4,125 @@
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
  * ═══════════════════════════════ */
 /**
- * Écran de manche (ambient) — jeu + fin de partie uniquement.
- * La saisie des prénoms vit désormais dans SetupScreen ; ici les prénoms sont acquis.
+ * L'écran de jeu — la table. Absorbe nommer / jouer / saisir en ÉTATS (pas en
+ * écrans) : un seul montage, du 1er prénom au dernier point. Trois conteneurs
+ * empilés — cartouche (voix calme) / plateau (~50 %, persistant) / zone du bas
+ * (contenu dépendant de l'état, cf. specs-ecrans §Le Round).
  *
- * Ossature : <QuadrantGrid> (2×2 partagé) de <Quadrant>/<PlayerPill>, <Hub> centré.
- * États Hub : manche 1 à jouer → "ENTRER SCORES" ; après une manche → "FIN DE MANCHE".
- * Notif qui-donne-à-qui dans la pill ; easter egg GoF sur appui long ; carnet par
- * glissé vers le haut (modal montant du bas). Fin de partie : carte vainqueur.
+ * Le battement (reshape.md §battement) : tap une pill (seule cible) → elle
+ * s'allume, le numpad monte → chiffres sur la pill → ordre libre → « = » actif
+ * à 4/4 (un seul à 0) → calcul (domain, intouché) → totaux sur les pills.
+ *
+ * Pas de cérémonie/final ici (lot 2) : à `isGameOver`, l'état « terminé »
+ * suffit — un mot + deux portes minimales (resetGame), sans écran d'accueil
+ * (lot 3a). Le long-press GOF disparaît (il vivra au Gong, lot 4).
  */
-import { useEffect, useRef, useState } from 'react';
-import { Alert, PanResponder, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { GofAnimation } from '../components/GofAnimation';
-import { Hub } from '../components/Hub';
+import { Cartouche } from '../components/Cartouche';
+import { NumPad } from '../components/NumPad';
 import { PlayDirection } from '../components/PlayDirection';
 import { PlayerPill } from '../components/PlayerPill';
 import type { PillNotif } from '../components/PlayerPill';
 import { Quadrant } from '../components/Quadrant';
 import { QuadrantGrid } from '../components/QuadrantGrid';
-import { PLAYER_IDS, TABLE_SEATS } from '../domain/model';
-import type { PlayerId } from '../domain/model';
+import { MAX_CARDS, PLAYER_IDS, SEAT_ORDER, TABLE_SEATS } from '../domain/model';
+import type { CardCount, PlayerId, Round } from '../domain/model';
 import { directionOfPlay } from '../domain/direction';
-import { computeTotals } from '../domain/scoring';
-import { determineWinner, roundLastPlace, roundWinner } from '../domain/winner';
+import { computeRoundScore, computeTotals } from '../domain/scoring';
+import { determineWinner, isValidRoundInput, lowestTotalCandidates, roundLastPlace, roundWinner } from '../domain/winner';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
-import { palette, seatColors } from '../theme/tokens';
+import { palette, seatColors, typography } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Round'>;
 
-export function RoundScreen({ navigation }: Props) {
+const KEEP_AWAKE_TAG = 'gang-round';
+
+const blankEntry = (): Record<PlayerId, string> => ({ 0: '', 1: '', 2: '', 3: '' });
+
+const isDuplicate = (players: Record<PlayerId, { prenom: string }>, id: PlayerId) => {
+  const v = players[id].prenom.trim().toLowerCase();
+  return v.length > 0 && PLAYER_IDS.filter((x) => players[x].prenom.trim().toLowerCase() === v).length > 1;
+};
+
+export function RoundScreen(_props: Props) {
   const players = useGameStore((s) => s.players);
+  const setPrenom = useGameStore((s) => s.setPrenom);
   const rounds = useGameStore((s) => s.rounds);
   const status = useGameStore((s) => s.status);
+  const addRound = useGameStore((s) => s.addRound);
   const resetGame = useGameStore((s) => s.resetGame);
 
   const [cardGiven, setCardGiven] = useState(false);
-  const [gofPlayer, setGofPlayer] = useState<PlayerId | null>(null);
+  const [activeId, setActiveId] = useState<PlayerId | null>(null);
+  const [entry, setEntry] = useState<Record<PlayerId, string>>(blankEntry);
 
-  const inPlay = rounds.length > 0 && status !== 'terminee';
+  const namesReady = PLAYER_IDS.every((id) => players[id].prenom.trim().length > 0) && !PLAYER_IDS.some((id) => isDuplicate(players, id));
   const over = status === 'terminee';
+
+  const state: 'nommer' | 'jouer' | 'saisir' | 'termine' =
+    !namesReady ? 'nommer' : over ? 'termine' : activeId !== null ? 'saisir' : 'jouer';
 
   const totals = computeTotals(rounds);
   const direction = directionOfPlay(rounds.length + 1);
   const winnerId = over ? determineWinner(rounds, TABLE_SEATS) : null;
+  const leaderId = rounds.length > 0 && !over ? lowestTotalCandidates(totals)[0] : null;
 
   const lastRound = rounds.length > 0 ? rounds[rounds.length - 1] : null;
   const prevWinner: PlayerId | null = lastRound ? roundWinner(lastRound) : null;
   const prevLast: PlayerId | null = lastRound ? roundLastPlace(lastRound, totals, TABLE_SEATS) : null;
 
+  // La veille bloquée (friction n°1 soirée 01) : active tant qu'une partie est en cours
+  // (nommer → jouer → saisir), relâchée à la fin.
+  useEffect(() => {
+    // .catch : tant que le module natif n'est pas rebuild (ajouté au lot 1), un
+    // échec ici ne doit pas faire planter l'écran — juste ne pas garder l'écran allumé.
+    if (status === 'en-cours') {
+      activateKeepAwakeAsync(KEEP_AWAKE_TAG).catch(() => {});
+    } else {
+      deactivateKeepAwake(KEEP_AWAKE_TAG).catch(() => {});
+    }
+    return () => { deactivateKeepAwake(KEEP_AWAKE_TAG).catch(() => {}); };
+  }, [status]);
+
   // Reset de la coche « a donné sa carte » à chaque nouvelle manche.
   useEffect(() => { setCardGiven(false); }, [rounds.length]);
 
-  // Fin de partie : on n'ouvre plus la feuille d'office. On annonce le vainqueur sur la
-  // carte de fin, avec un bouton « Voir les scores » (accès feuille FD-12 préservé, à la
-  // demande) — l'annonce vient avant la grille, pas après.
+  // Le battement — tap une pill (seule cible) : l'allume, ouvre/rejoint la saisie en cours.
+  const selectPlayer = (id: PlayerId) => setActiveId(id);
 
-  // Déclenche la frime : GofAnimation prend la main jusqu'à onDone (5 s), qui remet à null.
-  const triggerGof = (id: PlayerId) => setGofPlayer(id);
+  const onDigit = (d: number) => {
+    if (activeId === null) return;
+    setEntry((v) => {
+      const next = (v[activeId] + String(d)).slice(0, 2);
+      if (parseInt(next, 10) > MAX_CARDS) return v;
+      return { ...v, [activeId]: next };
+    });
+  };
+  const onBackspace = () => {
+    if (activeId === null) return;
+    setEntry((v) => ({ ...v, [activeId]: v[activeId].slice(0, -1) }));
+  };
 
-  const confirmReset = () =>
-    Alert.alert('Nouvelle partie', 'Rejouer avec qui ?', [
-      { text: 'Annuler', style: 'cancel' },
-      {
-        text: 'Nouveaux joueurs',
-        onPress: () => {
-          resetGame(false);
-          navigation.replace('Setup');
-        },
-      },
-      {
-        text: 'Mêmes joueurs',
-        onPress: () => {
-          resetGame(true);
-          setCardGiven(false);
-        },
-      },
-    ]);
+  const filled = PLAYER_IDS.every((id) => entry[id].length > 0);
+  const cardCounts = {} as Record<PlayerId, CardCount>;
+  for (const id of PLAYER_IDS) cardCounts[id] = parseInt(entry[id], 10);
+  const canValidate = filled && isValidRoundInput(cardCounts);
 
-  // Glissé vers le HAUT → carnet (cohérent avec le modal qui monte du bas).
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, g) => g.dy < -22 && Math.abs(g.dx) < 60,
-      onPanResponderRelease: (_, g) => {
-        if (g.dy < -55) navigation.navigate('ScoreGrid');
-      },
-    }),
-  ).current;
-
-  const hubState = gofPlayer !== null ? 'gofTriggered' : rounds.length === 0 ? 'enterScores' : 'roundEnd';
+  const onValidate = () => {
+    if (!canValidate) return;
+    addRound(cardCounts);
+    setEntry(blankEntry());
+    setActiveId(null);
+  };
 
   const notifFor = (id: PlayerId): PillNotif => {
-    if (!inPlay) return null;
+    if (state !== 'jouer' && state !== 'saisir') return null;
+    if (rounds.length === 0) return null;
     if (id === prevWinner) return { kind: 'winner' };
     if (id === prevLast) return { kind: 'giver', given: cardGiven, onGive: () => setCardGiven(true) };
     return null;
@@ -105,86 +131,121 @@ export function RoundScreen({ navigation }: Props) {
   // Haut : carte contre le bord haut, notif dessous (vers le centre). Bas : carte
   // contre le bord bas, notif dessus (vers le centre). Pills symétriques autour de l'arc.
   const cell = (id: PlayerId, row: 'top' | 'bottom') => (
-    <Quadrant key={id} align="center" recede={gofPlayer !== null && gofPlayer !== id}>
+    <Quadrant key={id} align="center">
       <PlayerPill
         color={seatColors[id]}
         prenom={players[id].prenom}
         score={totals[id]}
-        onLongPress={() => triggerGof(id)}
+        editable={state === 'nommer'}
+        hasError={state === 'nommer' && isDuplicate(players, id)}
+        onChangePrenom={(v) => setPrenom(id, v)}
+        onPress={state === 'jouer' || state === 'saisir' ? () => selectPlayer(id) : undefined}
+        active={state === 'saisir' && activeId === id}
+        inputValue={state === 'saisir' ? entry[id] : undefined}
         notif={notifFor(id)}
         notifPosition={row === 'top' ? 'below' : 'above'}
       />
     </Quadrant>
   );
 
-  const overlay =
-    over && winnerId !== null ? (
-      <View style={styles.endCard}>
-        <Text style={styles.endTitle}>⭐️ {players[winnerId].prenom} gagne</Text>
-        <TouchableOpacity style={styles.seeScores} onPress={() => navigation.navigate('ScoreGrid')}>
-          <Text style={styles.seeScoresText}>Voir les scores</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.newGame} onPress={confirmReset}>
-          <Text style={styles.newGameText}>Nouvelle partie</Text>
-        </TouchableOpacity>
-      </View>
-    ) : (
-      <Hub
-        state={hubState}
-        gofPlayerName={gofPlayer !== null ? players[gofPlayer].prenom : undefined}
-        onPress={() => {
-          setCardGiven(false);
-          navigation.navigate('ScoreEntry');
-        }}
-      />
-    );
+  const cartoucheText = state === 'nommer' ? '' : leaderId !== null ? `${players[leaderId].prenom} mène` : '';
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.flex} {...panResponder.panHandlers}>
-        <QuadrantGrid cells={[cell(0, 'top'), cell(1, 'top'), cell(2, 'bottom'), cell(3, 'bottom')]} overlay={overlay} />
+      <Cartouche text={cartoucheText} />
 
-        {/* Sens de jeu : 4 flèches autour du hub, tant que la partie tourne */}
-        {!over && (
+      <View style={styles.plateauZone}>
+        <QuadrantGrid cells={[cell(0, 'top'), cell(1, 'top'), cell(2, 'bottom'), cell(3, 'bottom')]} />
+        {(state === 'jouer' || state === 'saisir') && (
           <View style={styles.dirLayer} pointerEvents="none">
             <PlayDirection direction={direction} />
           </View>
         )}
+      </View>
 
-        {/* Affordance carnet (discrète) — toujours visible pour permettre de consulter
-            la soirée précédente dès la 1re manche (FD-12). */}
-        <TouchableOpacity style={styles.carnetHint} onPress={() => navigation.navigate('ScoreGrid')} hitSlop={12}>
-          <Text style={styles.carnetLabel}>carnet</Text>
-        </TouchableOpacity>
-
-        {/* Easter egg « GANG OF FOUR ! » — frime plein écran + son, par-dessus tout. */}
-        {gofPlayer !== null && (
-          <GofAnimation key={gofPlayer} playerId={gofPlayer} onDone={() => setGofPlayer(null)} />
+      <View style={styles.zoneBas}>
+        {state === 'jouer' && <FeuilleApercu rounds={rounds} />}
+        {state === 'saisir' && (
+          <NumPad onDigit={onDigit} onBackspace={onBackspace} onValidate={onValidate} canValidate={canValidate} />
+        )}
+        {state === 'termine' && winnerId !== null && (
+          <View style={styles.endCard}>
+            <Text style={styles.endTitle}>⭐️ {players[winnerId].prenom} gagne</Text>
+            <View style={styles.endActions}>
+              <TouchableOpacity style={styles.newGame} onPress={() => resetGame(true)}>
+                <Text style={styles.newGameText}>Rejouer (mêmes joueurs)</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.newGameGhost} onPress={() => resetGame(false)}>
+                <Text style={styles.newGameGhostText}>Nouveaux joueurs</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         )}
       </View>
     </SafeAreaView>
   );
 }
 
+/**
+ * L'aperçu feuille (état jouer, repos) — mini running : les 2 dernières manches
+ * + une ligne vierge (écho visuel, pas une cible — le tap-saisie ne vit que sur
+ * les pills, cf. fourche 3). Cellules = scores de manche (fourche 4), le cumul
+ * vit sur les pills. PAS la feuille modale complète (lot 3b).
+ */
+function FeuilleApercu({ rounds }: { rounds: Round[] }) {
+  const lastRounds = rounds.slice(-2);
+  return (
+    <View style={styles.feuille}>
+      <View style={styles.feuilleRow}>
+        {SEAT_ORDER.map((id) => (
+          <View key={id} style={[styles.feuilleDot, { backgroundColor: seatColors[id] }]} />
+        ))}
+      </View>
+      {lastRounds.map((round, i) => (
+        <View key={i} style={styles.feuilleRow}>
+          {SEAT_ORDER.map((id) => (
+            <Text key={id} style={styles.feuilleCell}>{computeRoundScore(round.cardCounts[id])}</Text>
+          ))}
+        </View>
+      ))}
+      <View style={styles.feuilleRow}>
+        {SEAT_ORDER.map((id) => (
+          <Text key={id} style={styles.feuilleCellVierge}>–</Text>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: palette.fondCreme },
-  flex: { flex: 1 },
+  // Le plateau unifié à ~50 % (archi cible) — capé pour rester au-dessus du
+  // clavier natif pendant NOMMER (~45-48 % depuis le bas, cf. BUG-03).
+  plateauZone: { flex: 5, maxHeight: '50%' },
   dirLayer: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },
-  carnetHint: { position: 'absolute', bottom: 10, alignSelf: 'center', alignItems: 'center' },
-  carnetLabel: { fontSize: 11, color: palette.accentSaisie, fontWeight: '700', letterSpacing: 1 },
+  zoneBas: { flex: 4, justifyContent: 'center' },
+
+  feuille: { paddingHorizontal: 24, gap: 10 },
+  feuilleRow: { flexDirection: 'row', justifyContent: 'space-around' },
+  feuilleDot: { width: 10, height: 10, borderRadius: 5 },
+  feuilleCell: { ...typography.chrome, fontSize: 16, color: palette.encre, minWidth: 28, textAlign: 'center' },
+  feuilleCellVierge: { ...typography.chrome, fontSize: 16, color: palette.bordure, minWidth: 28, textAlign: 'center' },
+
   endCard: {
     backgroundColor: palette.fondPill,
     borderRadius: 16,
     borderWidth: 2,
     borderColor: palette.encre,
+    marginHorizontal: 24,
     paddingVertical: 20,
-    paddingHorizontal: 28,
+    paddingHorizontal: 24,
     alignItems: 'center',
     gap: 16,
   },
-  endTitle: { fontSize: 22, fontWeight: '700', color: palette.encre },
-  seeScores: { backgroundColor: palette.encre, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 24 },
-  seeScoresText: { color: palette.fondCreme, fontSize: 16, fontWeight: '600' },
-  newGame: { borderRadius: 12, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1.5, borderColor: palette.bordureForte },
-  newGameText: { color: palette.encre, fontSize: 14, fontWeight: '600' },
+  endTitle: { ...typography.proclaim, fontSize: 22, color: palette.encre },
+  endActions: { gap: 10, alignSelf: 'stretch' },
+  newGame: { backgroundColor: palette.encre, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 24, alignItems: 'center' },
+  newGameText: { color: palette.fondCreme, fontSize: 15, fontWeight: '600' },
+  newGameGhost: { borderRadius: 12, paddingVertical: 10, paddingHorizontal: 20, borderWidth: 1.5, borderColor: palette.bordureForte, alignItems: 'center' },
+  newGameGhostText: { color: palette.encre, fontSize: 13, fontWeight: '600' },
 });

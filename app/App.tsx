@@ -1,11 +1,15 @@
-/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
- * Cible : stack hub-and-spoke : accueil · Round · stèle + feuille (modale).
- * Lot : lot 3 — plan : app/docs/journal/2026-07-12-plan-integration.md.
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé — STOPGAP LOT 1 (temporaire, borné) ═══
+ * Cible finale : stack hub-and-spoke (accueil · Round · stèle + feuille modale) — lot 3a.
+ * Ici : Splash → Round directement, le Round gère nommer/reprise lui-même. Pas de
+ * hub-and-spoke ni d'accueil (lot 3a). SetupScreen/ScoreEntryScreen/ScoreGridScreen
+ * restent sur le disque, non routés (ils meurent en 3a) — RootStackParamList les
+ * garde déclarés pour que ces fichiers restent tsc-clean.
+ * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
  * ═══════════════════════════════ */
 /**
  * Racine de l'app — container de navigation + stack unique.
- * Splash → Round (écran manche / démarrage). ScoreEntry et ScoreGrid en modals.
+ * Splash → Round (nouveau Round : nommer/jouer/saisir en états, un seul écran).
  */
 import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -13,9 +17,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RoundScreen } from './src/screens/RoundScreen';
-import { ScoreEntryScreen } from './src/screens/ScoreEntryScreen';
-import { ScoreGridScreen } from './src/screens/ScoreGridScreen';
-import { SetupScreen } from './src/screens/SetupScreen';
 import { SplashScreen } from './src/screens/SplashScreen';
 import { useGameStore } from './src/store/gameStore';
 import type { RootStackParamList } from './src/navigation/types';
@@ -31,16 +32,8 @@ export default function App() {
       <NavigationContainer>
         <StatusBar style="dark" />
         <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
-          {/* Splash → Setup → Round partagent le layout 2×2 : fondu plutôt que
-              push latéral, pour lire comme une continuité (pas une page qui pousse
-              sa jumelle). Les modals gardent leur montée depuis le bas. */}
           <Stack.Screen name="Splash" component={SplashScreen} />
-          <Stack.Screen name="Setup" component={SetupScreen} options={{ animation: 'fade' }} />
           <Stack.Screen name="Round" component={RoundScreen} options={{ animation: 'fade' }} />
-          <Stack.Group screenOptions={{ presentation: 'modal' }}>
-            <Stack.Screen name="ScoreEntry" component={ScoreEntryScreen} />
-            <Stack.Screen name="ScoreGrid" component={ScoreGridScreen} />
-          </Stack.Group>
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

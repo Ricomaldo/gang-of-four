@@ -1,7 +1,8 @@
 /* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
- * Cible : tap = saisie (s'allume) · appui long = renommer · notif « donne sa meilleure carte » GARDÉE.
+ * Cible : tap = saisie (s'allume) · notif « donne sa meilleure carte » GARDÉE.
  * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+ * PAS le long-press renommer (lot 3a) ; le long-press GOF de l'ancien code disparaît (le GOF vivra au Gong, lot 4).
  * ═══════════════════════════════ */
 /**
  * PlayerPill — la « zone d'affichage » d'un joueur, à TAILLE FIXE.
@@ -12,7 +13,7 @@
  * toujours réservé (vide → hauteur conservée). Présentationnel : tout vient en props.
  */
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { palette, shapes } from '../theme/tokens';
+import { palette, shapes, typography } from '../theme/tokens';
 
 /** Notif qui-donne-à-qui, posée sous la carte dans le footprint fixe de la pill. */
 export type PillNotif =
@@ -26,7 +27,12 @@ type Props = {
   score: number;
   editable?: boolean;
   onChangePrenom?: (v: string) => void;
-  onLongPress?: () => void;
+  /** Tap = seule cible de saisie (le battement) — sélectionne ce joueur pour le numpad. */
+  onPress?: () => void;
+  /** La pill s'allume : c'est le joueur actif de la saisie en cours. */
+  active?: boolean;
+  /** Pendant la saisie : les chiffres tapés s'affichent ici, à la place du score total. */
+  inputValue?: string;
   notif?: PillNotif;
   /** Côté où le slot notif est réservé. 'above' pour les pills du bas → la carte
    *  hugge le bord bas (symétrie avec les pills du haut) et la notif pointe vers le centre. */
@@ -43,13 +49,17 @@ export function PlayerPill({
   score,
   editable = false,
   onChangePrenom,
-  onLongPress,
+  onPress,
+  active = false,
+  inputValue,
   notif = null,
   notifPosition = 'below',
   hasError = false,
 }: Props) {
+  const displayScore = editable ? '' : inputValue !== undefined ? inputValue || '–' : String(score);
+
   const card = (
-    <View style={[styles.card, hasError && styles.cardError]}>
+    <View style={[styles.card, hasError && styles.cardError, active && styles.cardActive]}>
       <View style={styles.idRow}>
         <View style={[styles.dot, { backgroundColor: color }]} />
         {editable ? (
@@ -65,13 +75,13 @@ export function PlayerPill({
         )}
       </View>
       {/* Score toujours présent (espace réservé même en saisie) pour figer la hauteur */}
-      <Text style={styles.score}>{editable ? '' : score}</Text>
+      <Text style={[styles.score, active && styles.scoreActive]}>{displayScore}</Text>
     </View>
   );
 
   const cardWrapped =
-    !editable && onLongPress ? (
-      <TouchableOpacity onLongPress={onLongPress} delayLongPress={600} activeOpacity={0.8}>
+    !editable && onPress ? (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
         {card}
       </TouchableOpacity>
     ) : (
@@ -121,10 +131,12 @@ const styles = StyleSheet.create({
   },
   idRow: { flexDirection: 'row', alignItems: 'center', gap: 6, maxWidth: PILL_WIDTH - 28 },
   dot: { width: 12, height: 12, borderRadius: 6, borderWidth: 1.5, borderColor: palette.bordureForte },
-  name: { color: palette.bordureForte, fontSize: 12, fontWeight: '700', flexShrink: 1 },
+  name: { ...typography.chrome, color: palette.bordureForte, fontSize: 12, flexShrink: 1 },
   nameInput: { color: palette.encre, fontSize: 15, minWidth: 84, paddingVertical: 2, textAlign: 'center' },
   cardError: { borderColor: palette.accentSaisie },
-  score: { color: palette.score, fontSize: 42, fontWeight: '700', lineHeight: 46 },
+  cardActive: { borderColor: palette.accentSaisie, borderWidth: shapes.pillBorder + 1 },
+  score: { ...typography.proclaim, color: palette.score, fontSize: 42, lineHeight: 46 },
+  scoreActive: { color: palette.accentSaisie },
   notifSlot: { width: PILL_WIDTH, minHeight: 32, marginTop: 10, alignItems: 'center', justifyContent: 'flex-start' },
   notifSlotAbove: { marginTop: 0, marginBottom: 10, justifyContent: 'flex-end' },
   notifWinner: { fontSize: 11, color: palette.bordureForte, textAlign: 'center' },

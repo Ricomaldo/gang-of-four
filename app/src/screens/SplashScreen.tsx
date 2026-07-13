@@ -5,32 +5,26 @@
  * ═══════════════════════════════ */
 /**
  * Splash — ouverture de marque, dragon plein écran (asset fourni par Eric).
- * Court, enchaîne directement sur l'écran manche/démarrage. Un tap peut le sauter.
+ * Court, enchaîne directement sur le Round (stopgap lot 1 : le Round gère
+ * nommer/reprise lui-même, cf. App.tsx). Un tap peut le sauter.
  * Placeholder ici : l'asset dragon définitif sera branché plus tard.
  */
 import { useEffect } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
-import { useGameStore } from '../store/gameStore';
 import { palette } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 
-/** Reprise : une partie en cours avec ≥ 1 manche jouée → on rouvre sur Round, sinon Setup. */
-function nextRoute(): 'Setup' | 'Round' {
-  const { rounds, status } = useGameStore.getState();
-  return rounds.length > 0 && status === 'en-cours' ? 'Round' : 'Setup';
-}
-
 export function SplashScreen({ navigation }: Props) {
   useEffect(() => {
-    const t = setTimeout(() => navigation.replace(nextRoute()), 1400);
+    const t = setTimeout(() => navigation.replace('Round'), 1400);
     return () => clearTimeout(t);
   }, [navigation]);
 
   return (
-    <Pressable style={styles.wrap} onPress={() => navigation.replace(nextRoute())}>
+    <Pressable style={styles.wrap} onPress={() => navigation.replace('Round')}>
       <View style={styles.logoStack}>
         <Image source={require('../../assets/official/gang-of-four.webp')} style={styles.logo} />
         <Image

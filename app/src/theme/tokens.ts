@@ -39,3 +39,21 @@ export const shapes = {
   discSize: 88,
   discBorder: 6,
 };
+
+/**
+ * Rôles typo — v1 ossature (structure, pas le rendu fin). Deux voix : ce qui
+ * PROCLAME (titres, totaux, manchettes — condensé-bold, aucune police custom
+ * chargée à ce stade, le poids fait le travail) vs le CHROME (labels, listes —
+ * mono, discret). Le rendu fin (police condensée réelle) vient au lot 4.
+ */
+export const typography = {
+  proclaim: {
+    fontWeight: '800' as const,
+    letterSpacing: 0.3,
+  },
+  chrome: {
+    fontFamily: 'monospace' as const,
+    fontWeight: '600' as const,
+    letterSpacing: 0.5,
+  },
+};

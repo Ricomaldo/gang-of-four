@@ -77,7 +77,7 @@ export function ScoreEntryScreen({ navigation }: Props) {
       </Text>
 
       <View style={styles.pad}>
-        <NumPad onDigit={onDigit} onBackspace={onBackspace} />
+        <NumPad onDigit={onDigit} onBackspace={onBackspace} onValidate={onValidate} canValidate={canValidate} />
       </View>
 
       <SeatSelectors seats={seats} activeId={activeId} onSelect={setActiveId} />
