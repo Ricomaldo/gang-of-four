@@ -92,9 +92,11 @@ il dit **c'est fait** et *« je les ai enterrés »*, jamais *« ça va péter �
   copy *« petite / grosse branlée de {prénom} ! »*). Le corps du doc, qui posait
   *binaire*, est **caduc** sur ce point. **Seuils validés par Eric : petite ≥ ~30 ·
   grosse ≥ ~45** — ajustables à la récolte.
-- la **marque** de la branlée — toujours ouverte, **deux rejets fermes** : 💪
-  écarté (emoji stock, cheap) ; **‡ REJETÉ définitivement** (12/07 — c'est la
-  croix de Lorraine, et Eric est alsacien). Critère inchangé : elle dit *« c'est
-  fait, je les ai enterrés »*, jamais *« ça va péter »* ni *« je suis fort »* ;
+- la **marque** de la branlée — **✅ SIGNÉE (12/07) : L'ENCOCHE** — `/` (petite) ·
+  `//` (grosse). Le geste des gangs : **l'encoche sur la crosse** — un fait
+  d'armes gravé, comptabilisé, froid. Elle dit *« c'est fait »*, elle se double
+  avec l'échelle, elle se cumule comme des entailles. Sur la cellule du
+  **donneur** (`0 /`) ; la ligne qui pèse fait le reste. *Rejets au dossier :
+  💪 (emoji stock) · ‡ (croix de Lorraine) · † (silhouette de croix, écartée).* ;
 - le **mot** de la cérémonie (copy-deck) ;
 - l'**entrée dans le tie** du palmarès (« on va vers ça » — cf. `palmares.md`).

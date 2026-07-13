@@ -1,5 +1,5 @@
 /* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
- * Cible : soirée-unique → LE VRAC (terminées, inter-sessions, local P1) + migration de clé gof:soiree (schemaVersion).
+ * Cible : soirée-unique → LE VRAC (terminées, inter-sessions, local P1) — stockage neuf, repart à zéro (nouveau build, rien à migrer).
  * Lot : lot 0 — plan : app/docs/journal/2026-07-12-plan-integration.md.
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
  * ═══════════════════════════════ */

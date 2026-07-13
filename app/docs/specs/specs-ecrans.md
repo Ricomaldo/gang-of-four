@@ -1,8 +1,8 @@
 ---
 title: GANG — Specs écrans (IA, architecture, thème)
 created: '2026-07-12'
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: specs
 ---
@@ -100,6 +100,9 @@ Sur **le plateau**, jamais dans la zone du bas. Échelle :
 - *fin de partie (100)* → **le final** : plein plateau, miroir gloire/💩
   (vainqueur = cumul le plus bas), puis la feuille se scelle → portes *on
   rejoue ?* (même roster → nouveau battement) / *consulter* (→ stèle) / accueil.
+  — **asymétrie sonore = exigence sémantique du lot 2, pas du polish** : la
+  gloire prend le **son** (rugissement), la honte prend le **silence** (« la
+  colonne », cf. `signature/reshape.md:350`).
 
 Un seul surdominant à la fois : le plus fort claque, le cartouche absorbe le
 reste.
@@ -153,7 +156,12 @@ restent possibles ; c'est le prix d'Identité = A (« aucune réconciliation »)
   **uniquement** dans le Gong du Round. Le mot **GANG** = l'app → l'accueil
   (disque-GANG) et les titres.
 - **Marques typographiques** (remplacent les emojis stock) : ☞ le looser · ▲▼
-  standing · la marque branlée **à signer par Eric** (‡ REJETÉ — croix de Lorraine ; 💪 écarté — emoji stock ; aucune retenue).
+  standing · la **marque branlée = l'encoche** `/` (petite) · `//` (grosse) — le
+  slash typographique, l'encoche sur la crosse (fait d'armes gravé, comptabilisé,
+  froid) ; cellule du donneur dans la feuille, cumulable sur la stèle ; rendu fin
+  (taille, graisse) au lot concerné. **Rejetés :** 💪 (stock) · ‡ (croix de
+  Lorraine) · † (silhouette de croix). Source : `signature/branlee.md` +
+  `reshape.md` fourche 15.
 - **Couleurs de siège** : les 4 couleurs actuelles (`tokens.ts`) sont **en
   chantier** — à redessiner en cohérence placard (ni gardées telles quelles, ni
   supprimées).
@@ -170,6 +178,7 @@ sont la cible) · `Palmares` → absorbé par la **stèle** (miroirs corrigés) 
 ## Parqué
 
 Le rendu fin des anims d'annonce (flash léger, final) — famille de la frime, à
-spécifier au build · la marque branlée (à signer par Eric) · le départage exact
+spécifier au build (⚠️ l'asymétrie **son/silence** du final n'est PAS du rendu
+fin — c'est l'exigence sémantique du lot 2, cf. §annonces) · le départage exact
 disque-GANG 4b/4c et l'intensité 4d/4f (aux tokens) · les seuils branlée
 ajustables à la récolte.

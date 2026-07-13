@@ -1,8 +1,8 @@
 ---
 title: GANG — Specs partage
 created: 2026-07-07
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: specs
 ---
@@ -22,7 +22,7 @@ On partage **la feuille affichée** (la modale, ex-`ScoreCarnet` — cf. signatu
 ## Le mécanisme
 
 - **`react-native-view-shot`** — capture la vue de la feuille en image, puis **`Share` API** (RN natif) pour le partage système. Pas de serveur, pas de compte (le multi-appareils reste tranché, [[brief-02-complement]]).
-- Dépendance native de plus → **build EAS**. À **grouper** avec le build de l'anim / stats, jamais déclenché isolément (abonnement EAS compté).
+- view-shot **déjà installé et embarqué** (partage utilisé en soirée réelle 08/07) → **aucun build EAS requis par le reshape** — le build / déploiement est porté par une instance dédiée.
 
 ## L'emplacement
 

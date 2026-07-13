@@ -1,8 +1,8 @@
 ---
 title: 'GANG — Signature'
 created: '2026-07-10'
-updated: '2026-07-10'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: signature
 ---
@@ -101,7 +101,8 @@ specs (`specs-techniques`, `modele-donnees`…) en découlent. Ancrages déjà s
 à traduire, en vrac :
 
 - la branlée est **binaire** (branlée ou rien — pas de petite/grosse), déclenchée
-  dès **~30 points** cumulés sur la manche, seuil ajustable ;
+  dès **~30 points** cumulés sur la manche, seuil ajustable *(caduc 12/07 :
+  échelle petite/grosse — cf. `branlee.md`)* ;
 - **💩 = partie perdue** (ex-❌) ; le **🐌** reste le looser du gang (celui qui
   cumule le plus de 💩) ;
 - le **gang = le roster** (mêmes 4 → même palmarès, inter-parties *et*

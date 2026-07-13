@@ -1,8 +1,8 @@
 ---
 title: 'GANG — Écran : l''accueil (la porte / le moyeu)'
 created: '2026-07-10'
-updated: '2026-07-11'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: draft
 type: fiche-ecran
 ---
@@ -23,7 +23,7 @@ Zéro péage à l'entrée.
 
 ```
 ┌───────────────────────────────┐
-│  ╭ revanche ? ╮                │  CARTOUCHE — l'invite du moment (voix calme)
+│  ╭ on rejoue ? ╮               │  CARTOUCHE — l'invite du moment (voix calme)
 │           G A N G             │  WORDMARK — le mot, jamais illustré
 │          ╭─────────╮          │
 │          │  GONG   │          │  le GONG, DOMINANT — la porte
@@ -39,7 +39,7 @@ Zéro péage à l'entrée.
 | état | le cartouche dit | le Gong / l'action |
 |---|---|---|
 | **vierge** (aucun gang) | « nouveau gang ? » | tap → le **Round**, sièges à nommer. *Tes gangs* vide (germe). |
-| **revanche** (gangs connus) | « revanche ? » + standing | tap → relance le dernier gang. *Tes gangs* peuplé. |
+| **revanche** (gangs connus) | « on rejoue ? » + standing | tap → relance le dernier gang. *Tes gangs* peuplé. |
 | **reprise** (partie en cours) | « partie en cours » | le Gong = **reprendre** ; + choix **annuler** (confirm légère). |
 
 *Le rugissement marque toujours **un gang complet qui prend la table** (immédiat

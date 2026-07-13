@@ -1,8 +1,8 @@
 ---
 title: 'GANG — docs (porte d''entrée)'
 created: '2026-07-10'
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: index
 ---
@@ -34,14 +34,14 @@ lit à la version.**
 
 | spec | version | tient |
 |---|---|---|
-| `modele-donnees.md` | 0.2.1 | le modèle de données (siège, roster, partie, vrac) |
+| `modele-donnees.md` | 0.2.2 | le modèle de données (siège, roster, partie, vrac) |
 | `specs-techniques.md` | 0.2.1 | la stack, l'archi, les choix techniques |
 | `logique-comptage.md` | 0.2.1 | la logique de score, noms de fonctions |
-| `cas-reference-score.md` | 0.2.1 | les cas de référence (prouvés, 62 tests + branlée/titres) |
-| `specs-anim-frime.md` | 0.2.1 | l'anim frime (le Gong) |
-| `specs-partage.md` | 0.2.1 | le partage natif de la feuille |
-| `specs-stats.md` | 0.2.1 | les stats & la frontière P1/P2 |
-| `specs-ecrans.md` | 0.2.1 | l'IA, l'architecture d'écran et le thème *(née de la passe reshape)* |
+| `cas-reference-score.md` | 0.2.2 | les cas de référence (prouvés, 62 tests + branlée/titres) |
+| `specs-anim-frime.md` | 0.2.2 | l'anim frime (le Gong) |
+| `specs-partage.md` | 0.2.2 | le partage natif de la feuille |
+| `specs-stats.md` | 0.2.2 | les stats & la frontière P1/P2 |
+| `specs-ecrans.md` | 0.2.2 | l'IA, l'architecture d'écran et le thème *(née de la passe reshape)* |
 
 ## Le fil
 

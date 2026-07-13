@@ -1,8 +1,8 @@
 ---
 title: GANG — Specs stats & frontière P1/P2
 created: 2026-07-07
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: specs
 ---
@@ -34,7 +34,7 @@ Toutes calculées **sur les parties `terminee` du gang uniquement** (le vrac fil
 | Manche perdue | 💥 | nb de manches où le joueur est le dernier (`roundLastPlace`), sommé |
 | Partie gagnée | 🏆 | nb de parties gagnées (`determineWinner`) |
 | Partie perdue | 💩 *(ex-❌)* | nb de parties perdues (`gameLoser`) |
-| Branlée donnée | *à signer (‡ rejeté — croix de Lorraine ; 💪 écarté)* | **+1 au donneur** (le joueur à 0 de la manche-branlée, `detectBranlee` — cf. [[logique-comptage]]) ; les preneurs par déduction, leur honte se lit dans la feuille |
+| Branlée donnée | **l'encoche** `/` `//` | **+1 au donneur** (le joueur à 0 de la manche-branlée, `detectBranlee` — cf. [[logique-comptage]]) ; les preneurs par déduction, leur honte se lit dans la feuille |
 
 **Titres (un seul porteur, dérivés des compteurs) — miroirs indépendants** (cf. signature/palmares.md)
 

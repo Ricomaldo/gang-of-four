@@ -1,8 +1,8 @@
 ---
 title: GANG — Cas de référence, logique de score
 created: '2026-07-04'
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: cas-reference
 ---
@@ -55,7 +55,7 @@ Vérifie l'accumulation simple, sans déclenchement d'arrêt.
 
 La partie s'arrête dès qu'**au moins un** joueur atteint ou dépasse 100 (pas d'écrêtage). Le vainqueur est celui dont le **cumul est le plus bas** à cet instant — pas forcément celui qui a franchi 100.
 
-- **Franchissement en une manche** : un joueur passe de 92 à 107 (manche à 15 cartes restantes, +15... ex. 15 cartes = 60 pts, 47+60=107) → arrêt immédiat, score final 107 conservé tel quel.
+- **Franchissement en une manche** : un joueur passe de 47 à 107 (manche à 15 cartes restantes, +15... ex. 15 cartes = 60 pts, 47+60=107) → arrêt immédiat, score final 107 conservé tel quel.
 - **Le déclencheur n'est pas nécessairement perdant** : si un autre joueur cumule 130, celui à 107 peut quand même gagner.
 - **Double franchissement** : deux joueurs dépassent 100 dans la même manche → l'arrêt reste unique, le vainqueur est déterminé sur l'ensemble des 4 cumuls, pas seulement entre les deux qui ont franchi.
 

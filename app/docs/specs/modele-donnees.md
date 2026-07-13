@@ -1,8 +1,8 @@
 ---
 title: GANG — Modèle de données
 created: '2026-07-04'
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: modele-donnees
 ---
@@ -52,7 +52,8 @@ Jaune pur écarté (illisible sur fond crème) → ambre. Les prénoms sont des 
 - `cumul` par joueur = somme des scores dérivés sur toutes les manches
 - fin de partie = au moins un cumul ≥ 100
 - `vainqueur` = cumul le plus bas ; départage niveau 1 (score de la dernière manche) puis niveau 2 (siège le plus proche en horaire du `gagnantManche`)
-- `dernierManche` = joueur avec le plus de cartes ; départage L1 (cumul le plus élevé) puis L2 (siège le plus proche du gagnant en **anti-horaire**)
+- `roundLastPlace` (le dernier de la manche, ex-`dernierManche`) = joueur avec le plus de cartes ; départage L1 (cumul le plus élevé) puis L2 (siège le plus proche du gagnant en **anti-horaire**)
+- `gameLoser` (le perdant de la partie, 💩) = cumul final le plus haut ; départage L1 (plus grand score de dernière manche) puis L2 (anti-horaire) — cf. [[logique-comptage]].
 - `manchesGagnees` par joueur = compte de `gagnantManche` sur toutes les manches
 - le **gang** = le groupe des **4 prénoms triés**, dérivé par **filtrage du vrac** (« les 4 mêmes ») — pas d'objet gang stocké, pas d'id : identité = ensemble de prénoms, roster-scoped, **aucune réconciliation** (cf. signature/reshape.md §reste à signer, identité = A)
 - la **branlée** = dérivée **par manche** : total distribué sur la manche **≥ ~30 = petite**, **≥ ~45 = grosse** (seuils ajustables) ; le **donneur = le joueur à 0** ; détectée à la validation (cf. signature/branlee.md, seuils reshape §fourches pt 8)
@@ -75,6 +76,8 @@ Le statut couvre les **3 issues** (cf. signature/reshape.md §IA) : **seule la t
 **Session** — regroupement de parties :
 - `date` : `YYYY-MM-DD` avec tolérance nuit (parties terminées avant 5h = veille)
 - `lieu` : **optionnel** — la session titre la feuille (« Établi · 8 juin », cf. signature/palmares.md §scopes)
+
+> **« session » = nom d'entité interne uniquement** — le mot est **interdit dans le copy visible** (l'utilisateur lit « Établi · 8 juin », jamais « session »), cf. `signature/reshape.md` §fourches pt 9.
 
 **Point de bascule** : une partie rejoint le vrac au game-over (cumul ≥ 100), scellée. L'annulation la jette (confirm légère à l'accueil), sans trace.
 

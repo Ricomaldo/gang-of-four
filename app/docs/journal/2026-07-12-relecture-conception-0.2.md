@@ -51,9 +51,66 @@ une poignée de mineurs. Aucun ne remet en cause la conception — ils la finiss
 3. **Build & déploiement = hors périmètre supervision** — une instance dédiée s'en
    charge. Le caveat EAS (N7) lui revient ; je ne le porte plus.
 4. **Codename : Alpha 2 signature · version 0.2.** Alpha core (v0.1) est enterrée.
+5. **Q2 · le son du final** *(instance mère)* — défaut d'étiquetage de la passe
+   specs, pas une décision. L'asymétrie son/silence = la colonne rendue audible →
+   **exigence sémantique du lot 2**, pas polish lot 4. À porter dans `specs-ecrans`
+   à la consolidation. *(N2 résout.)*
+6. **Q4 · « session »** *(instance mère)* — l'interdit porte sur le **copy visible
+   uniquement** (l'user lit « Établi · 8 juin », jamais le mot) ; l'entité interne
+   garde son nom (intention depuis `palmares.md`). Ligne de distinction à écrire.
+7. **Q6 · EAS** *(instance mère)* — l'APK diffusé **embarque** `expo-audio` +
+   `react-native-view-shot` (preuve d'usage, soirée 08/07 : anim 3 sons + partage
+   « beaucoup utilisé »). Le « pas de build » du plan tient ; l'instance build
+   re-confirmera. *(N7 / mon caveat tombe.)*
+8. **La marque branlée — SIGNÉE : L'ENCOCHE.** `/` = petite · `//` = grosse. Le
+   slash typographique, l'encoche sur la crosse : un fait d'armes gravé,
+   comptabilisé, froid — « c'est fait ». Placement : cellule du donneur dans la
+   feuille (`0 /`), cumulable sur la stèle ; rendu fin (taille, graisse) au lot
+   concerné. **Rejets fermés — jamais reproposer :** 💪 (stock) · ‡ (croix de
+   Lorraine) · † (silhouette de croix). **Source de vérité : `branlee.md` +
+   `reshape.md` fourche 15** (gravée par l'instance mère) — ce rapport *pointe*, ne
+   redouble pas. *(N4 résout : le risque « marque non signée » tombe.)*
+9. **Split 3a/3b — reclassé.** Argument **bloquant évaporé** (marque signée → plus
+   rien ne gate 3b) ; reste l'argument de **taille** (deux gates dans un lot) →
+   split plus *nécessaire*, peut-être *utile*. **Eric tranche en amendant le plan**,
+   pas avant. Accueil gardé au lot 3 (builds 1-2 internes, assumé) — signé.
 
-*Restent en discussion (grill en cours) : le son du final (N2) · le découpage du
-lot 3 (§6) · la marque branlée.*
+**État net : plus aucune décision produit ne bloque le dégel.**
+
+La **consolidation 0.2.2** (maisons existantes, **zéro fichier neuf**) est **gelée
+jusqu'au go d'Eric**, à ma bascule. Items à threader chirurgicalement : N1 (brief
+lot 0) · N2 (son sémantique → `specs-ecrans`) · N4 (risque marque tombe → plan) ·
+N6 (le chiffre → `cas-reference-score:58`) · N7 (2 phrases EAS) · N8 (nommage +
+`gameLoser` aux dérivés) · mineurs (table du plan + `navigation/types` · staleness
+`reshape:250` · ligne « session » · resync fiches-sources · tag `soireeStorage`
+sans « migration »). Docs touchés → updated + **bump 0.2.2**. Ce rapport passe
+**consommé** quand tout est absorbé — trace, jamais 2ᵉ source de vérité.
+
+**Séquence, chaque barreau au signal d'Eric :** bascule supervision → consolidation
+0.2.2 → premier brief de lot.
+
+---
+
+## Correction de méthode *(12/07 — recadrage par l'instance de conception)*
+
+La grille binaire « signé / intention » était trop grossière et m'a fait
+**fabriquer un écart** sur la fin de partie. **Trois** statuts, pas deux — confondre
+les deux derniers est la faute à ne pas commettre :
+
+- **(a) signé + dessiné** — wireframe / planche Claude Design existe ;
+- **(b) signé + rendu explicitement parqué** — comportement tranché, rendu fin
+  *listé, daté, assumé*. **Une décision, pas un oubli.**
+- **(c) vrai trou** — rien nulle part.
+
+Règle : aucune conclusion « pas conçu » sans citer, **pour l'item**, `reshape` +
+spec + plan. Flaguer le propre avec la même rigueur que l'écart, zéro récit de
+démasquage.
+
+**Reclassement — la fin de partie = (b), pas un trou :** forme **validée**
+`reshape.md:323-329` → portée `specs-ecrans.md:100-102` → déclenchée plan lot 2 ;
+rendu fin **parqué** `specs-ecrans.md:172`. Mon « une seule case de tableau » était
+**faux** (je citais `ecrans/02-round.md:44` en ignorant `reshape.md` que j'avais
+lu). **N2 dégradé** en simple rappel de traçabilité.
 
 ---
 
@@ -90,7 +147,7 @@ vrac démarre neuf — OK ? (cf. §Questions).
 | # | Écart | Où | Geste |
 |---|---|---|---|
 | **N1** | **`resetGame` archive les parties interrompues** — contredit « l'annulée n'est jamais archivée » | `gameStore.ts:80-84` vs `modele-donnees.md:71` (+ `GameArchive` = « terminée **ou interrompue** » `model.ts:71`) | supprimer la branche ; annuler = `clearGame`, pas archive. Lot 0. |
-| **N2** | **L'asymétrie du son gloire/honte du final n'a aucune maison buildable** — décision **sémantique** (la colonne rendue audible : gloire avec son / honte en silence), rangée sous « rendu fin des anims » | `reshape.md:350` (source) vs `specs-ecrans.md:100-101` (final sans le son) + `:172` (parqué polish) ; `specs-anim-frime` ne couvre que le Gong | sortir l'asymétrie du polish, la poser comme **exigence du lot 2**. Décision à toi (signature). |
+| **N2** *(dégradé → traçabilité, cf. §Correction de méthode)* | **La fin de partie est un (b) : forme validée + rendu parqué.** Résidu minuscule : l'asymétrie du son (gloire avec bruit / honte en silence — « la colonne ») n'est pas **nommée** dans le parqué générique | forme validée `reshape.md:323-329` → `specs-ecrans.md:100-102` → plan lot 2 ; sémantique du son `reshape.md:350` vs parqué générique `specs-ecrans.md:172` | au dé-parquage (lot 2/4), porter l'asymétrie comme **sémantique**, pas déco. Rappel sur un (b), **pas un trou**. |
 | **N3** | **Ouvrir une feuille passée depuis la stèle n'est porté par aucun lot** — l'affordance n'est pas énumérée, alors que le partage de partie passée la suppose | `ecrans/03-stele.md:65` + `specs-partage.md:16` (source) vs `specs-ecrans.md:130-137` (contenu stèle sans picker) ; gate lot 3 « une partie d'hier se rouvre » l'implique sans la nommer | nommer le sélecteur de parties dans le contenu de la stèle. Lot 3. |
 | **N4** | **Le plan sous-porte le blocage de la marque branlée** : elle gate aussi le **partage** (feuille A **et** stèle B) ; et le **lot 2 n'est PAS bloqué** (la cérémonie tourne au **texte**, pas à la marque) | `plan:92-93` vs `specs-partage.md:20` + `specs-ecrans.md:99` | corriger le périmètre du risque dans le plan (le lecteur du plan seul croit l'inverse). |
 | **N5** | **Gong pressé alors qu'une partie en pause vit** : transition non spécifiée (reprendre ? écraser ?) — un seul slot `gof:game` | `specs-ecrans.md:110-116` (reprendre/annuler, mais « jouer » muet) ; l'anti-enfermement (`reshape.md:221`) interdit d'écraser en silence | trancher la sémantique du tap Gong avec un en-cours vivant. Petite fourche UX. Lot 3. |

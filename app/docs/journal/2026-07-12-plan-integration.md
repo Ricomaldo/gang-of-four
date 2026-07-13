@@ -1,8 +1,8 @@
 ---
 title: 'GANG — Plan d''intégration du reshape (alpha-signature)'
 created: '2026-07-12'
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: plan
 ---
@@ -29,6 +29,7 @@ type: plan
 | `store/gameStore.ts` | **[R]** | 3 issues (annulée ≠ archivée), pause/reprise |
 | `store/soireeStorage.ts` | **[R]** | soirée-unique → **le vrac** (terminées, inter-sessions, local P1) + migration de clé `gof:soiree` (schemaVersion) |
 | `App.tsx` | **[R]** | stack : accueil · Round · stèle + feuille (modale) — hub-and-spoke |
+| `navigation/types.ts` | **[R]** | routes hub-and-spoke (accueil/Round/stèle/feuille) |
 | `screens/SplashScreen.tsx` | **[†]** | remplacé par **l'accueil** [N] |
 | `screens/SetupScreen.tsx` | **[†]** | dissous dans le Round (état *nommer*) |
 | `screens/ScoreEntryScreen.tsx` | **[†]** | dissous dans le Round (état *saisir*, numpad en zone du bas) |
@@ -89,12 +90,12 @@ dev.irimwebforge.com). **Gate : la table réelle — prochaine soirée.**
   spec'd (`specs-ecrans`) mais à éprouver sur device tôt (lot 1).
 - **L'irréversible** (branlée gravée) vs l'esprit clément : la cérémonie est le
   seul verrou — QA dédiée sur corriger/graver.
-- **La marque branlée** non signée (‡ REJETÉ — croix de Lorraine, 12/07) : bloque le rendu feuille/stèle
-  du lot 3 — à signer avant (une décision d'Eric, pas du dev).
+- **La marque branlée — signée : l'encoche `/` `//`** (fourche 15). Le risque
+  tombe ; rendu fin (taille, graisse) au lot concerné.
 
 ## Ce qui reste avant le dégel — les décisions d'Eric
 
-1. **La marque branlée** — à signer (💪 écarté, ‡ rejeté — croix de Lorraine).
+1. **La marque branlée — signée : l'encoche `/` `//`** ✅.
 2. L'intensité chaud **4d/4f** — se cale aux tokens (lot 4), pas bloquant.
 
 *Tranchées le 12/07 (portées aux specs) : disque-GANG = **4c** · renommer =

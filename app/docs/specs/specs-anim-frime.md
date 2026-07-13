@@ -1,8 +1,8 @@
 ---
 title: GANG — Specs anim frime
 created: 2026-07-07
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: specs
 ---
@@ -52,4 +52,4 @@ La frime se joue **avec ces beats exactement**. Tentations à refuser tant que l
 
 ## Implication build
 
-La lecture des sons passe par **`expo-audio`** (ajouté à l'implémentation ; `expo-av` écarté — retiré des SDK Expo récents, non viable sur Expo 57). Nouvelle dépendance native → **nouveau build EAS** pour tester en natif, à grouper avec l'anim, pas à déclencher isolément. Animation en `Animated` API + `react-native-svg` (déjà présents, aucune dép native ajoutée hors audio).
+La lecture des sons passe par **`expo-audio`** — **déjà installé et embarqué dans l'APK diffusé** (`expo-av` écarté — retiré des SDK Expo récents, non viable sur Expo 57). **Aucun build EAS requis par le reshape** — le build / déploiement est porté par une instance dédiée. Animation en `Animated` API + `react-native-svg` (déjà présents).

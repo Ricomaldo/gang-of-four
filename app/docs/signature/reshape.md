@@ -1,8 +1,8 @@
 ---
 title: 'GANG — Reshape (hub)'
 created: '2026-07-10'
-updated: '2026-07-10'
-version: 0.2.1
+updated: '2026-07-13'
+version: 0.2.2
 status: active
 type: reshape-hub
 ---
@@ -246,9 +246,8 @@ annonces. La cible **casse le plein-écran** :
 - **saisie unifiée** *(geste **observé** : Bruno, soirée 01 — bloqué alors par
   l'easter-egg sur la pill, **libéré** par le déménagement de la frime dans le
   Gong central)* : on **tape la pill** d'un joueur *sur le plateau* → le numpad
-  (3×4) monte dans la zone du bas. *(Ouvert : le tap-saisie vient de la **pill**
-  ou d'une **ligne vierge** de la feuille ? — duplication à trancher dans le
-  flow.)*
+  (3×4) monte dans la zone du bas. *(Tranché — fourche pt 3 : tap-saisie =
+  **les pills uniquement** ; la ligne vierge = écho visuel.)*
 
 **Ce que ça résout :** le plateau **reste** → le cartouche vit au-dessus, les
 annonces éclaboussent le plateau, la cérémonie s'y joue ; seule la zone du bas
@@ -451,6 +450,11 @@ ne tient pas la saisie) · l'**aperçu feuille ≥ 2 manches + vierge**. → Sui
     stèle (périmètre B du partage entre en jeu).
 14. **‡ rejeté définitivement** pour la branlée (croix de Lorraine) — la marque
     reste à signer.
+15. **La marque branlée = L'ENCOCHE** *(signée 12/07)* — `/` petite · `//` grosse.
+    L'encoche sur la crosse : « c'est fait, comptabilisé ». Cellule du donneur
+    (`0 /`), cumulable sur la stèle. **Plus aucune décision produit ne bloque le
+    dégel.** *(À threader dans specs-ecrans, specs-stats et le plan à la
+    consolidation 0.2.2 — supervision.)*
 
 **État après passe 3 (12/07) — variantes retenues : 3b (accueil) · 3e (Round) ·
 3f (stèle-monolithe) · 3h (feuille) :**
