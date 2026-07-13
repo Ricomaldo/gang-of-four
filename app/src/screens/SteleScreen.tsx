@@ -30,7 +30,7 @@ import type { PrenomStats } from '../domain/stats';
 import { filterByGang, groupBySoiree, relativeLabel, sumGofCount } from '../store/vracStorage';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
-import { palette, typography } from '../theme/tokens';
+import { matiere, palette, typography } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Stele'>;
 
@@ -207,25 +207,26 @@ const styles = StyleSheet.create({
   shareBtn: { borderWidth: 1, borderColor: palette.bordureForte, borderRadius: 12, paddingVertical: 4, paddingHorizontal: 10, minWidth: 64, alignItems: 'center' },
   shareTxt: { ...typography.chrome, fontSize: 11, color: palette.bordureForte, fontWeight: '600' },
 
-  // Rendu monolithe (ossature « bloc gravé » — pas la matière pierre fine, lot 4).
-  monument: { backgroundColor: palette.encre, borderRadius: 8, padding: 20, gap: 16 },
+  // Le placard-monument (reshape.md §placard) : la matière gravée — un seul
+  // token pour ce bloc entier (fond + encre), la teinte fine (pierre) reste lot 4b.
+  monument: { backgroundColor: matiere.grave.fond, borderRadius: 8, padding: 20, gap: 16 },
   trones: { flexDirection: 'row', justifyContent: 'space-around' },
   trone: { alignItems: 'center', gap: 4 },
   troneEmoji: { fontSize: 32 },
-  troneNom: { ...typography.proclaim, fontSize: 20, color: palette.fondCreme },
+  troneNom: { ...typography.proclaim, fontSize: 20, color: matiere.grave.encre },
   troneLabel: { ...typography.chrome, fontSize: 11, color: 'rgba(244,241,232,0.6)' },
-  mondeEtrange: { ...typography.chrome, fontSize: 12, color: palette.fondCreme, textAlign: 'center', fontStyle: 'italic' },
+  mondeEtrange: { ...typography.chrome, fontSize: 12, color: matiere.grave.encre, textAlign: 'center', fontStyle: 'italic' },
 
   detail: { borderTopWidth: 1, borderColor: 'rgba(244,241,232,0.2)', paddingTop: 12, gap: 8 },
   detailRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  detailNom: { ...typography.chrome, flex: 1, fontSize: 13, color: palette.fondCreme },
-  detailStat: { fontSize: 13, color: palette.fondCreme, minWidth: 34, textAlign: 'center' },
+  detailNom: { ...typography.chrome, flex: 1, fontSize: 13, color: matiere.grave.encre },
+  detailStat: { fontSize: 13, color: matiere.grave.encre, minWidth: 34, textAlign: 'center' },
   detailEncoche: { ...typography.chrome, fontSize: 11, color: 'rgba(244,241,232,0.7)', minWidth: 44, textAlign: 'right' },
 
   gof: { ...typography.chrome, fontSize: 11, color: 'rgba(244,241,232,0.7)', textAlign: 'center' },
 
-  revancheBtn: { alignSelf: 'center', marginTop: 20, backgroundColor: palette.encre, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 28 },
-  revancheTxt: { ...typography.proclaim, fontSize: 15, color: palette.fondCreme },
+  revancheBtn: { alignSelf: 'center', marginTop: 20, backgroundColor: matiere.grave.fond, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 28 },
+  revancheTxt: { ...typography.proclaim, fontSize: 15, color: matiere.grave.encre },
 
   feuilles: { marginTop: 24 },
   feuillesTitre: { ...typography.chrome, fontSize: 11, color: palette.bordureForte, marginBottom: 6 },

@@ -4,7 +4,7 @@
  * ═══════════════════════════════ */
 /**
  * QuadrantGrid — l'assemblage 2×2 partagé par l'écran de setup et l'écran de manche.
- * Deux rangées de cadrans + un overlay centré (le Hub, ou la carte de fin de partie)
+ * Deux rangées de cadrans + un overlay centré (le Gong, ou la carte de fin de partie)
  * posé à l'intersection. Garantit que setup et jeu partagent EXACTEMENT le même layout.
  *
  * `cells` : 4 nœuds déjà emballés (typiquement <Quadrant><PlayerPill/></Quadrant>),

@@ -10,6 +10,15 @@
  * + `uncommitLastRound` (lot 3c, brief 2026-07-13) : l'undo crayon — retire la
  * dernière manche non-branlée, rebascule 'terminee' → 'en-cours' si besoin (et
  * désarchive du vrac le cas échéant). Une branlée gravée refuse (retourne null).
+ *
+ * + `incrementGof` + `freshEntry` (lot 4, brief 2026-07-13) : le Gong. `gofCount`
+ * (déjà dans `Game`, jamais lu jusqu'ici) est maintenant écrit — événement
+ * global, jamais par joueur. `freshEntry` est TRANSITOIRE (pas dans `Game`,
+ * jamais persisté) : posé à `true` par `resetGame` (nouvelle partie OU
+ * revanche), consommé par `RoundScreen` au premier passage en état `jouer`
+ * pour décider le rugissement d'entrée — sa seule raison d'être est de
+ * distinguer une partie fraîche (roar) d'une partie reprise (silence), deux
+ * choses indiscernables au seul `state` dérivé (mêmes rounds=0/joueurs nommés).
  * ═══════════════════════════════ */
 /**
  * Store de partie — la SEULE source de vérité stockée (Zustand, single device).
@@ -60,6 +69,8 @@ function gameOf(s: Game): Game {
 interface GameStore extends Game {
   vrac: Vrac;
   masked: string[];
+  /** Transitoire, jamais persisté — cf. header. */
+  freshEntry: boolean;
   setPrenom: (id: PlayerId, prenom: string) => void;
   addRound: (cardCounts: Record<PlayerId, CardCount>) => void;
   resetGame: (keepPlayers?: boolean) => void;
@@ -67,6 +78,8 @@ interface GameStore extends Game {
   maskGang: (key: string) => void;
   unmaskAllGangs: () => void;
   uncommitLastRound: () => Record<PlayerId, CardCount> | null;
+  incrementGof: () => void;
+  clearFreshEntry: () => void;
   hydrate: () => Promise<void>;
 }
 
@@ -74,6 +87,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   ...initialGame(),
   vrac: { schemaVersion: 1, parties: [] },
   masked: [],
+  freshEntry: false,
 
   setPrenom: (id, prenom) => {
     set((s) => ({ players: { ...s.players, [id]: { ...s.players[id], prenom } } }));
@@ -119,7 +133,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const fresh = initialGame();
     // « Mêmes joueurs » : on rejoue avec les mêmes prénoms, cartes/statut remis à zéro.
     const players = keepPlayers ? s.players : fresh.players;
-    set({ ...fresh, players, vrac: s.vrac });
+    // freshEntry: true — un gang complet va (re)prendre la table, le rugissement
+    // d'entrée est dû au prochain passage en état 'jouer' (cf. header).
+    set({ ...fresh, players, vrac: s.vrac, freshEntry: true });
     saveGame(gameOf(get()));
   },
 
@@ -166,6 +182,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
     saveGame(gameOf(get()));
     return lastRound.cardCounts;
   },
+
+  // Le Gong (lot 4) : le nb de GOF, global par partie, jamais par joueur
+  // (signature/frime.md §le prix assumé). Le rugissement d'entrée ne passe
+  // JAMAIS par ici — il n'est pas compté (ce n'est pas un carré).
+  incrementGof: () => {
+    set((s) => ({ gofCount: s.gofCount + 1 }));
+    saveGame(gameOf(get()));
+  },
+
+  // Consommé par RoundScreen dès que le rugissement d'entrée a été décidé
+  // (joué ou non) — évite tout redéclenchement au re-render suivant.
+  clearFreshEntry: () => set({ freshEntry: false }),
 
   // Au boot : recharge le vrac + la partie en cours (si l'app avait été tuée en jeu) + les masqués.
   hydrate: async () => {

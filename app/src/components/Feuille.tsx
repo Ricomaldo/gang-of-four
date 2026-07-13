@@ -18,7 +18,7 @@ import type { GameArchive, PlayerId } from '../domain/model';
 import { directionOfPlay } from '../domain/direction';
 import { computeRoundScore, computeTotals, detectBranlee } from '../domain/scoring';
 import { roundWinner } from '../domain/winner';
-import { palette, typography } from '../theme/tokens';
+import { matiere, palette, typography } from '../theme/tokens';
 
 const ENCOCHE: Record<'petite' | 'grosse', string> = { petite: '/', grosse: '//' };
 
@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
   // Matière gravé — le reste : un léger poids (teinte, gras).
   rowGrave: { backgroundColor: 'rgba(0,0,0,0.03)' },
   // La branlée pèse par-dessus, qu'elle soit sur du crayon ou du gravé : inversée, sombre.
-  rowBranlee: { backgroundColor: palette.encre, borderColor: palette.encre },
-  textInverse: { color: palette.fondCreme },
+  rowBranlee: { backgroundColor: matiere.grave.fond, borderColor: matiere.grave.fond },
+  textInverse: { color: matiere.grave.encre },
 
   cell: {
     flex: 1,
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
   headCell: { alignItems: 'center', justifyContent: 'center', paddingVertical: 12 },
   headText: { fontSize: 15, fontWeight: '700', color: palette.encre },
 
-  totalRow: { borderTopWidth: 2, borderColor: palette.encre, borderBottomWidth: 0, backgroundColor: palette.encre },
-  totalDir: { backgroundColor: palette.encre },
-  totalDirText: { fontSize: 11, fontWeight: '700', color: palette.fondCreme, fontStyle: 'italic' },
-  totalText: { fontSize: 22, fontWeight: '700', color: palette.fondCreme },
+  totalRow: { borderTopWidth: 2, borderColor: matiere.grave.fond, borderBottomWidth: 0, backgroundColor: matiere.grave.fond },
+  totalDir: { backgroundColor: matiere.grave.fond },
+  totalDirText: { fontSize: 11, fontWeight: '700', color: matiere.grave.encre, fontStyle: 'italic' },
+  totalText: { fontSize: 22, fontWeight: '700', color: matiere.grave.encre },
 });

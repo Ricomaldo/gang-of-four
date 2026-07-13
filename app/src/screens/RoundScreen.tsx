@@ -36,6 +36,17 @@
  * TouchableOpacity — RN route le geste au plus imbriqué, pas de conflit).
  * Ré-ouvre la saisie pré-remplie des 4 valeurs de cette manche ; « = »
  * recommite via le battement existant.
+ *
+ * La frime (lot 4, brief 2026-07-13) : le Gong (interstice central des 4
+ * quadrants, overlay de QuadrantGrid) — tap → `GofAnimation` (plein écran) +
+ * gofCount++ (`incrementGof`, global, jamais par joueur), plateau entier en
+ * recul (`recede` sur les 4 `Quadrant`). Le même geste rugit à l'ENTRÉE en
+ * partie (revanche/roster neuf, jamais à la reprise), non compté — décidé par
+ * `freshEntry` (store, transitoire) consommé au premier passage en état
+ * `jouer`. L'annonce finale répare le trou ouvert par le lot 3c (« corriger »,
+ * réutilise `onCorrigerDerniere`, seulement si la manche gagnante n'est pas
+ * une branlée gravée) et comble le reliquat du lot 3b (« consulter » → la
+ * stèle du gang courant).
  */
 import { useEffect, useRef, useState } from 'react';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
@@ -44,6 +55,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Annonce } from '../components/Annonce';
 import { Cartouche } from '../components/Cartouche';
+import { GofAnimation } from '../components/GofAnimation';
+import { Gong } from '../components/Gong';
 import { NumPad } from '../components/NumPad';
 import { PlayDirection } from '../components/PlayDirection';
 import { PlayerPill } from '../components/PlayerPill';
@@ -63,6 +76,7 @@ import {
   roundWinner,
 } from '../domain/winner';
 import { useGameStore } from '../store/gameStore';
+import { gangKey } from '../store/vracStorage';
 import type { RootStackParamList } from '../navigation/types';
 import { palette, seatColors, typography } from '../theme/tokens';
 
@@ -85,8 +99,14 @@ export function RoundScreen({ navigation }: Props) {
   const addRound = useGameStore((s) => s.addRound);
   const resetGame = useGameStore((s) => s.resetGame);
   const uncommitLastRound = useGameStore((s) => s.uncommitLastRound);
+  const incrementGof = useGameStore((s) => s.incrementGof);
+  const freshEntry = useGameStore((s) => s.freshEntry);
+  const clearFreshEntry = useGameStore((s) => s.clearFreshEntry);
 
   const [cardGiven, setCardGiven] = useState(false);
+  // La frime (lot 4) : un seul état pour les deux déclencheurs (tap-Gong /
+  // rugissement d'entrée) — même rendu (`GofAnimation`), seul le compteur diffère.
+  const [frimeOn, setFrimeOn] = useState(false);
   const [activeId, setActiveId] = useState<PlayerId | null>(null);
   const [entry, setEntry] = useState<Record<PlayerId, string>>(blankEntry);
   // Renommer (fourche 11) : appui long sur une pill, en cours de partie (jouer/saisir).
@@ -120,6 +140,11 @@ export function RoundScreen({ navigation }: Props) {
   const prevWinner: PlayerId | null = lastRound ? roundWinner(lastRound) : null;
   const prevLast: PlayerId | null = lastRound ? roundLastPlace(lastRound, totals, TABLE_SEATS) : null;
 
+  // La porte « corriger » de l'annonce finale (lot 4) n'existe que si la manche
+  // qui a scellé la partie est du crayon — même garde que l'aperçu-feuille
+  // (une branlée gravée refuse déjà côté store, cf. uncommitLastRound).
+  const finalCorrectable = over && lastRound !== null && detectBranlee(lastRound) === null;
+
   // Détection « passe devant » : un seul flash au moment où le meneur bascule,
   // jamais en cascade avec un surdominant (la cérémonie tient déjà l'écran).
   useEffect(() => {
@@ -132,6 +157,26 @@ export function RoundScreen({ navigation }: Props) {
       return () => clearTimeout(t);
     }
   }, [state, leaderId]);
+
+  // Le rugissement d'entrée (lot 4) : le même geste que le Gong, mais pas
+  // compté. `freshEntry` (posé par resetGame) distingue une partie fraîche
+  // (revanche : state='jouer' dès le montage → immédiat ; roster neuf : la
+  // transition nommer→jouer → après les prénoms) d'une reprise (freshEntry
+  // déjà false, jamais consommé pour cette partie-là → silence).
+  useEffect(() => {
+    if (state === 'jouer' && freshEntry) {
+      clearFreshEntry();
+      setFrimeOn(true);
+    }
+  }, [state, freshEntry, clearFreshEntry]);
+
+  // Tap-Gong : la frime comptée (gofCount++, global — jamais par joueur).
+  // Verrouillé pendant qu'une frime joue déjà (roar ou gof précédent).
+  const onTapGong = () => {
+    if (frimeOn) return;
+    incrementGof();
+    setFrimeOn(true);
+  };
 
   // La veille bloquée (friction n°1 soirée 01) : active tant qu'une partie est en cours
   // (nommer → jouer → saisir), relâchée à la fin.
@@ -222,7 +267,7 @@ export function RoundScreen({ navigation }: Props) {
   const cell = (id: PlayerId, row: 'top' | 'bottom') => {
     const isRenaming = renamingId === id;
     return (
-      <Quadrant key={id} align="center">
+      <Quadrant key={id} align="center" recede={frimeOn}>
         <PlayerPill
           color={seatColors[id]}
           prenom={players[id].prenom}
@@ -262,7 +307,14 @@ export function RoundScreen({ navigation }: Props) {
       <Cartouche text={cartoucheText} />
 
       <View style={styles.plateauZone}>
-        <QuadrantGrid cells={[cell(0, 'top'), cell(1, 'top'), cell(2, 'bottom'), cell(3, 'bottom')]} />
+        <QuadrantGrid
+          cells={[cell(0, 'top'), cell(1, 'top'), cell(2, 'bottom'), cell(3, 'bottom')]}
+          overlay={
+            state === 'jouer' || state === 'saisir'
+              ? <Gong onPress={onTapGong} disabled={frimeOn || ceremonie !== null} />
+              : undefined
+          }
+        />
         {(state === 'jouer' || state === 'saisir') && (
           <View style={styles.dirLayer} pointerEvents="none">
             <PlayDirection direction={direction} />
@@ -284,6 +336,8 @@ export function RoundScreen({ navigation }: Props) {
             vainqueur={players[winnerId].prenom}
             dernier={players[loserId].prenom}
             onRejouer={() => resetGame(true)}
+            onCorriger={finalCorrectable ? onCorrigerDerniere : undefined}
+            onConsulter={() => navigation.navigate('Stele', { gangKey: gangKey(players) })}
           />
         )}
       </View>
@@ -302,6 +356,11 @@ export function RoundScreen({ navigation }: Props) {
           <NumPad onDigit={onDigit} onBackspace={onBackspace} onValidate={onValidate} canValidate={canValidate} />
         )}
       </View>
+
+      {/* La frime — plein écran, par-dessus tout le safe-area (pas seulement
+          plateauZone, cf. specs-anim-frime.md). Tap-Gong ou rugissement d'entrée,
+          même rendu. */}
+      {frimeOn && <GofAnimation onDone={() => setFrimeOn(false)} />}
     </SafeAreaView>
   );
 }

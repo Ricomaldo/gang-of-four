@@ -121,3 +121,32 @@ describe('gameStore — undo crayon (brief lot 3c)', () => {
     expect(g().vrac.parties).toHaveLength(before); // désarchivée, plus rien à montrer comme scellé
   });
 });
+
+describe('gameStore — le Gong (brief lot 4)', () => {
+  it('incrementGof cumule, global (jamais par joueur)', () => {
+    expect(g().gofCount).toBe(0);
+    g().incrementGof();
+    g().incrementGof();
+    expect(g().gofCount).toBe(2);
+  });
+
+  it('resetGame remet gofCount à zéro', () => {
+    g().incrementGof();
+    g().resetGame();
+    expect(g().gofCount).toBe(0);
+  });
+
+  it('resetGame pose freshEntry à true (le rugissement d’entrée sera dû)', () => {
+    g().clearFreshEntry();
+    expect(g().freshEntry).toBe(false);
+    g().resetGame();
+    expect(g().freshEntry).toBe(true);
+  });
+
+  it('clearFreshEntry le consomme — une seule fois par (re)prise de table', () => {
+    g().resetGame();
+    expect(g().freshEntry).toBe(true);
+    g().clearFreshEntry();
+    expect(g().freshEntry).toBe(false);
+  });
+});

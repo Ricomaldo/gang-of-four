@@ -1,27 +1,32 @@
 /* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
- * Cible : sans playerId (biais couleur retiré), le plateau entier recule, + rugissement d'entrée (ne compte pas en gofCount).
+ * Cible : sans playerId (biais couleur retiré, cf. specs-anim-frime.md §Les
+ * beats — 12/07), le rugissement d'entrée réutilise ce même composant, câblé
+ * par RoundScreen (Gong tap → gofCount++ ; rugissement d'entrée → pas compté).
  * Lot : lot 4 — plan : app/docs/journal/2026-07-12-plan-integration.md.
  * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
  * ═══════════════════════════════ */
 /**
  * GofAnimation — la frime « GANG OF FOUR ! », overlay plein écran, 5 s fixe.
- * Source de vérité : app/docs/specs/specs-anim-frime.md.
+ * Source de vérité : app/docs/specs/specs-anim-frime.md. Rejouée à l'identique
+ * pour le tap-Gong (carré) et le rugissement d'entrée (revanche/roster neuf) —
+ * seul le déclencheur diffère (câblé côté RoundScreen), pas le rendu.
  *
  * Frime totale, aucune retenue. Tous les beats démarrent à la 1ʳᵉ frame :
  *  - scale overshoot (part du disque central, dépasse le plein écran, claque en place)
  *  - jitter de rotation ±3° (vibre d'énergie), respiration (pulse de scale)
- *  - fond disco plein spectre à cuts durs, biaisé vers la couleur du joueur
+ *  - fond disco plein spectre à cuts durs, criard assumé — aucun biais
+ *    couleur joueur (la frime n'est associée à aucun joueur)
  *  - sunburst (rayons de gloire) tournant lentement derrière l'image
  *  - freeze triomphal ~0,5 s sur la dernière frame
- * Le board qui recule (3 autres quadrants) est géré côté RoundScreen/Quadrant.
+ * Le board qui recule (les 4 quadrants, pas de quadrant déclencheur) est géré
+ * côté RoundScreen/Quadrant (`recede`).
  * Le son (un des 3, aléatoire) se lance au montage, sans synchro.
  */
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Svg, { Polygon } from 'react-native-svg';
 import { createAudioPlayer } from 'expo-audio';
-import type { PlayerId } from '../domain/model';
-import { seatColors, shapes } from '../theme/tokens';
+import { shapes } from '../theme/tokens';
 import { nextGofSoundIndex } from './gofSound';
 
 const DURATION = 5000; // durée totale fixe
@@ -41,23 +46,12 @@ const SOUNDS = [
 const GOF_IMAGE = require('../../assets/official/gang-of-four.webp');
 
 type Props = {
-  playerId: PlayerId;
   onDone: () => void;
 };
 
-/** Alterne couleur joueur / spectre → la couleur du gagnant revient ~1 cut sur 2. */
-function biasedCuts(playerColor: string): string[] {
-  const cuts: string[] = [];
-  for (let i = 0; i < SPECTRUM.length; i++) {
-    cuts.push(playerColor, SPECTRUM[i]);
-  }
-  return cuts;
-}
-
-export function GofAnimation({ playerId, onDone }: Props) {
+export function GofAnimation({ onDone }: Props) {
   const { width, height } = useWindowDimensions();
-  const playerColor = seatColors[playerId];
-  const cuts = useRef(biasedCuts(playerColor)).current;
+  const cuts = SPECTRUM;
 
   const [cutIndex, setCutIndex] = useState(0);
   const [frozen, setFrozen] = useState(false);
