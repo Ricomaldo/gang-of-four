@@ -61,4 +61,5 @@ Label **plat + ✌️**. Pas de titre malin. Le ✌️ et le ton portent la swag
   partie — le vainqueur d'un soir n'a pas le gang).
 - Le **flash** (GANG !, manche pliée) et le **règne** (mène, passe devant) ne
   parlent pas la même langue — on peut gagner la partie sans gagner de manche.
-- La branlée n'a pas encore d'emoji ni de rendu — **pilier 4, ouvert.**
+- La branlée n'a pas encore d'emoji ni de rendu — ~~pilier 4, ouvert~~ **résolu
+  (18/07)** : marque `‡` / `‡‡`, cf. `branlee.md`.

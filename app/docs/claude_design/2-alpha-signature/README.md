@@ -1,9 +1,9 @@
 ---
 title: 'Claude Design — round 2 · alpha-signature'
 created: '2026-07-10'
-updated: '2026-07-10'
-version: 0.2.2
-status: en-cours
+updated: '2026-07-18'
+version: 0.2.3
+status: active
 type: cd-round
 ---
 
@@ -15,10 +15,14 @@ stèle · feuille), en **exploration par vagues** (2-3 variantes/écran par pass
 - **`brief/`** — le paquet : `00-brief.md` (cover) · `donnees-exemple.md` ·
   `passes.md` (journal des vagues) · `03-message-passe4.md` (dernier message).
   Les 4 fiches vivent dans `signature/ecrans/` (source), jointes à l'envoi.
-- **`retour/`** — les planches finales figées (passe 4 : accueil disque-GANG ·
-  Round chaleurs).
+- **`retour/`** — les planches figées (passe 4 : accueil disque-GANG · Round
+  chaleurs) **+ `specs-placard.md`** (passe 5 : la spec précise, figée).
 
-Cycle : **CLOS (12/07) — convergé en 4 passes.** Direction : **le placard**
-(l'affiche bold) ; retenus 4b/4c (accueil) · 3e+4d/4f (Round) · 3f (stèle) ·
-3h (feuille). Le reste = ingénierie d'écran, traité côté specs. Détail et
-findings : `brief/passes.md`.
+Cycle : convergé en 4 passes (**CLOS 12/07**), **rouvert le 17/07** via le **canal
+direct Design→Code** (`/design-login`) — le build avait montré la signature absente
+du **texte buildable** (elle vivait dans les images). **Passe 5 : `GANG - Specs
+placard`** — palette / fontes (Anton · Plex Mono · Caveat) / traitements **sans
+ambiguïté**, **implémentée sur les 5 écrans le 18/07**. Retenus : **4b** (accueil,
+disque noir) · Round chaleurs · **3f** (stèle) · **3h** (feuille) ; ‡ (branlée) ·
+sièges retirés. **Fait foi visuel** désormais : `retour/specs-placard.md`
+(intention) + `theme/tokens.ts` (valeurs). Détail : `brief/passes.md`.

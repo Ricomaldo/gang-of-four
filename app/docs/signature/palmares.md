@@ -49,11 +49,16 @@ seule hantise » — le all-in habite les deux pôles).
 
 ## Départage
 
-- **✌️ :** 🏆 → ⭐️ manches → **branlée** *(quand elle entrera — « on va vers
-  ça »)* → **le champion en titre reste** *(à égalité totale, on ne détrône pas :
-  il faut le battre)*. **Jamais le 💩.**
-- **🐌 (miroir strict) :** 💩 → 💥 manches perdues → **branlée prise** → **le
-  looser en titre reste**. **Jamais le 🏆.**
+**Correction (31/07) : la branlée n'entre PAS dans le départage.** Eric tranche :
+elle n'a jamais été pensée pour être comptabilisée ou pondérée — « du fun gratuit
+pour l'animation de soirée ». Les lignes ci-dessous et §La branlée dans le
+palmarès, qui la posaient comme un palier du départage, sont **caduques** sur ce
+point ; corrigées.
+
+- **✌️ :** 🏆 → ⭐️ manches → **le champion en titre reste** *(à égalité totale,
+  on ne détrône pas : il faut le battre)*. **Jamais le 💩.**
+- **🐌 (miroir strict) :** 💩 → 💥 manches perdues → **le looser en titre reste**.
+  **Jamais le 🏆.**
 
 ## Conséquences code (forge, plus tard)
 
@@ -67,16 +72,24 @@ seule hantise » — le all-in habite les deux pôles).
 
 ## La branlée dans le palmarès
 
-**+1 au donneur** (vainqueur de la manche-branlée) ; les preneurs par déduction.
-Entre dans le départage ✌️ **après les manches**. Le *quoi / pourquoi* — seuil,
-cérémonie, gravé, POV — vit dans **`branlee.md`** (pilier 4).
+~~+1 au donneur… entre dans le départage ✌️ après les manches~~ **caduc (31/07)** :
+la branlée ne vaut **aucun point** et n'entre dans **aucun** départage — cosmétique
+et narrative uniquement (marque `‡`/`‡‡` sur la feuille, cérémonie). Le
+*quoi / pourquoi* — seuil, cérémonie, gravé, POV — vit dans **`branlee.md`**
+(pilier 4).
 
 ## Ouvert
 
-- l'**emoji** de la branlée : 💪 candidat (POV donneur), **non scellé** ;
-- le **mot** de la cérémonie (copy-deck) ;
-- **rendu des marques** — *finding passe 1 (Claude Design, 12/07)* : posés seuls,
-  les **emojis stock font cheap**. Les traiter en **marques dessinées dans le
-  style** (ou de la typo), **intégrées** — pas des emojis flottants. La signature
-  est typographique (frotte avec pilier 1, « jamais illustré ») : ✌️ / 🐌 / 💩 /
-  💪 sont des **marques à concevoir**, pas des stickers.
+- l'**emoji** de la branlée — ~~💪 candidat, non scellé~~ **résolu (18/07)** :
+  marque `‡` / `‡‡`, cf. `branlee.md`.
+- le **mot** de la cérémonie (copy-deck) — **routé (31/07)** : traité dans la
+  prochaine passe de review générale avec Claude Design.
+- **rendu des marques** — ~~finding passe 1 (12/07), à concevoir~~ **résolu
+  (18/07)** par `specs-placard.md` : champion **sans glyphe** (gloire = le plus
+  gros corps + halo), looser **☞** (mot : « le looser »), branlée **‡ / ‡‡**.
+  Tous typographiques/dessinés, aucun emoji stock. *Non couvert par le placard :
+  🏆/💩 (scope partie) et ⭐️/💥 (scope manche) — pas vu passer dans les specs
+  placard, à vérifier lors de ta review visuelle.*
+- **la mécanique du départage** — **fermé (31/07)** : la branlée ne pèse dans
+  aucun départage, cf. §Départage corrigé ci-dessus. Ce n'était pas une question
+  mécanique à trancher, c'était une prémisse fausse à corriger.

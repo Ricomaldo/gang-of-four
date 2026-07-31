@@ -1,8 +1,8 @@
 ---
 title: 'GANG — Écran : la feuille (la grille d''une partie)'
 created: '2026-07-11'
-updated: '2026-07-11'
-version: 0.2.1
+updated: '2026-07-31'
+version: 0.2.2
 status: draft
 type: fiche-ecran
 ---
@@ -56,6 +56,17 @@ lit dans leurs gros scores. **💪 = emoji provisoire** (candidat, non scellé).
 - **les deux matières** : crayon (présent, léger) vs **gravé** (permanent, lourd) ;
 - **la branlée qui pèse** dans la grille ;
 - **partager** — capture WYSIWYG de la feuille affichée (partage natif).
+
+## Filtre « détails » — réintroduit (31/07)
+
+Deux versions, un bouton (hors zone de capture, donc **jamais dans le partage**,
+mais **le partage respecte le mode affiché à l'instant T**) :
+- **simple (défaut)** — cellules en **cumul** (comme la 0.1), branlée invisible
+  (pas de bande inversée, pas de marque, pas de légende) ;
+- **détails (activé)** — score **par manche** (comme le wireframe ci-dessus),
+  branlée visible avec sa marque `‡`/`‡‡` et sa légende.
+La matière crayon/gravé (ligne éditable, précédence branlée) est **indépendante**
+du filtre — elle reste vraie dans les deux modes.
 
 ## Ce qui fait GANG *(signature)*
 

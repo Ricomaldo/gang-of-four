@@ -80,11 +80,11 @@ La branlée a deux POV : celui qui **inflige**, ceux qui **prennent**.
 
 L'emoji dit l'**auteur** ; la gravure dit la **permanence.**
 
-**L'emoji reste OUVERT.** 💣 écarté (mèche en cours = anticipation, or la branlée
-est un fait accompli). 💥 déjà pris (manche perdue). **💪 = « pas mal », pas
-« oui »** — il dit *la force*, pas *le massacre infligé.* Critère du bon signe :
-il dit **c'est fait** et *« je les ai enterrés »*, jamais *« ça va péter »* ni
-*« je suis fort ».* À signer dans la langue d'Eric, jamais sprayé.
+**L'emoji — RÉSOLU (18/07), supersede cette section.** Voir plus bas : la marque
+`‡` / `‡‡` porte à la fois le rôle de l'emoji (« qui a collé ») et celui de la
+gravure (« cette manche reste »). Les critères ci-dessous (💣 écarté, 💥 déjà pris,
+💪 insuffisant) restent comme trace du raisonnement, mais n'appellent plus de
+décision.
 
 ## Ce qui reste ouvert
 
@@ -92,11 +92,14 @@ il dit **c'est fait** et *« je les ai enterrés »*, jamais *« ça va péter �
   copy *« petite / grosse branlée de {prénom} ! »*). Le corps du doc, qui posait
   *binaire*, est **caduc** sur ce point. **Seuils validés par Eric : petite ≥ ~30 ·
   grosse ≥ ~45** — ajustables à la récolte.
-- la **marque** de la branlée — **✅ SIGNÉE (12/07) : L'ENCOCHE** — `/` (petite) ·
-  `//` (grosse). Le geste des gangs : **l'encoche sur la crosse** — un fait
-  d'armes gravé, comptabilisé, froid. Elle dit *« c'est fait »*, elle se double
-  avec l'échelle, elle se cumule comme des entailles. Sur la cellule du
-  **donneur** (`0 /`) ; la ligne qui pèse fait le reste. *Rejets au dossier :
-  💪 (emoji stock) · ‡ (croix de Lorraine) · † (silhouette de croix, écartée).* ;
-- le **mot** de la cérémonie (copy-deck) ;
-- l'**entrée dans le tie** du palmarès (« on va vers ça » — cf. `palmares.md`).
+- la **marque** de la branlée — ~~✅ SIGNÉE (12/07) : L'ENCOCHE~~ **SUPERSEDÉE
+  (18/07)** : `‡` (petite) / `‡‡` (grosse) remplace l'encoche `/` `//` — décision
+  d'Eric au canal direct Claude Design, cf. `journal/2026-07-18-placard-implemente.md`
+  et `claude_design/2-alpha-signature/retour/specs-placard.md:60-61`. Posée sur la
+  cellule du **donneur** (`0 ‡`). *L'ancien rejet de `‡` (croix de Lorraine, ligne
+  ci-dessus) ne tient plus — reversé en connaissance de cause.*
+- le **mot** de la cérémonie (copy-deck) — **routé (31/07)** : traité dans la
+  prochaine passe de review générale avec Claude Design, pas ici.
+- l'**entrée dans le tie** du palmarès — **fermé (31/07)** : la branlée n'entre
+  dans **aucun** départage, ✌️ ni 🐌 — pur fun d'animation, aucun point. Prémisse
+  du 10/07 corrigée dans `palmares.md` §Départage.

@@ -1,8 +1,8 @@
 ---
 title: 'GANG — Round 2 · journal des passes Claude Design'
 created: '2026-07-12'
-updated: '2026-07-12'
-version: 0.2.1
+updated: '2026-07-18'
+version: 0.2.3
 status: active
 type: passes-log
 ---
@@ -74,3 +74,28 @@ portée de Claude Design :
 le logo qui règne sur la table · les chaleurs rouge/jaune · les marques typo ·
 les copies de table. **La suite se joue chez nous** : passe specs 0.2 →
 annotation des écrans réels (tag hérité/reshapé/neuf) → plan d'intégration.
+
+## Réouverture — le canal direct Design→Code (17/07)
+
+La clôture 12/07 tenait pour la **direction** (le placard) mais **pas pour les
+valeurs** : le build a montré que la signature n'était **nulle part en texte
+buildable** — elle vivait dans les planches, des *images*, qu'un gate texte+test ne
+peut pas attraper (d'où un rendu « timide », des specs non tenues). Eric a rouvert
+Claude Design via le **canal direct** (`/design-login`, MCP Design→Code) pour
+obtenir une **spec précise** — ce que l'exploration wireframe n'avait pas à donner.
+
+## Passe 5 — le placard précis (17-18/07) — via le canal direct
+
+**Demandé :** « sois plus précis » — une spec de handoff **sans ambiguïté** (hexs,
+fontes nommées, traitements par écran), pas des variantes.
+**Revenu :** **`GANG - Specs placard`** — palette aux hexs, 3 fontes (Anton / IBM
+Plex Mono / Caveat), marques, 2 matières, 4 écrans détaillés, copies + invariants.
+Figé : `retour/specs-placard.md` (+ source vivante sur CD).
+**Retenu / implémenté (18/07), sur les 5 écrans.** Décisions au fil : **‡ supersede
+l'encoche `/` `//`** (la croix de branlée, ok Eric) · **4 couleurs de siège
+retirées** (plateau noir/crème, seul le meneur s'allume rouge) · **disque accueil
+en 4b** (noir, non 4c crème). **Fait foi désormais** pour le visuel :
+`retour/specs-placard.md` (intention/traitements) + `theme/tokens.ts` (valeurs) ;
+pointeur posé dans `specs/specs-ecrans.md §thème`.
+**Restes signalés (prochaine retouche) :** la **grille de score** (scoresheet) + du
+polish par-ci par-là. Fondation validée sur device (Anton monte, l'identité lit).

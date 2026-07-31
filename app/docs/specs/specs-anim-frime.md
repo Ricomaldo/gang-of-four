@@ -1,8 +1,8 @@
 ---
 title: GANG — Specs anim frime
 created: 2026-07-07
-updated: '2026-07-13'
-version: 0.2.2
+updated: '2026-07-18'
+version: 0.2.3
 status: active
 type: specs
 ---
@@ -17,17 +17,17 @@ La frappe du Gong, c'est un **« GANG OF FOUR ! »** jeté à la table. L'anim d
 
 ## Déclencheur
 
-- **Tap sur le Gong central** — visible, gros, l'asset `gang-of-four.webp` (cf. signature/frime.md : sorti de l'easter-egg, le long-press sur une pill est abandonné — affordance). Lance **simultanément** l'anim + un **son aléatoire** parmi les 3.
+- **Tap sur le Gong central** — visible, gros, l'asset `gang-of-four.webp` (cf. signature/frime.md : sorti de l'easter-egg, le long-press sur une pill est abandonné — affordance). Lance **simultanément** l'anim + un **son aléatoire** parmi les 4.
 - La frime **n'est pas associée à un joueur** (prix assumé, cf. signature/frime.md §prix assumé). Compté : le **nb de GOF global par partie** (`gofCount`, [[modele-donnees]]) — jamais par joueur.
 - Durée : **5 s** fixe. Le son joue par-dessus (déborde ou finit avant, sans importance — c'est de la frime, pas de la synchro).
 
-## Le rugissement d'entrée
+## Le rugissement d'entrée — retiré (18/07)
 
-Le **même geste rugit aussi à l'entrée en partie** — il marque *un gang complet qui prend la table* (cf. signature/frime.md, fiche 01-accueil) : **immédiat pour une revanche**, **après les prénoms pour un roster neuf**, **jamais à la reprise** d'une partie en pause. Non compté dans `gofCount` (ce n'est pas un carré).
+**Retiré sur consigne d'Eric (18/07)** : l'anim ne se joue **QUE sur tap-Gong en jeu**, jamais au lancement. Le démarrage d'une partie est désormais **délibéré** — état `pret` (les 4 nommés → tap sur le **Gong central** lance, **sans anim** ; cf. `RoundScreen`). `gofCount` ne compte que les frimes de jeu (inchangé). *(L'ancienne règle — « le même geste rugit à l'entrée : immédiat pour une revanche, après les prénoms pour un roster neuf » — ne s'applique plus.)*
 
 ## Les beats (tous simultanés, dès la 1ʳᵉ frame)
 
-Assets : image `assets/official/gang-of-four.webp` (fond transparent), sons `assets/sounds/gof-01..03.mp3`.
+Assets : image `assets/official/gang-of-four.webp` (fond transparent), sons `assets/sounds/gof-01..04.mp3`.
 
 - **Scale overshoot** — l'image part du **disque central**, grandit jusqu'à **dépasser** le plein écran, puis **claque** en place. Arrogant, pas propre.
 - **Jitter de rotation** — micro-tremblement en rotation (±3°). L'image ne tremble pas de peur, elle **vibre d'énergie**. Démarre tout de suite, pas après le scale.

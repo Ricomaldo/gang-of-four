@@ -145,6 +145,17 @@ restent possibles ; c'est le prix d'Identité = A (« aucune réconciliation »)
 
 ## Le thème — direction « l'affiche » (placard)
 
+> **Fait foi désormais : `GANG - Specs placard`** (Claude Design, projet
+> « Wireframes GANG app », 17/07 — importée via le canal direct Design→Code). Elle
+> **fixe les valeurs** que cette section posait en placeholder : fontes nommées
+> (**Anton** l'affiche · **IBM Plex Mono** le chrome · **Caveat** le crayon),
+> palette aux hexs exacts, **règle d'or du chaud** (le vivant seul), matières
+> crayon/gravé. Elle **supersede** trois placeholders de cette section (implémentés
+> 18/07) : les **4 couleurs de siège sont RETIRÉES** (plateau noir/crème, seul le
+> meneur s'allume rouge) · le **disque-accueil est en 4b (noir)** (et non 4c crème)
+> · les chaleurs sont **pinnées** (plus « aux tokens »). Ci-dessous = l'intention ;
+> les valeurs vivent dans la spec placard + `theme/tokens.ts`.
+
 - **Base** : noir / crème — bandes pleines, aplats, zéro ombre décorative.
 - **Typo** : condensée bold pour ce qui proclame (titres, totaux, manchettes) ;
   mono pour le chrome (labels, listes). **Le mot, jamais illustré** : aucune
@@ -156,12 +167,12 @@ restent possibles ; c'est le prix d'Identité = A (« aucune réconciliation »)
   **uniquement** dans le Gong du Round. Le mot **GANG** = l'app → l'accueil
   (disque-GANG) et les titres.
 - **Marques typographiques** (remplacent les emojis stock) : ☞ le looser · ▲▼
-  standing · la **marque branlée = l'encoche** `/` (petite) · `//` (grosse) — le
-  slash typographique, l'encoche sur la crosse (fait d'armes gravé, comptabilisé,
-  froid) ; cellule du donneur dans la feuille, cumulable sur la stèle ; rendu fin
-  (taille, graisse) au lot concerné. **Rejetés :** 💪 (stock) · ‡ (croix de
-  Lorraine) · † (silhouette de croix). Source : `signature/branlee.md` +
-  `reshape.md` fourche 15.
+  standing (pris / rendu) · la **marque branlée = ‡** (petite) · **‡‡** (grosse) —
+  la croix de branlée, gravée sur la cellule du donneur dans la feuille, cumulable
+  sur la stèle (fait d'armes comptabilisé, froid) ; rendu fin à l'écran.
+  **Décidé (18/07) : ‡ supersede l'encoche `/` `//`** (spec placard, ok Eric) —
+  l'encoche typographique est retirée. **Rejetés :** 💪 (stock) · † (silhouette de
+  croix). Source : `GANG - Specs placard` §Typo · `signature/branlee.md`.
 - **Couleurs de siège** : les 4 couleurs actuelles (`tokens.ts`) sont **en
   chantier** — à redessiner en cohérence placard (ni gardées telles quelles, ni
   supprimées).
