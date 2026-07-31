@@ -30,21 +30,28 @@ export function GangList({ gangs, maskedCount, onTapGang, onMasquer, onRevelerMa
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.titre}>tes gangs</Text>
-      {gangs.map((g) => (
-        <TouchableOpacity
-          key={g.key}
-          style={styles.row}
-          onPress={() => onTapGang(g.key)}
-          onLongPress={() => onMasquer(g.key)}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.prenoms} numberOfLines={1}>
-            {SEAT_ORDER.map((id) => g.players[id].prenom).join(' · ')}
-          </Text>
-          <Text style={styles.temps}>{relativeLabel(g.lastPlayedAt)}</Text>
-        </TouchableOpacity>
-      ))}
+      {/* Entête entre deux traits 3px (placard §04). */}
+      <View style={styles.header}>
+        <Text style={styles.titre}>TES GANGS</Text>
+      </View>
+      {gangs.map((g, i) => {
+        // Le dernier joué (le plus récent) = bande inversée, prêt pour la revanche.
+        const recent = i === 0;
+        return (
+          <TouchableOpacity
+            key={g.key}
+            style={[styles.row, recent ? styles.rowRecent : styles.rowNormal]}
+            onPress={() => onTapGang(g.key)}
+            onLongPress={() => onMasquer(g.key)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.prenoms, recent && styles.textInverse]} numberOfLines={1}>
+              {SEAT_ORDER.map((id) => g.players[id].prenom).join(' · ')}
+            </Text>
+            <Text style={[styles.temps, recent && styles.tempsInverse]}>{relativeLabel(g.lastPlayedAt)}</Text>
+          </TouchableOpacity>
+        );
+      })}
       {maskedCount > 0 && (
         <TouchableOpacity onPress={onRevelerMasques} style={styles.masquesRow} hitSlop={8}>
           <Text style={styles.masquesTxt}>
@@ -57,18 +64,22 @@ export function GangList({ gangs, maskedCount, onTapGang, onMasquer, onRevelerMa
 }
 
 const styles = StyleSheet.create({
-  wrap: { paddingHorizontal: 24, paddingTop: 8, gap: 4 },
-  titre: { ...typography.chrome, fontSize: 11, color: palette.bordureForte, textAlign: 'center', marginBottom: 6 },
+  wrap: { paddingHorizontal: 24, paddingTop: 8 },
+  header: { borderTopWidth: 3, borderBottomWidth: 3, borderColor: palette.encre, paddingVertical: 7, marginBottom: 2 },
+  titre: { ...typography.chrome, fontSize: 11, letterSpacing: 3, color: palette.encre },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: palette.bordure,
+    paddingVertical: 11,
+    paddingHorizontal: 12,
   },
-  prenoms: { ...typography.chrome, fontSize: 14, color: palette.encre, flexShrink: 1, marginRight: 8 },
-  temps: { ...typography.chrome, fontSize: 11, color: palette.bordureForte },
+  rowRecent: { backgroundColor: palette.encre },
+  rowNormal: { borderBottomWidth: 1.5, borderBottomColor: palette.encre },
+  prenoms: { ...typography.chrome, fontSize: 15, color: palette.encre, flexShrink: 1, marginRight: 8 },
+  temps: { ...typography.chrome, fontSize: 11, color: palette.murmure },
+  textInverse: { color: palette.cremePage },
+  tempsInverse: { color: palette.pierre },
   masquesRow: { paddingVertical: 10, alignItems: 'center' },
-  masquesTxt: { ...typography.chrome, fontSize: 11, color: palette.bordureForte, textDecorationLine: 'underline' },
+  masquesTxt: { ...typography.chrome, fontSize: 11, color: palette.murmure, textDecorationLine: 'underline' },
 });

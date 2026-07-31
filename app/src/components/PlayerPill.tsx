@@ -1,27 +1,25 @@
-/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
- * Cible : tap = saisie (s'allume) · notif « donne sa meilleure carte » GARDÉE.
- * Lot : lot 1 — plan : app/docs/journal/2026-07-12-plan-integration.md.
- * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
- * Long-press renommer câblé au lot 3a ; le long-press GOF de l'ancien code disparaît (le GOF vivra au Gong, lot 4).
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé — LE PLACARD ═══
+ * Cible : la cellule joueur du plateau — prénom mono + total Anton, PAS de
+ * pastille (le placard retire les 4 couleurs de siège). Le meneur = crème + ◀
+ * (la cellule s'allume rouge côté Quadrant). tap = saisie · appui long = renommer.
+ * Specs : GANG - Specs placard §Round · specs-ecrans.md §battement (fait foi).
  * ═══════════════════════════════ */
 /**
- * PlayerPill — la « zone d'affichage » d'un joueur, à TAILLE FIXE.
- * Calée sur le pire cas (score 3 chiffres + un espace notif réservé) pour que
- * toutes les pills soient identiques quel que soit le score ou la présence de notif.
+ * PlayerPill — le CONTENU d'une cellule du plateau (le cadre/fond vit sur le
+ * Quadrant). À footprint fixe pour que les 4 cellules soient identiques quel que
+ * soit le score ou la notif. Présentationnel : tout vient en props.
  *
- * Structure : carte bordée (pastille + prénom + gros score) surmontant un slot notif
- * toujours réservé (vide → hauteur conservée). Présentationnel : tout vient en props.
+ * Placard : prénom (mono, petit) surmontant le total (Anton, gros). Plus de
+ * pastille couleur. Le meneur porte le ◀ et passe en crème (sa cellule est
+ * remplie rouge par le Quadrant). Le fréquent (pulse, notif) reste discret.
  *
- * + `pulse` (lot 2, brief 2026-07-13) : le discret de l'échelle des annonces —
- * la pill du gagnant de manche respire, une fois par manche. Ossature, non gaté.
- *
- * + `onLongPress`/`onBlur` (lot 3a, brief 2026-07-13) : appui long sur une pill
- * = renommer ce joueur en cours de partie. Réutilise le rendu `editable`
- * (TextInput) déjà bâti pour nommer — RoundScreen pilote qui est en renommage.
+ * États préservés : `editable` (nommer/renommer, TextInput) · `active` (saisie,
+ * la pill s'allume) · `inputValue` (les chiffres tapés sur la pill) · `notif`
+ * (gagnant ▲ / donneur) · `pulse` (le gagnant de manche respire).
  */
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { palette, shapes, typography } from '../theme/tokens';
+import { fonts, palette, typography } from '../theme/tokens';
 
 /** Notif qui-donne-à-qui, posée sous la carte dans le footprint fixe de la pill. */
 export type PillNotif =
@@ -30,9 +28,10 @@ export type PillNotif =
   | null;
 
 type Props = {
-  color: string;
   prenom: string;
   score: number;
+  /** Le meneur (cumul le plus bas) : texte crème + ◀. Sa cellule est rouge (Quadrant). */
+  leader?: boolean;
   editable?: boolean;
   onChangePrenom?: (v: string) => void;
   /** Tap = seule cible de saisie (le battement) — sélectionne ce joueur pour le numpad. */
@@ -49,7 +48,7 @@ type Props = {
   /** Côté où le slot notif est réservé. 'above' pour les pills du bas → la carte
    *  hugge le bord bas (symétrie avec les pills du haut) et la notif pointe vers le centre. */
   notifPosition?: 'below' | 'above';
-  /** Doublon détecté en saisie : bordure accent pour signaler le conflit. */
+  /** Doublon détecté en saisie : le prénom vire au rouge pour signaler le conflit. */
   hasError?: boolean;
   /** Le discret de l'échelle (lot 2) : la pill du gagnant de manche respire. Ossature — pas gaté. */
   pulse?: boolean;
@@ -60,9 +59,9 @@ type Props = {
 export const PILL_WIDTH = 150;
 
 export function PlayerPill({
-  color,
   prenom,
   score,
+  leader = false,
   editable = false,
   onChangePrenom,
   onPress,
@@ -77,6 +76,7 @@ export function PlayerPill({
   pulseKey,
 }: Props) {
   const displayScore = editable ? '' : inputValue !== undefined ? inputValue || '–' : String(score);
+  const inverse = leader; // texte clair (la cellule est rouge)
 
   // Le discret (échelle, lot 2) : un pulse ponctuel, une fois par manche.
   const scale = useRef(new Animated.Value(1)).current;
@@ -89,45 +89,43 @@ export function PlayerPill({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pulse, pulseKey]);
 
-  const card = (
-    <Animated.View style={[styles.card, hasError && styles.cardError, active && styles.cardActive, { transform: [{ scale }] }]}>
-      <View style={styles.idRow}>
-        <View style={[styles.dot, { backgroundColor: color }]} />
-        {editable ? (
-          <TextInput
-            style={styles.nameInput}
-            value={prenom}
-            onChangeText={onChangePrenom}
-            onBlur={onBlur}
-            autoFocus={active}
-            placeholder="prénom"
-            placeholderTextColor={palette.bordureForte}
-          />
-        ) : (
-          <Text style={styles.name} numberOfLines={1}>{prenom}</Text>
-        )}
-      </View>
-      {/* Score toujours présent (espace réservé même en saisie) pour figer la hauteur */}
-      <Text style={[styles.score, active && styles.scoreActive]}>{displayScore}</Text>
+  const content = (
+    <Animated.View style={[styles.content, active && styles.contentActive, { transform: [{ scale }] }]}>
+      {editable ? (
+        <TextInput
+          style={[styles.nameInput, hasError && styles.nameInputError]}
+          value={prenom}
+          onChangeText={onChangePrenom}
+          onBlur={onBlur}
+          autoFocus={active}
+          placeholder="prénom"
+          placeholderTextColor={palette.estompe}
+        />
+      ) : (
+        <Text style={[styles.name, inverse && styles.nameInverse]} numberOfLines={1}>
+          {leader ? '◀ ' : ''}
+          {prenom}
+        </Text>
+      )}
+      {/* Total toujours présent (espace réservé même en saisie) pour figer la hauteur */}
+      <Text style={[styles.score, inverse && styles.scoreInverse, active && styles.scoreActive]}>{displayScore}</Text>
     </Animated.View>
   );
 
   const cardWrapped =
     !editable && (onPress || onLongPress) ? (
       <TouchableOpacity onPress={onPress} onLongPress={onLongPress} activeOpacity={0.8}>
-        {card}
+        {content}
       </TouchableOpacity>
     ) : (
-      card
+      content
     );
 
   // Slot notif — hauteur toujours réservée pour figer la taille des pills. Placé
   // dessus ou dessous selon notifPosition (la carte hugge toujours le bord extérieur).
   const notifSlot = (
     <View style={[styles.notifSlot, notifPosition === 'above' && styles.notifSlotAbove]}>
-      {notif?.kind === 'winner' && (
-        <Text style={styles.notifWinner}>⭐️ gagnant manche préc.</Text>
-      )}
+      {notif?.kind === 'winner' && <Text style={styles.notifWinner}>▲ gagnant manche préc.</Text>}
       {notif?.kind === 'giver' && (
         <TouchableOpacity onPress={notif.onGive} disabled={notif.given} hitSlop={6}>
           <Text style={styles.notifGiver}>
@@ -149,29 +147,28 @@ export function PlayerPill({
 
 const styles = StyleSheet.create({
   zone: { width: PILL_WIDTH, alignItems: 'center' },
-  card: {
+  // Le contenu de la cellule : prénom + total, sans carte (le Quadrant porte le
+  // cadre/fond). Hauteur fixe pour que les 4 pills soient identiques.
+  content: {
     width: PILL_WIDTH,
-    height: 96,
-    backgroundColor: palette.fondPill,
-    borderRadius: shapes.pillRadius,
-    borderWidth: shapes.pillBorder,
-    borderColor: palette.encre,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    minHeight: 92,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 4,
     gap: 2,
   },
-  idRow: { flexDirection: 'row', alignItems: 'center', gap: 6, maxWidth: PILL_WIDTH - 28 },
-  dot: { width: 12, height: 12, borderRadius: 6, borderWidth: 1.5, borderColor: palette.bordureForte },
-  name: { ...typography.chrome, color: palette.bordureForte, fontSize: 12, flexShrink: 1 },
-  nameInput: { color: palette.encre, fontSize: 15, minWidth: 84, paddingVertical: 2, textAlign: 'center' },
-  cardError: { borderColor: palette.accentSaisie },
-  cardActive: { borderColor: palette.accentSaisie, borderWidth: shapes.pillBorder + 1 },
-  score: { ...typography.proclaim, color: palette.score, fontSize: 42, lineHeight: 46 },
-  scoreActive: { color: palette.accentSaisie },
-  notifSlot: { width: PILL_WIDTH, minHeight: 32, marginTop: 10, alignItems: 'center', justifyContent: 'flex-start' },
-  notifSlotAbove: { marginTop: 0, marginBottom: 10, justifyContent: 'flex-end' },
-  notifWinner: { fontSize: 11, color: palette.bordureForte, textAlign: 'center' },
-  notifGiver: { fontSize: 11, color: palette.encre, textAlign: 'center', textDecorationLine: 'underline' },
+  // La pill s'allume en saisie : liseré orangé (le vivant).
+  contentActive: { borderWidth: 2, borderColor: palette.orange, borderRadius: 8 },
+  name: { ...typography.chrome, fontSize: 13, letterSpacing: 1, color: palette.murmure },
+  nameInverse: { color: palette.cremePage },
+  nameInput: { fontFamily: fonts.mono, color: palette.encre, fontSize: 15, minWidth: 90, paddingVertical: 2, textAlign: 'center' },
+  nameInputError: { color: palette.rouge },
+  // Le total en Anton, gros (l'affiche). Le meneur en crème, la saisie en orangé.
+  score: { fontFamily: fonts.affiche, color: palette.encre, fontSize: 54, lineHeight: 58, letterSpacing: 1 },
+  scoreInverse: { color: palette.cremePage },
+  scoreActive: { color: palette.orange },
+  notifSlot: { width: PILL_WIDTH, minHeight: 30, marginTop: 8, alignItems: 'center', justifyContent: 'flex-start' },
+  notifSlotAbove: { marginTop: 0, marginBottom: 8, justifyContent: 'flex-end' },
+  notifWinner: { ...typography.chrome, fontSize: 11, color: palette.murmure, textAlign: 'center' },
+  notifGiver: { ...typography.chrome, fontSize: 11, color: palette.encre, textAlign: 'center', textDecorationLine: 'underline' },
 });

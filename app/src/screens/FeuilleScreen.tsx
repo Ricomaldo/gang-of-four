@@ -23,7 +23,7 @@ import type { GameArchive } from '../domain/model';
 import { useGameStore } from '../store/gameStore';
 import { findArchive } from '../store/vracStorage';
 import type { RootStackParamList } from '../navigation/types';
-import { palette, typography } from '../theme/tokens';
+import { fonts, palette, typography } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Feuille'>;
 
@@ -61,6 +61,7 @@ export function FeuilleScreen({ navigation, route }: Props) {
 
   const captureZone = useRef<View>(null);
   const [sharing, setSharing] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const onShare = async () => {
     if (sharing) return;
     setSharing(true);
@@ -78,33 +79,51 @@ export function FeuilleScreen({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.topRow}>
+      {/* Entête : bande noire pleine largeur, titre Anton crème + ✕. */}
+      <View style={styles.entete}>
         <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={12} style={styles.closeBtn}>
           <Text style={styles.closeX}>✕</Text>
         </TouchableOpacity>
         <Text style={styles.titre} numberOfLines={1}>{titre}</Text>
-        <TouchableOpacity onPress={onShare} style={styles.shareBtn} hitSlop={8} disabled={sharing}>
-          {sharing ? <ActivityIndicator size="small" color={palette.encre} /> : <Text style={styles.shareTxt}>partager</Text>}
+        <View style={styles.closeBtn} />
+      </View>
+
+      {/* Filtre détails : hors de la zone de capture — le partage suit le mode affiché. */}
+      <View style={styles.filtreBar}>
+        <TouchableOpacity onPress={() => setShowDetails((v) => !v)} hitSlop={8} style={styles.filtreBtn}>
+          <Text style={styles.filtreTxt}>{showDetails ? '✓ DÉTAILS' : 'DÉTAILS'}</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
         <View ref={captureZone} collapsable={false} style={styles.capture}>
-          <Feuille archive={archive} isLive={isLive} />
+          <Feuille archive={archive} isLive={isLive} showDetails={showDetails} />
         </View>
       </ScrollView>
+
+      {/* Partager : bande noire pleine largeur en bas (capture WYSIWYG de la feuille). */}
+      <TouchableOpacity style={styles.partager} onPress={onShare} disabled={sharing} activeOpacity={0.85}>
+        {sharing ? (
+          <ActivityIndicator size="small" color={palette.cremePage} />
+        ) : (
+          <Text style={styles.partagerTxt}>PARTAGER</Text>
+        )}
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: palette.fondCreme },
-  topRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, gap: 8 },
+  safe: { flex: 1, backgroundColor: palette.cremePage },
+  entete: { flexDirection: 'row', alignItems: 'center', backgroundColor: palette.encre, paddingHorizontal: 16, paddingVertical: 12 },
   closeBtn: { width: 32 },
-  closeX: { fontSize: 18, color: palette.encre },
-  titre: { ...typography.proclaim, flex: 1, fontSize: 16, color: palette.encre, textAlign: 'center' },
-  shareBtn: { borderWidth: 1, borderColor: palette.bordureForte, borderRadius: 12, paddingVertical: 4, paddingHorizontal: 10, minWidth: 64, alignItems: 'center' },
-  shareTxt: { ...typography.chrome, fontSize: 11, color: palette.bordureForte, fontWeight: '600' },
+  closeX: { ...typography.chrome, fontSize: 18, color: palette.cremePage },
+  titre: { fontFamily: fonts.affiche, flex: 1, fontSize: 20, letterSpacing: 1, color: palette.cremePage, textAlign: 'center', textTransform: 'uppercase' },
+  filtreBar: { flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 16, paddingTop: 12 },
+  filtreBtn: { borderWidth: 1, borderColor: palette.encre, paddingHorizontal: 10, paddingVertical: 5 },
+  filtreTxt: { ...typography.chrome, fontSize: 11, letterSpacing: 1, color: palette.encre },
   scroll: { padding: 16 },
-  capture: { backgroundColor: palette.fondCreme, padding: 8, borderRadius: 4 },
+  capture: { backgroundColor: palette.cremePage, padding: 8 },
+  partager: { backgroundColor: palette.encre, paddingVertical: 14, alignItems: 'center' },
+  partagerTxt: { ...typography.chrome, fontSize: 12, letterSpacing: 2, color: palette.cremePage },
 });

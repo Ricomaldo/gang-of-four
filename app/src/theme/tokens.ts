@@ -1,109 +1,145 @@
-/* ═══ RESHAPE 0.2 · TAG [R] reshapé ═══
- * Cible : palette placard : noir/crème + chaleurs du logo ; 4 couleurs de siège À REDESSINER ; marques typo.
- * Lot : lot 1 (ossature) + lot 4 (polish) — plan : app/docs/journal/2026-07-12-plan-integration.md.
- * Specs : app/docs/specs/specs-ecrans.md · signature/reshape.md (fait foi). Dev gelé jusqu'au dégel (Eric déclare).
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé — LE PLACARD ═══
+ * L'instrument de la signature « placard » : la palette EXACTE, les 3 fontes
+ * d'affiche, les 2 matières, les traits. Source qui fait foi : la spec placard
+ * (Claude Design, projet « Wireframes GANG app » · GANG - Specs placard) +
+ * specs-ecrans.md §Le thème. On ne règle plus des placeholders : on pose
+ * l'identité tranchée (Anton / noir-crème / le chaud sur le vivant seul).
  *
- * + `chaleur` / `siege` / `matiere` (lot 4, brief 2026-07-13) : l'échafaudage des
- * tokens réglables — les VALEURS restent provisoires (placeholder), c'est la
- * STRUCTURE qui doit rendre le réglage trivial pour Eric (son geste, sur
- * device). `palette.accentSaisie` et `seatColors` sont conservés tels quels
- * (tous les sites d'appel existants continuent de fonctionner) mais dérivent
- * maintenant de `chaleur`/`siege` — une seule source, la propagation suit.
+ * Transition : les anciens jetons (fondCreme/fondPill/accentSaisie/score/bordure,
+ * + `chaleur`/`siege`/`seatColors`/`matiere.grave`) restent exportés le temps
+ * que les 5 écrans passent au placard, puis sont retirés. Marqués @deprecated.
  * ═══════════════════════════════ */
-/**
- * Design tokens — palette « écho du jeu ».
- * Source de vérité : app/docs/specs/modele-donnees.md v0.1.5. Ne pas modifier sans MAJ du doc.
- *
- * Les couleurs joueur sont FIGÉES et liées à la POSITION du quadrant
- * (grille 2×2, propriétaire du téléphone assis en bas), jamais au joueur.
- * Convention d'indexation des quadrants (id = PlayerId) :
- *   0 = haut-gauche · 1 = haut-droite · 2 = bas-gauche · 3 = bas-droite
- */
 import type { PlayerId } from '../domain/model';
 
 /**
- * Les 4 couleurs de siège, NOMMÉES (specs-ecrans §Le thème : « en chantier —
- * à redessiner en cohérence placard »). Valeurs actuelles = placeholder,
- * inchangées ; seul le nommage change, pour que le redesign d'Eric touche un
- * seul endroit. `seatColors` (ci-dessous, indexé PlayerId) en dérive — tous
- * les sites d'appel existants (`seatColors[id]`) sont inchangés.
+ * LES FONTES (spec placard §02). Chargées au runtime par `useFonts` (App.tsx),
+ * via @expo-google-fonts — le `fontFamily` est la clé d'export du package.
+ * - `affiche` (Anton) : le wordmark GA/NG, les totaux, les trônes, les
+ *   manchettes. TOUJOURS capitales, letter-spacing 1–4. C'est LUI qui fait
+ *   « l'affiche » (Anton 88px ≠ gras-système : c'est toute la différence).
+ * - `mono*` (IBM Plex Mono) : labels, grille de données, chrome, méta, cartouche.
+ * - `crayon` (Caveat) : l'annotation manuscrite du live — usage RARE (sur le
+ *   placard le crayon s'exprime surtout par l'orangé + le dashed, pas la cursive).
  */
-export const siege = {
-  hautGauche: '#C8483C', // rouge brique
-  hautDroite: '#3E6DA6', // bleu
-  basGauche: '#4E9D6C', // vert
-  basDroite: '#E0A83A', // ambre
+export const fonts = {
+  affiche: 'Anton_400Regular',
+  mono: 'IBMPlexMono_400Regular',
+  monoMed: 'IBMPlexMono_500Medium',
+  monoBold: 'IBMPlexMono_600SemiBold',
+  crayon: 'Caveat_700Bold',
+} as const;
+
+/**
+ * LA PALETTE (spec placard §01). Deux familles + une exception.
+ * — le SOCLE noir / crème : partout, toujours.
+ * — les CHAUDS du logo : le LIVE uniquement (le Round). RÈGLE D'OR — le chaud ne
+ *   se pose que sur ce qui est vivant (meneur, disque, manche éditable). La
+ *   mémoire (stèle, feuille passée) reste strictement noir / crème.
+ * — la CICATRICE (brique / rougeClair) : la seule chaleur tolérée sur la
+ *   mémoire — elle marque la branlée, le looser, la revanche (le passé qui pèse).
+ */
+const socle = {
+  encre: '#1B1814', // noir chaud — la mémoire, les traits, l'inverse
+  cremePage: '#F2EDE0', // le fond, le papier
+  cremeRelief: '#F7F3E8', // le disque, surfaces relevées
+  murmure: '#6E675C', // labels secondaires, la voix calme
+  estompe: '#B7AF9E', // inactif, la ligne vierge, méta
+  pierre: '#8A8272', // texte 2ᵈ sur fond noir
+  rouge: '#C0231F', // le meneur (le projecteur) · branlée live       [LIVE]
+  orange: '#E06B1A', // le crayon (manche éditable) · rayonnement       [LIVE]
+  ambre: '#F0A11C', // la lumière · halo disque · nom du meneur        [LIVE]
+  brique: '#B3402E', // revanche · légende branlée                 [CICATRICE]
+  rougeClair: '#D98573', // ‡ / ☞ sur fond noir (lisible sans crier)  [CICATRICE]
+} as const;
+
+export const palette = {
+  ...socle,
+  // — transition placard (@deprecated — retiré une fois les 5 écrans restylés) —
+  fondCreme: socle.cremePage,
+  fondPill: socle.cremeRelief,
+  score: socle.encre,
+  accentSaisie: socle.orange,
+  bordure: 'rgba(27,24,20,0.18)',
+  bordureForte: 'rgba(27,24,20,0.40)',
 };
 
+/**
+ * Rôles typo. `proclaim` = l'affiche (Anton) : ce qui proclame. `chrome` =
+ * l'appareil (mono) : labels & données. `crayon` = Caveat, l'annotation live.
+ * (Anton n'a qu'une graisse — `fontWeight` est inopérant dessus, le corps fait
+ * le poids ; on empile les tailles au cas par cas dans les écrans.)
+ */
+export const typography = {
+  proclaim: { fontFamily: fonts.affiche, letterSpacing: 1 },
+  chrome: { fontFamily: fonts.mono, letterSpacing: 0.5 },
+  crayon: { fontFamily: fonts.crayon },
+} as const;
+
+/**
+ * Les DEUX MATIÈRES (spec placard §03), le cœur du système.
+ * - `crayon` : le présent, léger, réversible — cadre DASHED orangé, chiffres
+ *   gris, fond crème (option jaune pâle `voile`). Éditable sans confirmation.
+ * - `grave` : la mémoire, lourd, définitif — bande INVERSÉE (fond encre, texte
+ *   crème), trait épais. Ça pèse, non éditable. (RN ne fait pas d'inset-shadow ;
+ *   le relief « creusé » s'approxime d'un filet haut `reliefHaut`.)
+ */
+export const matiere = {
+  crayon: {
+    fond: palette.cremePage,
+    encre: palette.murmure,
+    bordure: palette.orange,
+    voile: 'rgba(240,161,28,0.10)', // jaune pâle optionnel sous le crayon
+  },
+  grave: {
+    fond: palette.encre,
+    encre: palette.cremePage,
+    overlay: 'rgba(27,24,20,0.92)', // calque translucide (annonce), ≠ fond opaque
+    reliefHaut: 'rgba(242,237,224,0.15)', // filet clair en haut = le « creusé »
+  },
+} as const;
+
+/**
+ * Formes & traits. Le placard est fait de TRAITS PLEINS (pas de bordures
+ * translucides) : `trait` standard, `traitFort` pour les séparateurs majeurs
+ * (bord haut du plateau, ligne TOTAL, entêtes).
+ */
+export const shapes = {
+  pillRadius: 14,
+  pillBorder: 2,
+  discSize: 88, // le Gong (affiné dans le composant)
+  discBorder: 6,
+  trait: 2,
+  traitFort: 4,
+} as const;
+
+/* ══════════════ TRANSITION — @deprecated, retiré à mesure du restyle ══════════════ */
+
+/**
+ * @deprecated Les chaleurs de l'échafaudage lot 4a. La spec placard nomme les
+ * chauds directement (`palette.rouge/orange/ambre/brique`). Encore lu par
+ * `Gong` et `SteleScreen` (revanche) — migrés à leur restyle, puis supprimé.
+ */
+export const chaleur = {
+  braise: palette.orange,
+  brasier: palette.rouge,
+} as const;
+
+/**
+ * @deprecated Les 4 couleurs de siège. Le placard les RETIRE : le plateau est
+ * noir / crème, seul le meneur s'allume (rouge). Conservé le temps que
+ * `RoundScreen` bascule sur ce modèle, puis supprimé.
+ */
+export const siege = {
+  hautGauche: palette.encre,
+  hautDroite: palette.encre,
+  basGauche: palette.encre,
+  basDroite: palette.encre,
+} as const;
+
+/** @deprecated cf. `siege` — indexé par PlayerId, tous en encre en attendant le retrait. */
 export const seatColors: Record<PlayerId, string> = {
   0: siege.hautGauche,
   1: siege.hautDroite,
   2: siege.basGauche,
   3: siege.basDroite,
-};
-
-/**
- * Les chaleurs du logo (rouge / jaune-orangé) — l'accent placard, cf.
- * specs-ecrans §Le thème : « le meneur, le disque qui rayonne, la manche
- * éditable — intensité entre "braise" (4d) et "brasier" (4f), calée aux
- * tokens. » Valeurs provisoires (l'intervalle 4d↔4f reste à caler par Eric) ;
- * `braise` = l'accent de base (ex-`accentSaisie`), `brasier` = le pic
- * d'intensité (le Gong, le rugissement).
- */
-export const chaleur = {
-  braise: '#C86A4A',
-  brasier: '#E0522A',
-};
-
-/** Neutres & surfaces (indicatifs — voir handoff, à affiner avec le design system). */
-export const palette = {
-  encre: '#1A1A1A', // texte principal
-  score: '#111111', // chiffres de score (élément dominant)
-  fondCreme: '#F4F1E8', // fond écran (crème carnet)
-  fondPill: '#FFFEFB', // fond pill
-  accentSaisie: chaleur.braise, // chiffre en attente « 1_ » — alias, dérive de chaleur.braise
-  bordure: 'rgba(0,0,0,0.18)',
-  bordureForte: 'rgba(0,0,0,0.40)',
-};
-
-/**
- * La dualité-mère crayon / gravé (reshape.md §La dualité-mère), en tokens de
- * matière — léger/manuscrit/réversible vs lourd/inversé/définitif. `crayon`
- * documente le défaut déjà partout (`palette.fondCreme`/`palette.encre`, non
- * migré — zéro bénéfice à renommer ce qui propage déjà) ; `grave` est LE
- * token à router vers les surfaces inverse existantes (branlée, stèle,
- * annonce finale) pour qu'un réglage se propage aux trois d'un coup.
- * `grave.overlay` porte l'alpha (calque translucide, ex. l'annonce) — distinct
- * de `grave.fond` (opaque, ex. la stèle) : ne pas les confondre au risque
- * d'aplatir une transparence voulue.
- */
-export const matiere = {
-  crayon: { fond: palette.fondCreme, encre: palette.encre, poids: '600' as const },
-  grave: { fond: palette.encre, encre: palette.fondCreme, overlay: 'rgba(26,26,26,0.92)', poids: '800' as const },
-};
-
-/** Formes (indicatif — handoff). */
-export const shapes = {
-  pillRadius: 15,
-  pillBorder: 2.5,
-  discSize: 88,
-  discBorder: 6,
-};
-
-/**
- * Rôles typo — v1 ossature (structure, pas le rendu fin). Deux voix : ce qui
- * PROCLAME (titres, totaux, manchettes — condensé-bold, aucune police custom
- * chargée à ce stade, le poids fait le travail) vs le CHROME (labels, listes —
- * mono, discret). Le rendu fin (police condensée réelle) vient au lot 4.
- */
-export const typography = {
-  proclaim: {
-    fontWeight: '800' as const,
-    letterSpacing: 0.3,
-  },
-  chrome: {
-    fontFamily: 'monospace' as const,
-    fontWeight: '600' as const,
-    letterSpacing: 0.5,
-  },
 };

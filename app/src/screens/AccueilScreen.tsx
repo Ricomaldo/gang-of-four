@@ -18,7 +18,7 @@
  * vit à la stèle (« on rejoue ? », lot 3b).
  */
 import { useMemo } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Cartouche } from '../components/Cartouche';
@@ -27,7 +27,7 @@ import { PLAYER_IDS } from '../domain/model';
 import { deriveGangs } from '../store/vracStorage';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
-import { palette, typography } from '../theme/tokens';
+import { fonts, palette, typography } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Accueil'>;
 
@@ -80,11 +80,18 @@ export function AccueilScreen({ navigation }: Props) {
       <Cartouche text={cartoucheText} />
 
       <View style={styles.discZone}>
+        {/* Le disque-GANG (placard 4b, « le disque noir ») : disque ENCRE, GA/NG
+            crème en Anton coupé aux bords, double anneau (crème puis encre). C'est
+            l'objet qu'on frappe → jouer. Le logo Gang of Four ne vit PAS ici. */}
         <TouchableOpacity onPress={onTapDisc} activeOpacity={0.85} accessibilityLabel={hasGameEnCours ? 'Reprendre la partie' : 'Nouvelle partie'}>
-          <View style={styles.disc}>
-            <Text style={styles.discText} numberOfLines={2}>
-              {'GA\nNG'}
-            </Text>
+          <View style={styles.ringOuter}>
+            <View style={styles.ringCreme}>
+              <View style={styles.disc}>
+                <Text style={styles.discText} numberOfLines={2}>
+                  {'GA\nNG'}
+                </Text>
+              </View>
+            </View>
           </View>
         </TouchableOpacity>
         {hasGameEnCours && (
@@ -105,31 +112,39 @@ export function AccueilScreen({ navigation }: Props) {
   );
 }
 
-const DISC_SIZE = 220;
+// Le disque « coupé aux bords » : gros grain, ~66 % de la largeur, capé.
+const DISC = Math.min(Math.round(Dimensions.get('window').width * 0.66), 288);
+const RING = 4; // l'épaisseur des deux anneaux (crème puis encre)
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: palette.fondCreme },
+  safe: { flex: 1, backgroundColor: palette.cremePage },
   discZone: { alignItems: 'center', paddingVertical: 24, gap: 14 },
+  // Le double anneau (box-shadow 0 0 0 4px crème, 0 0 0 8px encre → nesting RN) :
+  // de l'extérieur, anneau encre, anneau crème, puis le disque encre.
+  ringOuter: { backgroundColor: palette.encre, borderRadius: 9999, padding: RING },
+  ringCreme: { backgroundColor: palette.cremePage, borderRadius: 9999, padding: RING },
   disc: {
-    width: DISC_SIZE,
-    height: DISC_SIZE,
-    borderRadius: DISC_SIZE / 2,
-    backgroundColor: palette.fondPill,
-    borderWidth: 4,
-    borderColor: palette.encre,
+    width: DISC,
+    height: DISC,
+    borderRadius: DISC / 2,
+    backgroundColor: palette.encre,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  // La grande gueule typographique (disque-GANG 4c) : GANG énorme, sur 2 lignes,
-  // coupé aux bords du cercle. Forme d'ossature — le rendu fin vient au lot 4.
+  // GA/NG en Anton crème, énorme, 2 lignes. fontSize + lineHeight calés pour
+  // tenir DANS le cercle (Anton monte haut : lineHeight trop serré rogne les
+  // capitales). includeFontPadding/textAlignVertical : centrage propre Android.
   discText: {
-    ...typography.proclaim,
-    fontSize: 90,
-    lineHeight: 82,
-    color: palette.encre,
+    fontFamily: fonts.affiche,
+    fontSize: Math.round(DISC * 0.36),
+    lineHeight: Math.round(DISC * 0.34),
+    letterSpacing: 1,
+    color: palette.cremePage,
     textAlign: 'center',
+    textAlignVertical: 'center',
+    includeFontPadding: false,
   },
   annulerBtn: { paddingVertical: 4, paddingHorizontal: 12 },
-  annulerTxt: { ...typography.chrome, fontSize: 12, color: palette.accentSaisie, textDecorationLine: 'underline' },
+  annulerTxt: { ...typography.chrome, fontSize: 12, color: palette.murmure, textDecorationLine: 'underline' },
 });

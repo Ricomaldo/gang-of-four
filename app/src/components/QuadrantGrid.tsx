@@ -13,6 +13,7 @@
  */
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { palette, shapes } from '../theme/tokens';
 
 type Props = {
   cells: [ReactNode, ReactNode, ReactNode, ReactNode];
@@ -40,7 +41,8 @@ export function QuadrantGrid({ cells, overlay }: Props) {
 }
 
 const styles = StyleSheet.create({
-  grid: { flex: 1, padding: 8 },
+  // Le bord haut du plateau : trait fort 4px (placard §Round).
+  grid: { flex: 1, padding: 8, borderTopWidth: shapes.traitFort, borderTopColor: palette.encre },
   row: { flex: 1, flexDirection: 'row' },
   overlay: {
     position: 'absolute',

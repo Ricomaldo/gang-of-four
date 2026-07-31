@@ -1,21 +1,15 @@
-/* ═══ RESHAPE 0.2 · TAG [R] reshapé — écran réel (lot 3b, remplace le stub lot 3a, absorbe Palmares.tsx) ═══
- * Cible : le monument du gang — 2 trônes (✌️/🐌) + détail par joueur (l'encoche
- * pèse) + mention GOF + on rejoue ? + une feuille passée + partager.
- * Lot : lot 3b — plan : app/docs/journal/2026-07-12-plan-integration.md.
- * Specs : app/docs/specs/specs-ecrans.md §La stèle & la feuille ·
- *   signature/ecrans/03-stele.md · signature/palmares.md (fait foi).
+/* ═══ RESHAPE 0.2 · TAG [R] reshapé — LE PLACARD (le monolithe, 3f) ═══
+ * Cible : le monument du gang — la dalle gravée : champion (gloire, sans glyphe)
+ * / looser (☞, honte) + détail par joueur (colonnes P▲ P▼ M▲ M▼ ‡) + mention GOF
+ * + socle revanche (brique). Mémoire → strictement noir/crème (+ la cicatrice).
+ * Specs : GANG - Specs placard §Stèle (fait foi) · signature/ecrans/03-stele.md.
  * ═══════════════════════════════ */
 /**
  * La stèle — le palmarès gravé d'un gang. Le vrac est filtré sur ce gang
- * (`filterByGang`) puis `computeSoireeStats` (lot 0, intouché) donne les 2
- * trônes + le détail. Rendu monolithe (ossature « bloc gravé » sombre/dense) —
- * pas la matière pierre fine (lot 4).
- *
- * « on rejoue ? » relance CE gang : seed les 4 prénoms du roster le plus
- * récent puis `resetGame(true)` (réutilise les primitives existantes du
- * store, aucune nouvelle action). Garde-fou repris de l'accueil (onAnnuler) :
- * si une AUTRE partie est en cours ailleurs, une confirmation légère évite de
- * l'écraser en silence.
+ * (`filterByGang`) puis `computeSoireeStats` (lot 0, intouché) donne les 2 trônes
+ * + le détail. Rendu monolithe : une dalle encre posée dans la pièce crème.
+ * Miroir INÉGAL : la gloire crie (le plus gros corps, crème, sans glyphe), la
+ * honte se lit en creux (plus bas, plus petit, gris, ☞).
  */
 import { useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -30,7 +24,7 @@ import type { PrenomStats } from '../domain/stats';
 import { filterByGang, groupBySoiree, relativeLabel, sumGofCount } from '../store/vracStorage';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
-import { matiere, palette, typography } from '../theme/tokens';
+import { fonts, palette, typography } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Stele'>;
 
@@ -41,6 +35,8 @@ function latestRoster(parties: GameArchive[]): GameArchive | null {
     null,
   );
 }
+
+const plural = (n: number) => (n > 1 ? 's' : '');
 
 export function SteleScreen({ navigation, route }: Props) {
   const { gangKey } = route.params;
@@ -61,6 +57,8 @@ export function SteleScreen({ navigation, route }: Props) {
   );
 
   const mondeEtrange = stats.leader !== null && stats.leader === stats.looser;
+  const leaderStats = stats.parPrenom.find((p) => p.prenom === stats.leader);
+  const looserStats = stats.parPrenom.find((p) => p.prenom === stats.looser);
 
   const monumentRef = useRef<View>(null);
   const [sharing, setSharing] = useState(false);
@@ -122,45 +120,66 @@ export function SteleScreen({ navigation, route }: Props) {
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.topRow}>
           <Text style={styles.titre} numberOfLines={1}>
-            LE GANG · {SEAT_ORDER.map((id) => roster.players[id].prenom).join(' · ')}
+            {SEAT_ORDER.map((id) => roster.players[id].prenom).join(' · ')}
           </Text>
           <TouchableOpacity onPress={onShare} style={styles.shareBtn} hitSlop={8} disabled={sharing}>
             {sharing ? <ActivityIndicator size="small" color={palette.encre} /> : <Text style={styles.shareTxt}>partager</Text>}
           </TouchableOpacity>
         </View>
 
+        {/* La dalle — le monolithe posé dans la pièce crème. */}
         <View ref={monumentRef} collapsable={false} style={styles.monument}>
-          <View style={styles.trones}>
-            <View style={styles.trone}>
-              <Text style={styles.troneEmoji}>✌️</Text>
-              <Text style={styles.troneNom}>{stats.leader ?? '—'}</Text>
-              <Text style={styles.troneLabel}>champion</Text>
-            </View>
-            <View style={styles.trone}>
-              <Text style={styles.troneEmoji}>🐌</Text>
-              <Text style={styles.troneNom}>{stats.looser ?? '—'}</Text>
-              <Text style={styles.troneLabel}>looser</Text>
-            </View>
+          {/* LE CHAMPION — la gloire : le plus gros corps, crème, aucun glyphe. */}
+          <View style={styles.champion}>
+            <Text style={styles.championLabel}>LE CHAMPION</Text>
+            <Text style={styles.championNom} numberOfLines={1}>{stats.leader ?? '—'}</Text>
+            {leaderStats && (
+              <Text style={styles.championSous}>▲ {leaderStats.partiesGagnees} partie{plural(leaderStats.partiesGagnees)} prise{plural(leaderStats.partiesGagnees)}</Text>
+            )}
+          </View>
+
+          <View style={styles.dalleDivider} />
+
+          {/* LE LOOSER — la honte : ☞, plus bas, plus petit, gris. Jamais crié. */}
+          <View style={styles.looser}>
+            <Text style={styles.looserNom} numberOfLines={1}>☞ {stats.looser ?? '—'}</Text>
+            <Text style={styles.looserSous}>
+              le looser{looserStats ? ` · ▼ ${looserStats.partiesPerdues} fois dernier` : ''}
+            </Text>
           </View>
 
           {mondeEtrange && <Text style={styles.mondeEtrange}>le monde étrange : {stats.leader} tient les 2 trônes</Text>}
 
+          <View style={styles.dalleDivider} />
+
+          {/* Le détail — colonnes P▲ P▼ M▲ M▼ ‡ (parties/manches prises·rendues, branlées). */}
           <View style={styles.detail}>
+            <View style={styles.detailHead}>
+              <Text style={styles.detailNom} />
+              <Text style={styles.detailHeadStat}>P▲</Text>
+              <Text style={styles.detailHeadStat}>P▼</Text>
+              <Text style={styles.detailHeadStat}>M▲</Text>
+              <Text style={styles.detailHeadStat}>M▼</Text>
+              <Text style={styles.detailHeadBranlee}>‡</Text>
+            </View>
             {detail.map((p) => (
-              <DetailRow key={p.prenom} p={p} />
+              <DetailRow key={p.prenom} p={p} isLeader={p.prenom === stats.leader} isLooser={p.prenom === stats.looser} />
             ))}
           </View>
 
-          <Text style={styles.gof}>{gofTotal} gang-of-four{gofTotal > 1 ? 's' : ''} pour ce gang</Text>
+          <Text style={styles.gof}>{gofTotal} gang-of-four{plural(gofTotal)} pour ce gang</Text>
         </View>
 
-        <TouchableOpacity onPress={onRejouer} style={styles.revancheBtn}>
+        {/* Le socle = revanche : bande brique au bas de la dalle (la cicatrice qui relance). */}
+        <TouchableOpacity onPress={onRejouer} style={styles.revancheBtn} activeOpacity={0.85}>
           <Text style={styles.revancheTxt}>on rejoue ?</Text>
         </TouchableOpacity>
 
         {pastParties.length > 0 && (
           <View style={styles.feuilles}>
-            <Text style={styles.feuillesTitre}>les parties</Text>
+            <View style={styles.feuillesHead}>
+              <Text style={styles.feuillesTitre}>LES PARTIES</Text>
+            </View>
             {pastParties.map((session) => (
               <View key={session.date}>
                 {session.parties.map((p) => (
@@ -186,55 +205,93 @@ export function SteleScreen({ navigation, route }: Props) {
   );
 }
 
-function DetailRow({ p }: { p: PrenomStats }) {
+function DetailRow({ p, isLeader, isLooser }: { p: PrenomStats; isLeader: boolean; isLooser: boolean }) {
   return (
     <View style={styles.detailRow}>
-      <Text style={styles.detailNom} numberOfLines={1}>{p.prenom}</Text>
-      <Text style={styles.detailStat}>🏆{p.partiesGagnees}</Text>
-      <Text style={styles.detailStat}>💩{p.partiesPerdues}</Text>
-      <Text style={styles.detailStat}>⭐️{p.manchesGagnees}</Text>
-      <Text style={styles.detailStat}>💥{p.manchesPerdues}</Text>
-      <Text style={styles.detailEncoche}>／{p.brancheesDonnees}·{p.brancheesPrises}</Text>
+      <Text style={[styles.detailNom, isLeader && styles.detailNomLeader]} numberOfLines={1}>
+        {isLooser ? '☞ ' : ''}
+        {p.prenom}
+      </Text>
+      <Text style={styles.detailStat}>{p.partiesGagnees}</Text>
+      <Text style={[styles.detailStat, isLooser && styles.detailStatLooser]}>{p.partiesPerdues}</Text>
+      <Text style={styles.detailStat}>{p.manchesGagnees}</Text>
+      <Text style={styles.detailStat}>{p.manchesPerdues}</Text>
+      <Text style={styles.detailBranlee}>{p.brancheesDonnees}·{p.brancheesPrises}</Text>
     </View>
   );
 }
 
+const LIGHT = 'rgba(242,237,224,0.22)'; // filet clair sur la dalle (le « creusé »)
+
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: palette.fondCreme },
+  safe: { flex: 1, backgroundColor: palette.cremePage },
   scroll: { padding: 20, paddingBottom: 8 },
   topRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  titre: { ...typography.chrome, flex: 1, fontSize: 13, color: palette.bordureForte },
-  shareBtn: { borderWidth: 1, borderColor: palette.bordureForte, borderRadius: 12, paddingVertical: 4, paddingHorizontal: 10, minWidth: 64, alignItems: 'center' },
-  shareTxt: { ...typography.chrome, fontSize: 11, color: palette.bordureForte, fontWeight: '600' },
+  titre: { ...typography.chrome, flex: 1, fontSize: 12, letterSpacing: 1, color: palette.murmure },
+  shareBtn: { borderWidth: 2, borderColor: palette.encre, paddingVertical: 4, paddingHorizontal: 12, minWidth: 66, alignItems: 'center' },
+  shareTxt: { ...typography.chrome, fontSize: 11, color: palette.encre },
 
-  // Le placard-monument (reshape.md §placard) : la matière gravée — un seul
-  // token pour ce bloc entier (fond + encre), la teinte fine (pierre) reste lot 4b.
-  monument: { backgroundColor: matiere.grave.fond, borderRadius: 8, padding: 20, gap: 16 },
-  trones: { flexDirection: 'row', justifyContent: 'space-around' },
-  trone: { alignItems: 'center', gap: 4 },
-  troneEmoji: { fontSize: 32 },
-  troneNom: { ...typography.proclaim, fontSize: 20, color: matiere.grave.encre },
-  troneLabel: { ...typography.chrome, fontSize: 11, color: 'rgba(244,241,232,0.6)' },
-  mondeEtrange: { ...typography.chrome, fontSize: 12, color: matiere.grave.encre, textAlign: 'center', fontStyle: 'italic' },
+  // La dalle : encre, monte du bas (radius haut), filet clair en tête + drop = le relief.
+  monument: {
+    backgroundColor: palette.encre,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderTopWidth: 2,
+    borderTopColor: LIGHT,
+    padding: 22,
+    gap: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 8,
+  },
 
-  detail: { borderTopWidth: 1, borderColor: 'rgba(244,241,232,0.2)', paddingTop: 12, gap: 8 },
+  champion: { alignItems: 'center', gap: 3 },
+  championLabel: { ...typography.chrome, fontSize: 11, letterSpacing: 4, color: palette.pierre },
+  championNom: { fontFamily: fonts.affiche, fontSize: 52, letterSpacing: 1, color: palette.cremePage, textAlign: 'center' },
+  championSous: { ...typography.chrome, fontSize: 11, letterSpacing: 1, color: palette.pierre },
+
+  dalleDivider: { height: 1, backgroundColor: LIGHT },
+
+  looser: { alignItems: 'center', gap: 2 },
+  looserNom: { fontFamily: fonts.affiche, fontSize: 30, letterSpacing: 1, color: palette.pierre, textAlign: 'center' },
+  looserSous: { ...typography.chrome, fontSize: 10, letterSpacing: 2, color: palette.brique },
+
+  mondeEtrange: { ...typography.chrome, fontSize: 12, color: palette.cremePage, textAlign: 'center', fontStyle: 'italic' },
+
+  detail: { gap: 7 },
+  detailHead: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingBottom: 5, borderBottomWidth: 1, borderBottomColor: LIGHT },
+  detailHeadStat: { ...typography.chrome, fontSize: 10, letterSpacing: 1, color: palette.pierre, minWidth: 34, textAlign: 'center' },
+  detailHeadBranlee: { ...typography.chrome, fontSize: 10, color: palette.pierre, minWidth: 44, textAlign: 'right' },
   detailRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  detailNom: { ...typography.chrome, flex: 1, fontSize: 13, color: matiere.grave.encre },
-  detailStat: { fontSize: 13, color: matiere.grave.encre, minWidth: 34, textAlign: 'center' },
-  detailEncoche: { ...typography.chrome, fontSize: 11, color: 'rgba(244,241,232,0.7)', minWidth: 44, textAlign: 'right' },
+  detailNom: { ...typography.chrome, flex: 1, fontSize: 13, color: palette.pierre },
+  detailNomLeader: { color: palette.cremePage },
+  detailStat: { ...typography.chrome, fontSize: 13, color: palette.pierre, minWidth: 34, textAlign: 'center' },
+  detailStatLooser: { color: palette.rougeClair },
+  detailBranlee: { ...typography.chrome, fontSize: 12, color: palette.pierre, minWidth: 44, textAlign: 'right' },
 
-  gof: { ...typography.chrome, fontSize: 11, color: 'rgba(244,241,232,0.7)', textAlign: 'center' },
+  gof: { ...typography.chrome, fontSize: 11, color: palette.pierre, textAlign: 'center' },
 
-  revancheBtn: { alignSelf: 'center', marginTop: 20, backgroundColor: matiere.grave.fond, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 28 },
-  revancheTxt: { ...typography.proclaim, fontSize: 15, color: matiere.grave.encre },
+  // Le socle revanche : bande brique pleine largeur de la dalle, Anton crème.
+  revancheBtn: {
+    alignSelf: 'stretch',
+    backgroundColor: palette.brique,
+    paddingVertical: 13,
+    alignItems: 'center',
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+  },
+  revancheTxt: { fontFamily: fonts.affiche, fontSize: 18, letterSpacing: 3, color: palette.cremePage },
 
-  feuilles: { marginTop: 24 },
-  feuillesTitre: { ...typography.chrome, fontSize: 11, color: palette.bordureForte, marginBottom: 6 },
-  feuilleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderColor: palette.bordure },
+  feuilles: { marginTop: 26 },
+  feuillesHead: { borderTopWidth: 3, borderBottomWidth: 3, borderColor: palette.encre, paddingVertical: 6, marginBottom: 2 },
+  feuillesTitre: { ...typography.chrome, fontSize: 11, letterSpacing: 3, color: palette.encre },
+  feuilleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 11, paddingHorizontal: 4, borderBottomWidth: 1.5, borderColor: palette.encre },
   feuilleTxt: { ...typography.chrome, fontSize: 13, color: palette.encre },
-  feuilleFleche: { color: palette.bordureForte },
+  feuilleFleche: { ...typography.chrome, color: palette.murmure },
 
   retourBtn: { alignItems: 'center', paddingVertical: 12 },
-  retour: { ...typography.chrome, fontSize: 13, color: palette.bordureForte, textDecorationLine: 'underline' },
-  videTxt: { ...typography.chrome, fontSize: 14, color: palette.bordureForte, textAlign: 'center', marginTop: 40, marginBottom: 16, paddingHorizontal: 24 },
+  retour: { ...typography.chrome, fontSize: 13, color: palette.murmure, textDecorationLine: 'underline' },
+  videTxt: { ...typography.chrome, fontSize: 14, color: palette.murmure, textAlign: 'center', marginTop: 40, marginBottom: 16, paddingHorizontal: 24 },
 });

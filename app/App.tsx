@@ -12,15 +12,25 @@
  * pile (swipe-back / bouton retour), toujours à un geste (anti-enfermement).
  */
 import { useEffect } from 'react';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useFonts } from 'expo-font';
+import { Anton_400Regular } from '@expo-google-fonts/anton';
+import {
+  IBMPlexMono_400Regular,
+  IBMPlexMono_500Medium,
+  IBMPlexMono_600SemiBold,
+} from '@expo-google-fonts/ibm-plex-mono';
+import { Caveat_700Bold } from '@expo-google-fonts/caveat';
 import { AccueilScreen } from './src/screens/AccueilScreen';
 import { RoundScreen } from './src/screens/RoundScreen';
 import { SteleScreen } from './src/screens/SteleScreen';
 import { FeuilleScreen } from './src/screens/FeuilleScreen';
 import { useGameStore } from './src/store/gameStore';
+import { palette } from './src/theme/tokens';
 import type { RootStackParamList } from './src/navigation/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,6 +38,22 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App() {
   const hydrate = useGameStore((s) => s.hydrate);
   useEffect(() => { hydrate(); }, []);
+
+  // Les fontes du placard (Anton / IBM Plex Mono / Caveat) — chargées au boot.
+  // Les clés = les `fontFamily` de theme/tokens (`fonts.*`). Sans ça, tout
+  // retombe en système : « l'affiche » n'existe pas. On attend qu'elles soient
+  // prêtes (fond crème, pas de flash de texte système au premier rendu).
+  const [fontsLoaded] = useFonts({
+    Anton_400Regular,
+    IBMPlexMono_400Regular,
+    IBMPlexMono_500Medium,
+    IBMPlexMono_600SemiBold,
+    Caveat_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return <View style={{ flex: 1, backgroundColor: palette.cremePage }} />;
+  }
 
   return (
     <SafeAreaProvider>

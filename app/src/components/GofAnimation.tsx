@@ -20,7 +20,7 @@
  *  - freeze triomphal ~0,5 s sur la dernière frame
  * Le board qui recule (les 4 quadrants, pas de quadrant déclencheur) est géré
  * côté RoundScreen/Quadrant (`recede`).
- * Le son (un des 3, aléatoire) se lance au montage, sans synchro.
+ * Le son (un des 4, aléatoire) se lance au montage, sans synchro.
  */
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, View, useWindowDimensions } from 'react-native';
@@ -28,6 +28,7 @@ import Svg, { Polygon } from 'react-native-svg';
 import { createAudioPlayer } from 'expo-audio';
 import { shapes } from '../theme/tokens';
 import { nextGofSoundIndex } from './gofSound';
+import { GONG_SOUNDS } from './gongSounds';
 
 const DURATION = 5000; // durée totale fixe
 const FREEZE = 500; // freeze triomphal sur la dernière frame
@@ -37,21 +38,20 @@ const RAMP_MS = 300; // le fond disco n'est pas couvrant à l'ouverture (board q
 /** Spectre saturé, criard assumé. La couleur du joueur y est surpondérée à l'usage. */
 const SPECTRUM = ['#FF0033', '#00E5FF', '#FF00E5', '#00FF66', '#FFEA00', '#FF6A00', '#7A00FF'];
 
-const SOUNDS = [
-  require('../../assets/sounds/gof-01.mp3'),
-  require('../../assets/sounds/gof-02.mp3'),
-  require('../../assets/sounds/gof-03.mp3'),
-];
-
 const GOF_IMAGE = require('../../assets/official/gang-of-four.webp');
 
 type Props = {
   onDone: () => void;
+  /** Centre vertical réel du Gong (mesuré par RoundScreen, coord. locale à la
+   *  SafeAreaView) — sans lui, le centrage tombe au milieu de tout l'écran
+   *  (cartouche + plateau + zone du bas), au-dessous du Gong. Absent → centre écran. */
+  originY?: number;
 };
 
-export function GofAnimation({ onDone }: Props) {
+export function GofAnimation({ onDone, originY }: Props) {
   const { width, height } = useWindowDimensions();
   const cuts = SPECTRUM;
+  const offsetY = originY != null ? originY - height / 2 : 0;
 
   const [cutIndex, setCutIndex] = useState(0);
   const [frozen, setFrozen] = useState(false);
@@ -65,7 +65,7 @@ export function GofAnimation({ onDone }: Props) {
 
   useEffect(() => {
     // Son aléatoire (jamais deux fois le même d'affilée), lancé et oublié.
-    const player = createAudioPlayer(SOUNDS[nextGofSoundIndex(SOUNDS.length)]);
+    const player = createAudioPlayer(GONG_SOUNDS[nextGofSoundIndex(GONG_SOUNDS.length)]);
     player.play();
 
     // Le fond disco monte en opacité sur RAMP_MS → le board recule à découvert d'abord.
@@ -152,15 +152,15 @@ export function GofAnimation({ onDone }: Props) {
       {/* Fond disco — cut dur via backgroundColor (setState), opacité en ramp d'ouverture. */}
       <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: cuts[cutIndex], opacity: bgOpacity }]} />
 
-      {/* Rayons de gloire, derrière l'image. */}
-      <Animated.View style={[styles.center, { transform: [{ rotate: spin }] }]}>
+      {/* Rayons de gloire, derrière l'image — recentrés sur le Gong (offsetY). */}
+      <Animated.View style={[styles.center, { transform: [{ translateY: offsetY }, { rotate: spin }] }]}>
         <Svg width={rayR * 2} height={rayR * 2} viewBox={`${-rayR} ${-rayR} ${rayR * 2} ${rayR * 2}`}>
           {rays}
         </Svg>
       </Animated.View>
 
-      {/* L'image transparente flashe sur le disco. */}
-      <View style={styles.center}>
+      {/* L'image transparente flashe sur le disco — même recentrage. */}
+      <View style={[styles.center, { transform: [{ translateY: offsetY }] }]}>
         <Animated.Image
           source={GOF_IMAGE}
           resizeMode="contain"
