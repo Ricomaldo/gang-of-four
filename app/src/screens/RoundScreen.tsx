@@ -313,7 +313,10 @@ export function RoundScreen({ navigation }: Props) {
   // Gong masquait). Le gagnant garde son pulse + un petit ▲ sur la pill.
   const cell = (id: PlayerId) => {
     const isRenaming = renamingId === id;
-    const isLeader = id === leaderId;
+    // Le fond orange du meneur est masqué PENDANT la saisie : sinon il entre en
+    // concurrence avec l'orange du feedback de saisie (liseré + chiffres actifs)
+    // et on ne sait plus quelle cellule est active (Eric 09/08).
+    const isLeader = id === leaderId && state !== 'saisir';
     return (
       <Quadrant key={id} align="center" leader={isLeader} recede={frimeOn}>
         <PlayerPill

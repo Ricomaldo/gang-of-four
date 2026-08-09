@@ -92,9 +92,9 @@ export function PlayerPill({
         />
       ) : (
         <Text style={[styles.name, inverse && styles.nameInverse]} numberOfLines={1}>
-          {/* Le meneur porte ◀ ; sinon le gagnant de la manche préc. porte un petit ▲
-              (le texte « gagnant/donne » a migré vers la ligne unique sous le cartouche). */}
-          {leader ? '◀ ' : pulse ? '▲ ' : ''}
+          {/* Le meneur n'a plus de ◀ : le fond orange de sa cellule suffit (Eric 09/08).
+              Reste le petit ▲ du gagnant de la manche préc. quand il n'est pas meneur. */}
+          {!leader && pulse ? '▲ ' : ''}
           {prenom}
         </Text>
       )}
