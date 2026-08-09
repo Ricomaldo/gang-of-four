@@ -13,12 +13,8 @@
  * Deux intensités gatées (rareté = intensité) : la cérémonie (branlée, 2 sorties
  * corriger/graver) et le final (miroir gloire/honte + 3 portes).
  */
-import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { createAudioPlayer } from 'expo-audio';
 import { fonts, matiere, palette, typography } from '../theme/tokens';
-import { nextGofSoundIndex } from './gofSound';
-import { GONG_SOUNDS } from './gongSounds';
 
 type Props =
   | {
@@ -39,14 +35,10 @@ type Props =
     };
 
 export function Annonce(props: Props) {
-  useEffect(() => {
-    // La gloire prend le SON (le rugissement) ; la honte prend le silence.
-    if (props.kind !== 'final') return;
-    const player = createAudioPlayer(GONG_SOUNDS[nextGofSoundIndex(GONG_SOUNDS.length)]);
-    player.play();
-    return () => player.remove();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.kind]);
+  // Son de gloire : DÉBRANCHÉ (31/07, Eric). L'intention tient — la gloire prend
+  // le son, la honte le silence — mais ce ne sera PAS un des 4 sons du gong :
+  // un son de gloire DÉDIÉ, fourni plus tard. Point de câblage à rétablir ici
+  // (`kind === 'final'` → createAudioPlayer(GLOIRE_SOUND).play()) quand l'asset arrive.
 
   if (props.kind === 'ceremonie') {
     const mark = props.intensite === 'grosse' ? '‡‡' : '‡';

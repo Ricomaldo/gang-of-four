@@ -50,7 +50,8 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { createAudioPlayer } from 'expo-audio';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Annonce } from '../components/Annonce';
@@ -66,7 +67,7 @@ import { QuadrantGrid } from '../components/QuadrantGrid';
 import { MAX_CARDS, PLAYER_IDS, SEAT_ORDER, TABLE_SEATS } from '../domain/model';
 import type { CardCount, PlayerId, Round } from '../domain/model';
 import { directionOfPlay } from '../domain/direction';
-import { computeRoundScore, computeTotals, detectBranlee } from '../domain/scoring';
+import { computeTotals, detectBranlee } from '../domain/scoring';
 import {
   determineWinner,
   gameLoser,
@@ -78,11 +79,20 @@ import {
 import { useGameStore } from '../store/gameStore';
 import { gangKey } from '../store/vracStorage';
 import type { RootStackParamList } from '../navigation/types';
-import { matiere, palette, typography } from '../theme/tokens';
+import { palette, typography } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Round'>;
 
 const KEEP_AWAKE_TAG = 'gang-round';
+
+/** Son d'ouverture (Jacques) : joué UNE fois au démarrage délibéré d'une partie,
+ *  après la saisie des prénoms (tap-Gong qui quitte le setup). Pas à la reprise. */
+const OUVERTURE_SOUND = require('../../assets/sounds/ouverture.wav');
+
+/** L'illustration de la boîte du jeu — filigrane décoratif de la zone du bas (jeu). */
+const GAME_BOX = require('../../assets/official/game-box.webp');
+/** Opacité du filigrane game-box — atténué (watermark). Ajustable à l'œil. */
+const FILIGRANE_OPACITY = 0.15;
 
 const blankEntry = (): Record<PlayerId, string> => ({ 0: '', 1: '', 2: '', 3: '' });
 
@@ -130,6 +140,8 @@ export function RoundScreen({ navigation }: Props) {
   // vit le Gong — onLayout donne des coords déjà relatives à SafeAreaView, le
   // même repère que GofAnimation (rendue en sibling direct, absoluteFill).
   const [plateauCenterY, setPlateauCenterY] = useState<number | undefined>(undefined);
+  // Le son d'ouverture, tenu en ref pour être nettoyé (démontage / relance).
+  const ouverturePlayerRef = useRef<ReturnType<typeof createAudioPlayer> | null>(null);
 
   const namesReady = PLAYER_IDS.every((id) => players[id].prenom.trim().length > 0) && !PLAYER_IDS.some((id) => isDuplicate(players, id));
   const over = status === 'terminee';
@@ -153,10 +165,11 @@ export function RoundScreen({ navigation }: Props) {
   const prevWinner: PlayerId | null = lastRound ? roundWinner(lastRound) : null;
   const prevLast: PlayerId | null = lastRound ? roundLastPlace(lastRound, totals, TABLE_SEATS) : null;
 
-  // La porte « corriger » de l'annonce finale (lot 4) n'existe que si la manche
-  // qui a scellé la partie est du crayon — même garde que l'aperçu-feuille
-  // (une branlée gravée refuse déjà côté store, cf. uncommitLastRound).
-  const finalCorrectable = over && lastRound !== null && detectBranlee(lastRound) === null;
+  // La dernière manche est corrigeable si c'est du crayon (non-branlée) — une
+  // branlée gravée refuse déjà côté store (uncommitLastRound). Sert au « corriger »
+  // de la zone du bas (jouer) ET à la porte « corriger » de l'annonce finale.
+  const lastCorrectable = lastRound !== null && detectBranlee(lastRound) === null;
+  const finalCorrectable = over && lastCorrectable;
 
   // Détection « passe devant » : un seul flash au moment où le meneur bascule,
   // jamais en cascade avec un surdominant (la cérémonie tient déjà l'écran).
@@ -187,6 +200,11 @@ export function RoundScreen({ navigation }: Props) {
       if (namesReady) {
         clearFreshEntry();
         setStarted(true);
+        // Son d'ouverture : au lancement délibéré, après la saisie des prénoms.
+        ouverturePlayerRef.current?.remove();
+        const player = createAudioPlayer(OUVERTURE_SOUND);
+        ouverturePlayerRef.current = player;
+        player.play();
       }
       return;
     }
@@ -210,6 +228,9 @@ export function RoundScreen({ navigation }: Props) {
 
   // Reset de la coche « a donné sa carte » à chaque nouvelle manche.
   useEffect(() => { setCardGiven(false); }, [rounds.length]);
+
+  // Libère le player d'ouverture au démontage de l'écran.
+  useEffect(() => () => { ouverturePlayerRef.current?.remove(); }, []);
 
   // Le battement — tap une pill (seule cible) : l'allume, ouvre/rejoint la saisie en cours.
   const selectPlayer = (id: PlayerId) => setActiveId(id);
@@ -320,7 +341,9 @@ export function RoundScreen({ navigation }: Props) {
 
   // Le meneur au cartouche : son prénom en AMBRE (le seul chaud toléré ici), « mène » en crème.
   const leaderName = state !== 'nommer' && leaderId !== null ? players[leaderId].prenom : null;
-  const cartoucheText = leaderName ? 'mène' : state === 'nommer' && namesReady ? 'on joue ?' : '';
+  // En saisie (nommer) le cartouche invite déjà — « Qui joue ? » — puis bascule
+  // sur « on joue ? » quand les 4 prénoms sont prêts (le Gong apparaît).
+  const cartoucheText = leaderName ? 'mène' : state === 'nommer' ? (namesReady ? 'on joue ?' : 'Qui joue ?') : '';
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -369,14 +392,36 @@ export function RoundScreen({ navigation }: Props) {
       </View>
 
       <View style={styles.zoneBas}>
+        {state === 'nommer' && (
+          // Saisie des prénoms : retour explicite au moyeu, comme la Stèle. Rien
+          // n'est commité tant que le Gong n'a pas lancé — quitter est sans risque.
+          <View style={styles.retourWrap}>
+            <TouchableOpacity onPress={() => navigation.navigate('Accueil')} hitSlop={8} style={styles.retourBtn}>
+              <Text style={styles.retour}>← accueil</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {state === 'jouer' && (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('Feuille')}
-            accessibilityLabel="Voir la feuille complète"
-          >
-            <FeuilleApercu rounds={rounds} onCorrigerDerniere={onCorrigerDerniere} />
-          </TouchableOpacity>
+          // Zone du bas (jeu) : la boîte du jeu en filigrane (décor, non tappable),
+          // le bouton net « LA FEUILLE » porte l'action, « corriger » dessous si la
+          // dernière manche est du crayon. Les totaux vivent sur les pills — plus
+          // d'aperçu chiffré ici (redondant, jugé obscur — Eric 31/07).
+          <View style={styles.playBottom}>
+            <Image source={GAME_BOX} style={styles.filigrane} resizeMode="contain" />
+            <TouchableOpacity
+              style={styles.feuilleBtn}
+              activeOpacity={0.85}
+              onPress={() => navigation.navigate('Feuille')}
+              accessibilityLabel="Voir la feuille complète"
+            >
+              <Text style={styles.feuilleBtnTxt}>LA FEUILLE</Text>
+            </TouchableOpacity>
+            {lastCorrectable && (
+              <TouchableOpacity onPress={onCorrigerDerniere} hitSlop={8} style={styles.corrigerBtn} accessibilityLabel="Corriger la dernière manche">
+                <Text style={styles.corrigerTxt}>corriger la dernière manche</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         )}
         {state === 'saisir' && !ceremonie && (
           <NumPad onDigit={onDigit} onBackspace={onBackspace} onValidate={onValidate} canValidate={canValidate} />
@@ -391,57 +436,6 @@ export function RoundScreen({ navigation }: Props) {
   );
 }
 
-/**
- * L'aperçu feuille (état jouer, repos) — mini running : les 2 dernières manches
- * + une ligne vierge (écho visuel, pas une cible — le tap-saisie ne vit que sur
- * les pills, cf. fourche 3). Cellules = scores de manche (fourche 4), le cumul
- * vit sur les pills. PAS la feuille modale complète (lot 3b).
- *
- * La ligne de la DERNIÈRE manche porte en plus l'affordance « corriger » (lot
- * 3c) si et seulement si elle est du crayon (non-branlée) — un
- * TouchableOpacity imbriqué dans celui, plus large, qui ouvre la feuille.
- */
-function FeuilleApercu({ rounds, onCorrigerDerniere }: { rounds: Round[]; onCorrigerDerniere: () => void }) {
-  const lastRounds = rounds.slice(-2);
-  const correctable = rounds.length > 0 && detectBranlee(rounds[rounds.length - 1]) === null;
-  return (
-    <View style={styles.feuille}>
-      {lastRounds.map((round, i) => {
-        const isLast = i === lastRounds.length - 1;
-        // La dernière manche du crayon (non-branlée) : cadre dashed orangé (éditable).
-        const isCrayon = isLast && correctable;
-        return (
-          <View key={i} style={[styles.feuilleRow, isCrayon && styles.feuilleRowCrayon]}>
-            {SEAT_ORDER.map((id) => (
-              <Text key={id} style={[styles.feuilleCell, isCrayon && styles.feuilleCellCrayon]}>
-                {computeRoundScore(round.cardCounts[id])}
-              </Text>
-            ))}
-          </View>
-        );
-      })}
-      {/* La ligne vierge = l'appel à jouer (écho visuel, pas une cible). */}
-      <View style={styles.feuilleRow}>
-        {SEAT_ORDER.map((id) => (
-          <Text key={id} style={styles.feuilleCellVierge}>·</Text>
-        ))}
-      </View>
-      {/* Le pied HORS grille : « corriger » (le crayon) à gauche, l'appel à ouvrir
-          la feuille à droite — plus de « corriger » inline qui décalait la ligne. */}
-      <View style={styles.feuilleFooter}>
-        {correctable ? (
-          <TouchableOpacity onPress={onCorrigerDerniere} hitSlop={8} accessibilityLabel="Corriger la dernière manche">
-            <Text style={styles.corrigerTxt}>corriger</Text>
-          </TouchableOpacity>
-        ) : (
-          <View />
-        )}
-        <Text style={styles.feuilleHint}>↑ la feuille complète</Text>
-      </View>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: palette.cremePage },
   // Le plateau unifié à ~50 % (archi cible) — capé pour rester au-dessus du
@@ -451,15 +445,17 @@ const styles = StyleSheet.create({
   // Le flash léger (« passe devant », ossature) — un bref éclat ambré (la lumière).
   flashLayer: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: palette.ambre, opacity: 0.18 },
   zoneBas: { flex: 4, justifyContent: 'center' },
+  retourWrap: { flex: 1, justifyContent: 'flex-end' },
+  retourBtn: { alignItems: 'center', paddingVertical: 12 },
+  retour: { ...typography.chrome, fontSize: 13, color: palette.murmure, textDecorationLine: 'underline' },
 
-  // L'aperçu-feuille : 4 colonnes égales (flex), alignées d'une ligne à l'autre.
-  feuille: { paddingHorizontal: 24, gap: 6 },
-  feuilleRow: { flexDirection: 'row' },
-  feuilleRowCrayon: { borderWidth: 1.5, borderColor: matiere.crayon.bordure, borderStyle: 'dashed', borderRadius: 6, paddingVertical: 4 },
-  feuilleCell: { ...typography.chrome, flex: 1, fontSize: 16, color: palette.encre, textAlign: 'center' },
-  feuilleCellCrayon: { color: matiere.crayon.encre },
-  feuilleCellVierge: { ...typography.chrome, flex: 1, fontSize: 16, color: palette.estompe, textAlign: 'center' },
-  feuilleFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 },
+  // Zone du bas (jeu) : la boîte en filigrane + le bouton feuille par-dessus.
+  playBottom: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
+  // Le filigrane game-box : plein cadre, atténué, derrière le bouton (non tappable).
+  filigrane: { position: 'absolute', width: '100%', height: '100%', opacity: FILIGRANE_OPACITY },
+  // Le bouton net (placard : bande encre, mono crème espacé) — porte l'action.
+  feuilleBtn: { backgroundColor: palette.encre, paddingVertical: 14, paddingHorizontal: 36 },
+  feuilleBtnTxt: { ...typography.chrome, fontSize: 13, letterSpacing: 3, color: palette.cremePage },
+  corrigerBtn: { paddingVertical: 2 },
   corrigerTxt: { ...typography.chrome, fontSize: 11, color: palette.orange, textDecorationLine: 'underline' },
-  feuilleHint: { ...typography.chrome, fontSize: 11, color: palette.murmure },
 });

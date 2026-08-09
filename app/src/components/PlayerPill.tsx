@@ -164,7 +164,9 @@ const styles = StyleSheet.create({
   nameInput: { fontFamily: fonts.mono, color: palette.encre, fontSize: 15, minWidth: 90, paddingVertical: 2, textAlign: 'center' },
   nameInputError: { color: palette.rouge },
   // Le total en Anton, gros (l'affiche). Le meneur en crème, la saisie en orangé.
-  score: { fontFamily: fonts.affiche, color: palette.encre, fontSize: 54, lineHeight: 58, letterSpacing: 1 },
+  // lineHeight nettement > fontSize (31/07 : 58/54 rognait encore les capitales
+  // d'Anton sur device réel — corrigé en réel, pas en théorie).
+  score: { fontFamily: fonts.affiche, color: palette.encre, fontSize: 54, lineHeight: 65, letterSpacing: 1 },
   scoreInverse: { color: palette.cremePage },
   scoreActive: { color: palette.orange },
   notifSlot: { width: PILL_WIDTH, minHeight: 30, marginTop: 8, alignItems: 'center', justifyContent: 'flex-start' },
