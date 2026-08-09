@@ -1,13 +1,13 @@
 /* ═══ RESHAPE 0.2 · TAG [R] reshapé — LE PLACARD ═══
  * Cible : la cellule du plateau — cadre encre sur crème ; le MENEUR = cellule
- * remplie rouge (le seul chaud du plateau, cf. règle d'or). Le contenu (prénom
+ * remplie orange (le seul chaud du plateau, cf. règle d'or). Le contenu (prénom
  * + total) vit dans la PlayerPill passée en children.
  * Specs : GANG - Specs placard §Round (fait foi).
  * ═══════════════════════════════ */
 /**
  * Quadrant — l'ossature répétée du plateau : une cellule bordée qui accueille en
  * son sein une zone d'affichage (PlayerPill). Un seul rôle : le contenant. Il ne
- * connaît rien du joueur SAUF s'il mène (`leader` → cellule rouge, le projecteur).
+ * connaît rien du joueur SAUF s'il mène (`leader` → cellule orange, le projecteur).
  * `align` gère la contrainte keyboard-safe du setup (pills du bas remontées vers
  * la médiane pendant la saisie, centrées ensuite).
  */
@@ -19,7 +19,7 @@ import { palette, shapes } from '../theme/tokens';
 type Props = {
   children: ReactNode;
   align?: 'center' | 'top' | 'bottom';
-  /** Le meneur : la cellule s'allume rouge (le projecteur suit le cumul le plus bas). */
+  /** Le meneur : la cellule s'allume orange (le projecteur suit le cumul le plus bas). */
   leader?: boolean;
   /** Pendant la frime GoF : le quadrant recule (dim + ratatiné). */
   recede?: boolean;
@@ -62,6 +62,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
   },
-  quadrantLeader: { backgroundColor: palette.rouge, borderColor: palette.rouge },
+  // Le meneur : cellule remplie orange (ex-rouge, jugé trop criard le 09/08 —
+  // on descend vers le chaud du design color, moins agressif). Le texte crème
+  // de la PlayerPill reste lisible dessus.
+  quadrantLeader: { backgroundColor: palette.orange, borderColor: palette.orange },
   inner: { alignSelf: 'stretch', flex: 1, alignItems: 'center' },
 });

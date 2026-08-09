@@ -103,6 +103,14 @@ Anton 24px, le total du meneur **inversé**. **La branlée = le gravé** : bande
 inversée (chiffres Anton 20px crème), le « 0 ‡ » du donneur en rouge clair `#D98573`,
 légende mono 11px brique « ‡ … branlée de {nom} ! ». **Partager** : bande noire.
 
+> **Amendement 31/07 (Eric) — retour de la colonne sens.** La 1ʳᵉ colonne
+> n'affiche plus « M1…Mn » mais le **sens de jeu par manche** (`→` anti-horaire /
+> `←` horaire, mapping FD-09 ; entête `↔`, en encre/mono placard, sans la colonne
+> grise de l'ancien carnet). La ligne **TOTAL** garde « TOT ». Supersede le
+> choix placard « Mx » — le sens vit désormais **et** sur le plateau Round (flèche)
+> **et** sur la feuille (comme la feuille papier). Le numéro de manche est
+> abandonné dans la feuille (dérivable en comptant les lignes).
+
 ## 05 · La langue de la table & les invariants
 
 **Copies scellées :** « on rejoue ? » (revanche) · « {prénom} gagne la manche »

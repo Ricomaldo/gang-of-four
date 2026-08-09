@@ -71,6 +71,9 @@ interface GameStore extends Game {
   masked: string[];
   /** Transitoire, jamais persisté — cf. header. */
   freshEntry: boolean;
+  /** Transitoire : la feuille a demandé de corriger la dernière manche (solution B) —
+   *  le Round consomme le signal, rouvre la saisie pré-remplie, puis le remet à false. */
+  correctRequest: boolean;
   setPrenom: (id: PlayerId, prenom: string) => void;
   addRound: (cardCounts: Record<PlayerId, CardCount>) => void;
   resetGame: (keepPlayers?: boolean) => void;
@@ -80,6 +83,8 @@ interface GameStore extends Game {
   uncommitLastRound: () => Record<PlayerId, CardCount> | null;
   incrementGof: () => void;
   clearFreshEntry: () => void;
+  requestCorrect: () => void;
+  clearCorrect: () => void;
   hydrate: () => Promise<void>;
 }
 
@@ -88,6 +93,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   vrac: { schemaVersion: 1, parties: [] },
   masked: [],
   freshEntry: false,
+  correctRequest: false,
 
   setPrenom: (id, prenom) => {
     set((s) => ({ players: { ...s.players, [id]: { ...s.players[id], prenom } } }));
@@ -194,6 +200,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   // Consommé par RoundScreen dès que le rugissement d'entrée a été décidé
   // (joué ou non) — évite tout redéclenchement au re-render suivant.
   clearFreshEntry: () => set({ freshEntry: false }),
+  requestCorrect: () => set({ correctRequest: true }),
+  clearCorrect: () => set({ correctRequest: false }),
 
   // Au boot : recharge le vrac + la partie en cours (si l'app avait été tuée en jeu) + les masqués.
   hydrate: async () => {

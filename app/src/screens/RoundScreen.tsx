@@ -61,7 +61,6 @@ import { Gong } from '../components/Gong';
 import { NumPad } from '../components/NumPad';
 import { PlayDirection } from '../components/PlayDirection';
 import { PlayerPill } from '../components/PlayerPill';
-import type { PillNotif } from '../components/PlayerPill';
 import { Quadrant } from '../components/Quadrant';
 import { QuadrantGrid } from '../components/QuadrantGrid';
 import { MAX_CARDS, PLAYER_IDS, SEAT_ORDER, TABLE_SEATS } from '../domain/model';
@@ -112,6 +111,8 @@ export function RoundScreen({ navigation }: Props) {
   const incrementGof = useGameStore((s) => s.incrementGof);
   const freshEntry = useGameStore((s) => s.freshEntry);
   const clearFreshEntry = useGameStore((s) => s.clearFreshEntry);
+  const correctRequest = useGameStore((s) => s.correctRequest);
+  const clearCorrect = useGameStore((s) => s.clearCorrect);
 
   const [cardGiven, setCardGiven] = useState(false);
   // La frime (lot 4) : déclenchée UNIQUEMENT par le tap-Gong en jeu (le
@@ -286,23 +287,31 @@ export function RoundScreen({ navigation }: Props) {
   const onCorrigerDerniere = () => {
     const counts = uncommitLastRound();
     if (!counts) return;
+    // Corriger l'UNIQUE manche fait retomber rounds à 0 ; sans ceci, une partie
+    // REPRISE (started=false) redériverait l'état en 'nommer' (setup) au lieu de
+    // 'saisir'. On est en jeu → on l'affirme.
+    setStarted(true);
     const nextEntry = {} as Record<PlayerId, string>;
     for (const id of PLAYER_IDS) nextEntry[id] = String(counts[id]);
     setEntry(nextEntry);
     setActiveId(SEAT_ORDER[0]);
   };
 
-  const notifFor = (id: PlayerId): PillNotif => {
-    if (state !== 'jouer' && state !== 'saisir') return null;
-    if (rounds.length === 0) return null;
-    if (id === prevWinner) return { kind: 'winner' };
-    if (id === prevLast) return { kind: 'giver', given: cardGiven, onGive: () => setCardGiven(true) };
-    return null;
-  };
+  // Solution B : la feuille (dernière ligne tappée) demande la correction et se
+  // referme ; le Round, resté monté sous la modale, consomme le signal ici et
+  // rouvre la saisie pré-remplie via la mécanique éprouvée (onCorrigerDerniere).
+  useEffect(() => {
+    if (!correctRequest) return;
+    onCorrigerDerniere();
+    clearCorrect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [correctRequest]);
 
-  // Haut : carte contre le bord haut, notif dessous (vers le centre). Bas : carte
-  // contre le bord bas, notif dessus (vers le centre). Pills symétriques autour de l'arc.
-  const cell = (id: PlayerId, row: 'top' | 'bottom') => {
+  // Le plateau : chaque cellule = un Quadrant (cadre + fond meneur) + sa PlayerPill.
+  // Les textes conditionnels (gagnant préc. / passe de carte) ont migré vers la
+  // ligne unique sous le cartouche — plus rien à poser « vers le centre » (que le
+  // Gong masquait). Le gagnant garde son pulse + un petit ▲ sur la pill.
+  const cell = (id: PlayerId) => {
     const isRenaming = renamingId === id;
     const isLeader = id === leaderId;
     return (
@@ -330,8 +339,6 @@ export function RoundScreen({ navigation }: Props) {
           }
           active={(state === 'saisir' && activeId === id) || isRenaming}
           inputValue={state === 'saisir' ? entry[id] : undefined}
-          notif={notifFor(id)}
-          notifPosition={row === 'top' ? 'below' : 'above'}
           pulse={id === prevWinner}
           pulseKey={rounds.length}
         />
@@ -345,9 +352,28 @@ export function RoundScreen({ navigation }: Props) {
   // sur « on joue ? » quand les 4 prénoms sont prêts (le Gong apparaît).
   const cartoucheText = leaderName ? 'mène' : state === 'nommer' ? (namesReady ? 'on joue ?' : 'Qui joue ?') : '';
 
+  // La passe de carte (règle GoF) : le dernier de la manche préc. donne sa meilleure
+  // carte au gagnant. UNE ligne sous le cartouche, tappable pour confirmer — elle
+  // remplace les 2 notifs par-pill que le Gong masquait. prevWinner ≠ null ⇒ rounds > 0.
+  const passeActive = (state === 'jouer' || state === 'saisir') && prevWinner !== null && prevLast !== null;
+  const passeText = passeActive
+    ? `${players[prevLast!].prenom} ${cardGiven ? 'a donné' : 'donne'} sa meilleure carte à ${players[prevWinner!].prenom}`
+    : '';
+
   return (
     <SafeAreaView style={styles.safe}>
       <Cartouche accent={leaderName ?? undefined} text={cartoucheText} />
+      {passeActive && (
+        <TouchableOpacity
+          onPress={cardGiven ? undefined : () => setCardGiven(true)}
+          disabled={cardGiven}
+          activeOpacity={0.7}
+          style={styles.passeBar}
+          accessibilityLabel={passeText}
+        >
+          <Text style={[styles.passeTxt, cardGiven && styles.passeTxtDone]}>{passeText}</Text>
+        </TouchableOpacity>
+      )}
 
       <View
         style={styles.plateauZone}
@@ -357,18 +383,13 @@ export function RoundScreen({ navigation }: Props) {
         }}
       >
         <QuadrantGrid
-          cells={[cell(0, 'top'), cell(1, 'top'), cell(2, 'bottom'), cell(3, 'bottom')]}
+          cells={[cell(0), cell(1), cell(2), cell(3)]}
           overlay={
             (state === 'nommer' && namesReady) || state === 'jouer' || state === 'saisir'
               ? <Gong onPress={onTapGong} disabled={frimeOn || ceremonie !== null} />
               : undefined
           }
         />
-        {(state === 'jouer' || state === 'saisir') && (
-          <View style={styles.dirLayer} pointerEvents="none">
-            <PlayDirection direction={direction} />
-          </View>
-        )}
         {flash && <View style={styles.flashLayer} pointerEvents="none" />}
         {ceremonie && (
           <Annonce
@@ -402,12 +423,17 @@ export function RoundScreen({ navigation }: Props) {
           </View>
         )}
         {state === 'jouer' && (
-          // Zone du bas (jeu) : la boîte du jeu en filigrane (décor, non tappable),
-          // le bouton net « LA FEUILLE » porte l'action, « corriger » dessous si la
-          // dernière manche est du crayon. Les totaux vivent sur les pills — plus
-          // d'aperçu chiffré ici (redondant, jugé obscur — Eric 31/07).
+          // Zone du bas (jeu) : la boîte du jeu en filigrane (décor, non tappable) +
+          // le bouton net « LA FEUILLE ». La correction de la dernière manche a migré
+          // DANS la feuille (dernière ligne éditable) — plus de lien séparé ici
+          // (redondant, Eric 09/08). Les totaux vivent sur les pills.
           <View style={styles.playBottom}>
             <Image source={GAME_BOX} style={styles.filigrane} resizeMode="contain" />
+            {/* La flèche flotte EN HAUT de l'asset (sous les quadrants), plus dans
+                une bande dédiée — l'asset récupère la hauteur et grandit (Eric 09/08). */}
+            <View style={styles.dirOverlay} pointerEvents="none">
+              <PlayDirection direction={direction} />
+            </View>
             <TouchableOpacity
               style={styles.feuilleBtn}
               activeOpacity={0.85}
@@ -416,11 +442,6 @@ export function RoundScreen({ navigation }: Props) {
             >
               <Text style={styles.feuilleBtnTxt}>la feuille de scores</Text>
             </TouchableOpacity>
-            {lastCorrectable && (
-              <TouchableOpacity onPress={onCorrigerDerniere} hitSlop={8} style={styles.corrigerBtn} accessibilityLabel="Corriger la dernière manche">
-                <Text style={styles.corrigerTxt}>corriger la dernière manche</Text>
-              </TouchableOpacity>
-            )}
           </View>
         )}
         {state === 'saisir' && !ceremonie && (
@@ -441,7 +462,11 @@ const styles = StyleSheet.create({
   // Le plateau unifié à ~50 % (archi cible) — capé pour rester au-dessus du
   // clavier natif pendant NOMMER (~45-48 % depuis le bas, cf. BUG-03).
   plateauZone: { flex: 5, maxHeight: '50%' },
-  dirLayer: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, alignItems: 'center', justifyContent: 'center' },
+  // La bande dédiée du sens de jeu, sous les quadrants. Hauteur fixe (réservée
+  // dans tous les états) pour que le plateau et la zone du bas ne bougent pas.
+  // La flèche flotte en haut de la zone du bas, par-dessus l'asset (plus de bande
+  // dédiée qui volait de la hauteur et écrasait l'asset).
+  dirOverlay: { position: 'absolute', top: 6, left: 0, right: 0, alignItems: 'center' },
   // Le flash léger (« passe devant », ossature) — un bref éclat ambré (la lumière).
   flashLayer: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: palette.ambre, opacity: 0.18 },
   zoneBas: { flex: 4, justifyContent: 'center' },
@@ -450,12 +475,17 @@ const styles = StyleSheet.create({
   retour: { ...typography.chrome, fontSize: 13, color: palette.murmure, textDecorationLine: 'underline' },
 
   // Zone du bas (jeu) : la boîte en filigrane + le bouton feuille par-dessus.
-  playBottom: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  // Le filigrane game-box : plein cadre, atténué, derrière le bouton (non tappable).
-  filigrane: { position: 'absolute', width: '100%', height: '100%', opacity: FILIGRANE_OPACITY },
-  // Le bouton net (placard : bande encre, mono crème espacé) — porte l'action.
-  feuilleBtn: { backgroundColor: palette.encre, paddingVertical: 14, paddingHorizontal: 36 },
-  feuilleBtnTxt: { ...typography.chrome, fontSize: 13, letterSpacing: 3, color: palette.cremePage },
-  corrigerBtn: { paddingVertical: 2 },
-  corrigerTxt: { ...typography.chrome, fontSize: 11, color: palette.orange, textDecorationLine: 'underline' },
+  playBottom: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14, paddingHorizontal: 24 },
+  // Le filigrane game-box : inséré (marges → de l'air sous la flèche et aux bords,
+  // il respire au lieu d'être rogné plein cadre), atténué, derrière le bouton.
+  filigrane: { position: 'absolute', top: 4, left: 8, right: 8, bottom: 4, width: undefined, height: undefined, opacity: FILIGRANE_OPACITY },
+  // Le bouton net (placard : bande encre, mono crème) — colle au texte (alignSelf
+  // center + padding serré) pour ne PAS filer sur toute la largeur.
+  feuilleBtn: { alignSelf: 'center', backgroundColor: palette.encre, paddingVertical: 12, paddingHorizontal: 22 },
+  feuilleBtnTxt: { ...typography.chrome, fontSize: 12, letterSpacing: 1.5, color: palette.cremePage },
+  // La ligne de passe de carte, sous le cartouche (souligné = à confirmer d'un tap ;
+  // estompé sans souligné = déjà donné).
+  passeBar: { paddingVertical: 6, paddingHorizontal: 20, alignItems: 'center' },
+  passeTxt: { ...typography.chrome, fontSize: 12, color: palette.encre, textAlign: 'center', textDecorationLine: 'underline' },
+  passeTxtDone: { color: palette.murmure, textDecorationLine: 'none' },
 });

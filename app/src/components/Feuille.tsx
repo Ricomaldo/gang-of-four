@@ -13,15 +13,21 @@
  *    le score du donneur « 0 ‡ » en rouge clair, légende brique dessous. Ça pèse.
  * Précédence : une branlée scellée est TOUJOURS gravée, même en dernière manche.
  */
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SEAT_ORDER } from '../domain/model';
 import type { GameArchive, PlayerId } from '../domain/model';
 import { computeRoundScore, computeTotals, detectBranlee } from '../domain/scoring';
+import { directionOfPlay } from '../domain/direction';
 import { roundWinner } from '../domain/winner';
 import { fonts, matiere, palette, typography } from '../theme/tokens';
 
 /** La marque branlée = l'encoche ‡ (petite) / ‡‡ (grosse). Ok Eric 18/07 (supersede l'encoche `/` `//`). */
 const ENCOCHE: Record<'petite' | 'grosse', string> = { petite: '‡', grosse: '‡‡' };
+
+/** Le sens de jeu de la manche (1-indexée), rendu comme sur la feuille papier :
+ *  anti-horaire = →, horaire = ← (mapping FD-09). Réintroduit le 31/07 (Eric) —
+ *  la 1ʳᵉ colonne redevient la flèche (remplace le « Mx » du placard). */
+const dirGlyph = (roundNumber: number): string => (directionOfPlay(roundNumber) === 'anti-horaire' ? '→' : '←');
 
 /** Ligne TOT — le cumul final : Anton sur crème, trait fort 4px, le total du MENEUR inversé. */
 export function TotRow({ totals }: { totals: Record<PlayerId, number> }) {
@@ -51,11 +57,16 @@ export function Feuille({
   archive,
   isLive,
   showDetails,
+  onCorrigerDerniere,
 }: {
   archive: GameArchive;
   isLive: boolean;
   /** Version simple (cumul, sans branlée, comme la 0.1) vs détail (score par manche + branlées). */
   showDetails: boolean;
+  /** Solution B (partie en cours only) : tap sur la ligne crayon (dernière manche
+   *  corrigeable) → referme la feuille et rouvre la saisie du Round pré-remplie.
+   *  Absent pour une archive passée ou une partie scellée (pas de ligne crayon). */
+  onCorrigerDerniere?: () => void;
 }) {
   const { players, rounds } = archive;
   const totals = computeTotals(rounds);
@@ -78,9 +89,11 @@ export function Feuille({
 
   return (
     <View style={styles.feuille}>
-      {/* En-tête colonnes : mono gris sous trait 3px. */}
+      {/* En-tête colonnes : mono gris sous trait 3px. 1ʳᵉ colonne = sens de jeu (↔). */}
       <View style={[styles.row, styles.headRow]}>
-        <View style={styles.labelCell} />
+        <View style={styles.labelCell}>
+          <Text style={styles.dirHead}>↔</Text>
+        </View>
         {SEAT_ORDER.map((id) => (
           <View key={id} style={[styles.cell, styles.headCell, id !== lastId && styles.colDivider]}>
             <Text style={styles.headText} numberOfLines={1}>{players[id].prenom || '?'}</Text>
@@ -91,7 +104,7 @@ export function Feuille({
       {rows.length === 0 ? (
         <View style={styles.row}>
           <View style={styles.labelCell}>
-            <Text style={styles.labelText}>M1</Text>
+            <Text style={styles.dirText}>{dirGlyph(1)}</Text>
           </View>
           {SEAT_ORDER.map((id) => (
             <View key={id} style={[styles.cell, id !== lastId && styles.colDivider]}>
@@ -102,37 +115,49 @@ export function Feuille({
       ) : (
         rows.map((row) => {
           const showBranlee = showDetails && !!row.branlee;
+          // La ligne crayon (dernière manche vivante non-branlée) est la SEULE
+          // corrigeable : tap → rouvre la saisie du Round (solution B).
+          const editable = !!onCorrigerDerniere && row.matiere === 'crayon';
+          const rowInner = (
+            <View
+              style={[
+                styles.row,
+                row.matiere === 'crayon' && styles.rowCrayon,
+                showBranlee && styles.rowBranlee,
+              ]}
+            >
+              <View style={[styles.labelCell, showBranlee && styles.labelCellBranlee]}>
+                <Text style={[styles.dirText, showBranlee && styles.textInverse]}>{dirGlyph(row.i + 1)}</Text>
+              </View>
+              {row.cells.map((c) => {
+                const isBranleeDonneur = showBranlee && c.isDonneur;
+                return (
+                  <View key={c.id} style={[styles.cell, c.id !== lastId && styles.colDivider]}>
+                    <Text
+                      style={[
+                        styles.cumul,
+                        row.matiere === 'crayon' && styles.cumulCrayon,
+                        showBranlee && styles.cumulBranlee,
+                        isBranleeDonneur && styles.cumulDonneur,
+                      ]}
+                    >
+                      {showDetails ? c.pts : c.cumul}
+                      {isBranleeDonneur ? ` ${ENCOCHE[row.branlee!]}` : ''}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          );
           return (
             <View key={row.i}>
-              <View
-                style={[
-                  styles.row,
-                  row.matiere === 'crayon' && styles.rowCrayon,
-                  showBranlee && styles.rowBranlee,
-                ]}
-              >
-                <View style={[styles.labelCell, showBranlee && styles.labelCellBranlee]}>
-                  <Text style={[styles.labelText, showBranlee && styles.textInverse]}>M{row.i + 1}</Text>
-                </View>
-                {row.cells.map((c) => {
-                  const isBranleeDonneur = showBranlee && c.isDonneur;
-                  return (
-                    <View key={c.id} style={[styles.cell, c.id !== lastId && styles.colDivider]}>
-                      <Text
-                        style={[
-                          styles.cumul,
-                          row.matiere === 'crayon' && styles.cumulCrayon,
-                          showBranlee && styles.cumulBranlee,
-                          isBranleeDonneur && styles.cumulDonneur,
-                        ]}
-                      >
-                        {showDetails ? c.pts : c.cumul}
-                        {isBranleeDonneur ? ` ${ENCOCHE[row.branlee!]}` : ''}
-                      </Text>
-                    </View>
-                  );
-                })}
-              </View>
+              {editable ? (
+                <TouchableOpacity onPress={onCorrigerDerniere} activeOpacity={0.7} accessibilityLabel="Corriger la dernière manche">
+                  {rowInner}
+                </TouchableOpacity>
+              ) : (
+                rowInner
+              )}
               {showBranlee && (
                 <Text style={styles.legende}>
                   {ENCOCHE[row.branlee!]} {row.branlee} branlée de {row.donneurPrenom} !
@@ -156,11 +181,13 @@ const styles = StyleSheet.create({
 
   colDivider: { borderRightWidth: 1, borderRightColor: palette.encre },
 
-  // La colonne M-label (M1…Mn / TOT) — remplace l'ancienne colonne de sens de jeu
-  // (le sens vit sur le plateau du Round, pas ici).
+  // 1ʳᵉ colonne = le sens de jeu (flèche par manche, réintroduit 31/07). La ligne
+  // TOT y garde « TOT » (totalLabelText). Placard : pas de colonne grise ombrée.
   labelCell: { width: 44, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 },
   labelCellBranlee: { backgroundColor: matiere.grave.fond },
-  labelText: { ...typography.chrome, fontSize: 11, color: palette.murmure },
+  // La flèche →/← (anti-horaire/horaire, FD-09), en encre ; l'entête = ↔ atténué.
+  dirText: { ...typography.chrome, fontSize: 16, color: palette.encre },
+  dirHead: { ...typography.chrome, fontSize: 13, color: palette.murmure },
 
   // Matière crayon — la dernière manche d'une partie vivante : cadre dashed orangé.
   rowCrayon: { borderWidth: 1.5, borderColor: matiere.crayon.bordure, borderStyle: 'dashed', borderBottomWidth: 1.5 },

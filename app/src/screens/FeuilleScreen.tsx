@@ -41,6 +41,7 @@ export function FeuilleScreen({ navigation, route }: Props) {
   const rounds = useGameStore((s) => s.rounds);
   const status = useGameStore((s) => s.status);
   const gofCount = useGameStore((s) => s.gofCount);
+  const requestCorrect = useGameStore((s) => s.requestCorrect);
 
   const pastArchive = archiveId ? findArchive(vrac.parties, archiveId) : undefined;
   const archive: GameArchive =
@@ -97,7 +98,16 @@ export function FeuilleScreen({ navigation, route }: Props) {
 
       <ScrollView contentContainerStyle={styles.scroll}>
         <View ref={captureZone} collapsable={false} style={styles.capture}>
-          <Feuille archive={archive} isLive={isLive} showDetails={showDetails} />
+          <Feuille
+            archive={archive}
+            isLive={isLive}
+            showDetails={showDetails}
+            // Solution B : uniquement la partie EN COURS (pas une archive du vrac).
+            // La feuille signale la correction, se referme ; le Round rouvre la saisie.
+            onCorrigerDerniere={
+              archiveId ? undefined : () => { requestCorrect(); navigation.goBack(); }
+            }
+          />
         </View>
       </ScrollView>
 
