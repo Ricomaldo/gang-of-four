@@ -18,7 +18,7 @@
  * vit à la stèle (« on rejoue ? », lot 3b).
  */
 import { useMemo } from 'react';
-import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Cartouche } from '../components/Cartouche';
@@ -27,7 +27,7 @@ import { PLAYER_IDS } from '../domain/model';
 import { deriveGangs } from '../store/vracStorage';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
-import { fonts, palette, typography } from '../theme/tokens';
+import { palette, typography } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Accueil'>;
 
@@ -80,26 +80,38 @@ export function AccueilScreen({ navigation }: Props) {
       <Cartouche text={cartoucheText} />
 
       <View style={styles.discZone}>
-        {/* Le disque-GANG (placard 4b, « le disque noir ») : disque ENCRE, GA/NG
-            crème en Anton coupé aux bords, double anneau (crème puis encre). C'est
-            l'objet qu'on frappe → jouer. Le logo Gang of Four ne vit PAS ici. */}
-        <TouchableOpacity onPress={onTapDisc} activeOpacity={0.85} accessibilityLabel={hasGameEnCours ? 'Reprendre la partie' : 'Nouvelle partie'}>
-          <View style={styles.ringOuter}>
-            <View style={styles.ringCreme}>
-              <View style={styles.disc}>
-                <Text style={styles.discText} numberOfLines={2}>
-                  {'GA\nNG'}
-                </Text>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-        {hasGameEnCours && (
+        {/* Le logo-GANG : PNG rendu par Claude Design (assets/official/gang-logo.png),
+            « vérité pixel » — disque ENCRE + GA/NG Anton + double anneau + fond crème,
+            tout baké. Le fond crème du PNG (#F2EDE0) = palette.cremePage → raccord
+            invisible. Une image, plus de texte-dans-cercle à recentrer. C'est
+            l'objet qu'on frappe → jouer. Le logo Gang of Four (le jeu) ne vit PAS ici. */}
+        {/* Ombre portée ronde : le PNG a un fond crème OPAQUE (coins = page), donc
+            une ombre brute serait carrée. On clippe l'image en cercle (discClip,
+            Ø 93 % = pile le bord de l'anneau, mesuré) et on porte l'ombre sur un
+            wrapper séparé (discShadow) — deux vues distinctes, sinon iOS rogne
+            l'ombre quand overflow:hidden et shadow cohabitent. Décalée bas + un
+            filet à droite (wireframe : 0 10px 24px, l'œil d'Eric veut un poil de droite). */}
+        <View style={styles.discShadow}>
+          <TouchableOpacity
+            onPress={onTapDisc}
+            activeOpacity={0.85}
+            accessibilityLabel={hasGameEnCours ? 'Reprendre la partie' : 'Nouvelle partie'}
+            style={styles.discClip}
+          >
+            <Image source={GANG_LOGO} style={styles.logo} resizeMode="contain" />
+          </TouchableOpacity>
+        </View>
+        {hasGameEnCours ? (
           <TouchableOpacity onPress={onAnnuler} hitSlop={8} style={styles.annulerBtn}>
             <Text style={styles.annulerTxt}>annuler la partie</Text>
           </TouchableOpacity>
+        ) : (
+          <Text style={styles.tapHint}>TAP → ON JOUE</Text>
         )}
       </View>
+
+      {/* Spacer : la section « tes gangs » est ancrée en bas d'écran. */}
+      <View style={styles.spacer} />
 
       <GangList
         gangs={visibleGangs}
@@ -112,39 +124,31 @@ export function AccueilScreen({ navigation }: Props) {
   );
 }
 
-// Le disque « coupé aux bords » : gros grain, ~66 % de la largeur, capé.
-const DISC = Math.min(Math.round(Dimensions.get('window').width * 0.66), 288);
-const RING = 4; // l'épaisseur des deux anneaux (crème puis encre)
+// Le logo (PNG carré 1024², disque + double anneau + fond crème bakés). Taille
+// ~82 % de la largeur, capée : le disque visible (78 % du carré) retombe ~= le
+// Ø.66 d'avant. Le fond crème invisible fait office de marge/anneau extérieur.
+const LOGO = Math.min(Math.round(Dimensions.get('window').width * 0.82), 360);
+// Le disque + double anneau occupe ~92 % du carré (mesuré sur le PNG) ; on clippe
+// à 93 % pour coller au bord de l'anneau sans le rogner. Le cercle porte l'ombre.
+const DISC = Math.round(LOGO * 0.93);
+const GANG_LOGO = require('../../assets/official/gang-logo.png');
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: palette.cremePage },
+  spacer: { flex: 1 },
   discZone: { alignItems: 'center', paddingVertical: 24, gap: 14 },
-  // Le double anneau (box-shadow 0 0 0 4px crème, 0 0 0 8px encre → nesting RN) :
-  // de l'extérieur, anneau encre, anneau crème, puis le disque encre.
-  ringOuter: { backgroundColor: palette.encre, borderRadius: 9999, padding: RING },
-  ringCreme: { backgroundColor: palette.cremePage, borderRadius: 9999, padding: RING },
-  disc: {
-    width: DISC,
-    height: DISC,
+  discShadow: {
     borderRadius: DISC / 2,
-    backgroundColor: palette.encre,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+    backgroundColor: palette.cremePage,
+    shadowColor: palette.encre,
+    shadowOffset: { width: 3, height: 12 },
+    shadowOpacity: 0.28,
+    shadowRadius: 13,
+    elevation: 10,
   },
-  // GA/NG en Anton crème, énorme, 2 lignes. fontSize + lineHeight calés pour
-  // tenir DANS le cercle (Anton monte haut : lineHeight trop serré rogne les
-  // capitales). includeFontPadding/textAlignVertical : centrage propre Android.
-  discText: {
-    fontFamily: fonts.affiche,
-    fontSize: Math.round(DISC * 0.36),
-    lineHeight: Math.round(DISC * 0.34),
-    letterSpacing: 1,
-    color: palette.cremePage,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    includeFontPadding: false,
-  },
+  discClip: { width: DISC, height: DISC, borderRadius: DISC / 2, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  logo: { width: LOGO, height: LOGO },
+  tapHint: { ...typography.chrome, fontSize: 12, letterSpacing: 2, color: palette.murmure },
   annulerBtn: { paddingVertical: 4, paddingHorizontal: 12 },
   annulerTxt: { ...typography.chrome, fontSize: 12, color: palette.murmure, textDecorationLine: 'underline' },
 });
