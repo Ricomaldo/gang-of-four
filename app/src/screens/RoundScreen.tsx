@@ -414,7 +414,7 @@ export function RoundScreen({ navigation }: Props) {
               onPress={() => navigation.navigate('Feuille')}
               accessibilityLabel="Voir la feuille complète"
             >
-              <Text style={styles.feuilleBtnTxt}>LA FEUILLE</Text>
+              <Text style={styles.feuilleBtnTxt}>la feuille de scores</Text>
             </TouchableOpacity>
             {lastCorrectable && (
               <TouchableOpacity onPress={onCorrigerDerniere} hitSlop={8} style={styles.corrigerBtn} accessibilityLabel="Corriger la dernière manche">
