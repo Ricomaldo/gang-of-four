@@ -96,6 +96,11 @@ champion** (gloire, en haut) : label « LE CHAMPION » mono ls 4 pierre, nom **A
 34px gris `#8A8272`, « ☞ {nom} », « ▼ N fois dernier » brique. **Détail** : colonnes
 **P▲ P▼ M▲ M▼ ‡**. **Socle = revanche** : bande brique `#B3402E`, Anton crème.
 
+> **Amendement 09/08 (Eric).** Sur la stèle : **colonne branlée ‡ retirée** du
+> détail (colonnes = **P▲ P▼ M▲ M▼**) · **mention GOF retirée** (« N gang-of-fours
+> pour ce gang ») · champion « ▲ N parties **pliées** » (ex-« prises ») · liste
+> LES PARTIES préfixée « **il y a** … » (sauf aujourd'hui/hier).
+
 **Feuille — 3h, placard.** Modale qui monte du bas. Entête bande noire : titre
 session **Anton 20px crème** « ÉTABLI · 8 JUIN » + ✕. Grille : entête colonnes mono
 12px gris sous trait 3px ; manches mono 17px bold, trait 1px ; **TOTAL** trait 4px,

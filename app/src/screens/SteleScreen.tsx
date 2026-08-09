@@ -1,7 +1,8 @@
 /* ═══ RESHAPE 0.2 · TAG [R] reshapé — LE PLACARD (le monolithe, 3f) ═══
  * Cible : le monument du gang — la dalle gravée : champion (gloire, sans glyphe)
- * / looser (☞, honte) + détail par joueur (colonnes P▲ P▼ M▲ M▼ ‡) + mention GOF
+ * / looser (☞, honte) + détail par joueur (colonnes P▲ P▼ M▲ M▼)
  * + socle revanche (brique). Mémoire → strictement noir/crème (+ la cicatrice).
+ * (Colonne branlée ‡ et mention GOF retirées — Eric 09/08.)
  * Specs : GANG - Specs placard §Stèle (fait foi) · signature/ecrans/03-stele.md.
  * ═══════════════════════════════ */
 /**
@@ -21,7 +22,7 @@ import { PLAYER_IDS, SEAT_ORDER } from '../domain/model';
 import type { GameArchive } from '../domain/model';
 import { computeSoireeStats } from '../domain/stats';
 import type { PrenomStats } from '../domain/stats';
-import { filterByGang, groupBySoiree, relativeLabel, sumGofCount } from '../store/vracStorage';
+import { filterByGang, groupBySoiree, relativeLabel } from '../store/vracStorage';
 import { useGameStore } from '../store/gameStore';
 import type { RootStackParamList } from '../navigation/types';
 import { fonts, palette, typography } from '../theme/tokens';
@@ -38,6 +39,14 @@ function latestRoster(parties: GameArchive[]): GameArchive | null {
 
 const plural = (n: number) => (n > 1 ? 's' : '');
 
+/** « il y a 22 j » / « il y a 1 mois » — mais « aujourd'hui » et « hier » restent nus
+ *  (préfixer « il y a » y serait fautif). Wrapper local : relativeLabel reste partagé
+ *  avec l'accueil (GangList) sans « il y a ». */
+const partieLabel = (ts: number): string => {
+  const l = relativeLabel(ts);
+  return l === "aujourd'hui" || l === 'hier' ? l : `il y a ${l}`;
+};
+
 export function SteleScreen({ navigation, route }: Props) {
   const { gangKey } = route.params;
   const vrac = useGameStore((s) => s.vrac);
@@ -49,7 +58,6 @@ export function SteleScreen({ navigation, route }: Props) {
 
   const parties = useMemo(() => filterByGang(vrac.parties, gangKey), [vrac, gangKey]);
   const stats = useMemo(() => computeSoireeStats(parties), [parties]);
-  const gofTotal = useMemo(() => sumGofCount(parties), [parties]);
   const roster = useMemo(() => latestRoster(parties), [parties]);
   const pastParties = useMemo(
     () => groupBySoiree([...parties].sort((a, b) => b.archivedAt - a.archivedAt)),
@@ -134,7 +142,7 @@ export function SteleScreen({ navigation, route }: Props) {
             <Text style={styles.championLabel}>LE CHAMPION</Text>
             <Text style={styles.championNom} numberOfLines={1}>{stats.leader ?? '—'}</Text>
             {leaderStats && (
-              <Text style={styles.championSous}>▲ {leaderStats.partiesGagnees} partie{plural(leaderStats.partiesGagnees)} prise{plural(leaderStats.partiesGagnees)}</Text>
+              <Text style={styles.championSous}>▲ {leaderStats.partiesGagnees} partie{plural(leaderStats.partiesGagnees)} pliée{plural(leaderStats.partiesGagnees)}</Text>
             )}
           </View>
 
@@ -152,7 +160,8 @@ export function SteleScreen({ navigation, route }: Props) {
 
           <View style={styles.dalleDivider} />
 
-          {/* Le détail — colonnes P▲ P▼ M▲ M▼ ‡ (parties/manches prises·rendues, branlées). */}
+          {/* Le détail — colonnes P▲ P▼ M▲ M▼ (parties/manches prises·rendues).
+              Colonne branlée (‡) retirée — Eric 09/08. */}
           <View style={styles.detail}>
             <View style={styles.detailHead}>
               <Text style={styles.detailNom} />
@@ -160,14 +169,11 @@ export function SteleScreen({ navigation, route }: Props) {
               <Text style={styles.detailHeadStat}>P▼</Text>
               <Text style={styles.detailHeadStat}>M▲</Text>
               <Text style={styles.detailHeadStat}>M▼</Text>
-              <Text style={styles.detailHeadBranlee}>‡</Text>
             </View>
             {detail.map((p) => (
               <DetailRow key={p.prenom} p={p} isLeader={p.prenom === stats.leader} isLooser={p.prenom === stats.looser} />
             ))}
           </View>
-
-          <Text style={styles.gof}>{gofTotal} gang-of-four{plural(gofTotal)} pour ce gang</Text>
         </View>
 
         {/* Le socle = revanche : bande brique au bas de la dalle (la cicatrice qui relance). */}
@@ -188,7 +194,7 @@ export function SteleScreen({ navigation, route }: Props) {
                     style={styles.feuilleRow}
                     onPress={() => navigation.navigate('Feuille', { archiveId: p.id })}
                   >
-                    <Text style={styles.feuilleTxt}>{relativeLabel(p.archivedAt)}</Text>
+                    <Text style={styles.feuilleTxt}>{partieLabel(p.archivedAt)}</Text>
                     <Text style={styles.feuilleFleche}>→</Text>
                   </TouchableOpacity>
                 ))}
@@ -216,7 +222,6 @@ function DetailRow({ p, isLeader, isLooser }: { p: PrenomStats; isLeader: boolea
       <Text style={[styles.detailStat, isLooser && styles.detailStatLooser]}>{p.partiesPerdues}</Text>
       <Text style={styles.detailStat}>{p.manchesGagnees}</Text>
       <Text style={styles.detailStat}>{p.manchesPerdues}</Text>
-      <Text style={styles.detailBranlee}>{p.brancheesDonnees}·{p.brancheesPrises}</Text>
     </View>
   );
 }
@@ -263,15 +268,11 @@ const styles = StyleSheet.create({
   detail: { gap: 7 },
   detailHead: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingBottom: 5, borderBottomWidth: 1, borderBottomColor: LIGHT },
   detailHeadStat: { ...typography.chrome, fontSize: 10, letterSpacing: 1, color: palette.pierre, minWidth: 34, textAlign: 'center' },
-  detailHeadBranlee: { ...typography.chrome, fontSize: 10, color: palette.pierre, minWidth: 44, textAlign: 'right' },
   detailRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   detailNom: { ...typography.chrome, flex: 1, fontSize: 13, color: palette.pierre },
   detailNomLeader: { color: palette.cremePage },
   detailStat: { ...typography.chrome, fontSize: 13, color: palette.pierre, minWidth: 34, textAlign: 'center' },
   detailStatLooser: { color: palette.rougeClair },
-  detailBranlee: { ...typography.chrome, fontSize: 12, color: palette.pierre, minWidth: 44, textAlign: 'right' },
-
-  gof: { ...typography.chrome, fontSize: 11, color: palette.pierre, textAlign: 'center' },
 
   // Le socle revanche : bande brique pleine largeur de la dalle, Anton crème.
   revancheBtn: {
