@@ -87,6 +87,11 @@ export function Feuille({
     return { i, cells, branlee, matiere, donneurPrenom: players[donneur].prenom };
   });
 
+  // Feuille vivante : au moins 4 lignes ET au moins une vide (la place de la manche
+  // suivante) — le paquet de lignes réglées d'une feuille papier. Partie scellée
+  // (terminée) : aucune ligne vide, la feuille est close.
+  const emptyCount = isLive ? Math.max(1, 4 - rounds.length) : 0;
+
   return (
     <View style={styles.feuille}>
       {/* En-tête colonnes : mono gris sous trait 3px. 1ʳᵉ colonne = sens de jeu (↔). */}
@@ -101,19 +106,7 @@ export function Feuille({
         ))}
       </View>
 
-      {rows.length === 0 ? (
-        <View style={styles.row}>
-          <View style={styles.labelCell}>
-            <Text style={styles.dirText}>{dirGlyph(1)}</Text>
-          </View>
-          {SEAT_ORDER.map((id) => (
-            <View key={id} style={[styles.cell, id !== lastId && styles.colDivider]}>
-              <Text style={styles.cumul}>·</Text>
-            </View>
-          ))}
-        </View>
-      ) : (
-        rows.map((row) => {
+      {rows.map((row) => {
           const showBranlee = showDetails && !!row.branlee;
           // La ligne crayon (dernière manche vivante non-branlée) est la SEULE
           // corrigeable : tap → rouvre la saisie du Round (solution B).
@@ -165,8 +158,25 @@ export function Feuille({
               )}
             </View>
           );
-        })
-      )}
+        })}
+
+      {/* Padding en lignes vides (glyphe de sens + ·) : tenir au moins 4 lignes ET
+          au moins une vide tant que la partie vit. */}
+      {Array.from({ length: emptyCount }, (_, k) => {
+        const mancheNo = rounds.length + k + 1;
+        return (
+          <View key={`empty-${k}`} style={styles.row}>
+            <View style={styles.labelCell}>
+              <Text style={styles.dirText}>{dirGlyph(mancheNo)}</Text>
+            </View>
+            {SEAT_ORDER.map((id) => (
+              <View key={id} style={[styles.cell, id !== lastId && styles.colDivider]}>
+                <Text style={styles.cumul}>·</Text>
+              </View>
+            ))}
+          </View>
+        );
+      })}
 
       <TotRow totals={totals} />
     </View>
