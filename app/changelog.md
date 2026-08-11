@@ -9,7 +9,51 @@ title: Changelog — Gang of Four
 Changements par version (produit). Le récit de dev, lui, vit dans `docs/devlogs/`.
 Format : plus récent en haut.
 
-## 0.1.0 — en cours
+## 0.2.0 — alpha-signature (le PLACARD)
+
+L'ère **signature** : l'app prend son identité visuelle (« le placard ») et devient **GANG**. Reshape des 5 écrans, sons, et une passe de polish confrontée sur device.
+
+### Identité — le placard
+- **Fontes d'affiche chargées au boot** : Anton (l'affiche), IBM Plex Mono (l'appareil), Caveat (le crayon) — `expo-font`, `App.tsx`.
+- **Palette placard** (`theme/tokens.ts`) : noir/crème pour la mémoire, chauds (rouge/orangé/ambre/brique) réservés au **vivant** (le Round). Règle d'or du chaud.
+- **Restyle des 5 écrans** (Accueil, Round, Stèle, Feuille, Annonce) + composants (Cartouche, GangList, Gong, PlayerPill, Quadrant, Feuille).
+- **Marque branlée `‡` / `‡‡`** (supersede l'encoche `/` `//`).
+- **Logo GANG en asset** (PNG rendu Claude Design : disque encre + double anneau) sur l'accueil — fin du texte-dans-cercle qui rognait. **Famille d'icônes app** posée (icon, adaptive Android, favicon, splash).
+
+### Sons
+- **4 sons de gong** (pool aléatoire sans répétition immédiate) au tap du Gong en jeu.
+- **Son d'ouverture** au démarrage délibéré d'une partie (après la saisie des prénoms).
+- Son de « gloire » de l'annonce finale débranché (un asset dédié viendra) ; la honte reste silencieuse.
+
+### Accueil
+- Disque-GANG tappable (nouveau gang) + **ombre portée ronde** + libellé d'aide **« TAP → NOUVEAU GANG »**.
+- Section **« MES GANGS »** : full-bleed, titre centré entre 2 filets, **hauteur fixe 4 slots** (lignes vides si < 4, scroll vertical si > 4), ancrée en bas ; noms longs en **défilement horizontal** (fin de la troncature), dernier gang en bande inversée (revanche).
+
+### Round
+- **« ← » persistant** en haut à gauche (retour accueil dans tous les états — fin du tunnel jouer/saisir).
+- **Cartouche** : « Qui joue ? » en saisie des prénoms → « {meneur} mène » en jeu → **« Saisie de la manche »** pendant la saisie, avec la ligne de guidage **« Combien de cartes restantes en main ? »**.
+- **Meneur** = cellule **orange** (rouge abandonné), ◀ retiré (le fond suffit), fond masqué pendant la saisie (pas de concurrence avec le feedback orange).
+- **Passe de carte** en une ligne unique sous le cartouche (remplace les notifs par-pill masquées par le Gong) ; **▲** conservé sur le gagnant de la manche préc.
+- **Zone du bas (jeu)** : la boîte du jeu en **filigrane** + bouton **« la feuille de scores »** ; l'aperçu chiffré (obscur, redondant avec les totaux des pills) retiré.
+- **Flèche du sens de jeu** en overlay flottant sous les quadrants (plus de bande dédiée) ; prénoms des quadrants agrandis (lisibilité).
+
+### Feuille
+- **Colonne sens de jeu** de retour en 1ʳᵉ colonne (`→`/`←` par manche, mapping FD-09), remplace le « Mx » ; entête `↔`.
+- **Filtre « détails »** : cumul simple par défaut, détail par manche + branlées derrière le filtre ; le partage suit le mode affiché.
+- **Correction de la dernière manche migrée DANS la feuille** : ligne crayon (dernière manche vivante) tappable → rouvre la saisie pré-remplie (signal store `correctRequest`).
+- **Date + lieu en tête de grille** (dans la zone capturée au partage), lieu éditable inline ; titre modale « Établi · date » → **« la feuille »** ; ligne total sans label « TOT » ; min. 4 lignes + 1 vide tant que la partie vit.
+
+### Stèle
+- Titre **« Palmarès du gang »** (roster répété retiré).
+- **Colonne branlée (‡) retirée** du détail (P▲ P▼ M▲ M▼) ; **mention GOF retirée** ; champion **« N partie(s) pliée(s) »** ; **« il y a … »** sur LES PARTIES (sauf aujourd'hui/hier) + lieu affiché, partie la plus récente surlignée ; ☞ réservé au trône.
+- Bumps lisibilité (détail/entêtes/labels/retour).
+
+### Modèle / technique
+- `lieu?: string` sur `Game` + `GameArchive` (+ action `setLieu`, scellé au vrac) ; signal transitoire `correctRequest`.
+- Dépendances alignées sur **Expo SDK 57** (`expo install --check`).
+- **107 tests verts, tsc clean.**
+
+## 0.1.0 — alpha-core (diffusée)
 
 ### Ajouté
 - Scaffold app **RN / Expo managed** (SDK 57, TS, React Navigation, Zustand) — *scaffold init, 4 juillet*.
