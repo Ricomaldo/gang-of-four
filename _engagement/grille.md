@@ -3,7 +3,7 @@ created: '2026-07-03'
 status: active
 title: GoF — Grille
 type: grille
-updated: '2026-07-06'
+updated: '2026-08-11'
 version: 0.6.0
 ---
 
@@ -33,7 +33,7 @@ Chaque brique porte :
 |---|---|---|
 | **Montrer l'imparfait :** le plancher tient sans moi | Un pote a vu l'app tourner sans qu'Eric explique à côté, et a compris seul le geste de saisie de fin de manche | ✅ |
 | **Prouver la justesse :** la logique de score est éprouvée hors partie live | Un jeu de cas de référence dérivés des règles — dont les cas-limites de paliers et l'arrêt à 100 — passe à 100 % contre la logique | ✅ |
-| **Tenir la partie :** une partie réelle est jouée jusqu'au bout | Une partie à 4 est allée jusqu'à 100 points avec l'app, score annoncé juste à la fin | ☐ |
+| **Tenir la partie :** une partie réelle est jouée jusqu'au bout | Une partie à 4 est allée jusqu'à 100 points avec l'app, score annoncé juste à la fin | ✅ |
 | **Écrire l'histoire :** la partie ne s'oublie pas, elle se relit | La partie laisse une **trace relisible** — sa feuille manche × joueur se rouvre après coup. Fait vrai seulement avec la persistance du **palier 2 (DB)** ; le palier 1 en pose le germe (tableau de score, manches gagnées, carnet de soirée) | ☐ |
 
 ## codebase → archives
@@ -56,3 +56,5 @@ Chaque brique porte :
 *v0.6 — brique **ÉCRIRE L'HISTOIRE** ajoutée à forge→codebase : l'axe récit (Branche 3 de [[arbre-app]], « le jeu se raconte »), jusque-là une *fin* sans preuve, devient un gate explicite — même geste qu'en v0.3 pour la justesse. Brique et curseur posés par Eric. Cochable seulement au palier 2 (persistance DB) ; présente dès maintenant pour justifier le tableau de score et le germe du palmarès.*
 
 *2026-07-06 — **Prouver la justesse** cochée. Constat d'Eric : 49 tests verts couvrant barème (cas-limites de paliers), cumul, arrêt à 100 (dont double franchissement), départage bout-en-bout — 100 % contre la logique. Restent ouvertes : Tenir la partie (partie réelle mercredi 8/07 20h) ; Écrire l'histoire (attend le palier 2).*
+
+*2026-08-11 — **Tenir la partie** cochée. Déclaration d'Eric : le **dernier build** (celui qui précède les modifs du matin) a **tenu une partie entière à 4 jusqu'à 100**, score juste à la fin — l'endurance en conditions réelles est prouvée, l'app ne s'est pas fait lâcher par la table. **3/4** briques forge→codebase. Reste ouverte : **Écrire l'histoire**, qui attend le **palier 2 (DB)** — le move `forge → codebase` se déclenchera à ce moment (le palier 1 en a posé le germe : tableau de score, palmarès, feuille partageable). Le placard (0.2, alpha-signature) est un enrichissement de forge, pas une brique de move.*
