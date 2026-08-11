@@ -45,17 +45,19 @@ Trois conteneurs empilés :
 
 | conteneur | rôle | comportement |
 |---|---|---|
-| **le cartouche** | la voix calme (« {prénom} mène ») | fine ligne en haut, persistante ; change son texte sans animation |
-| **le plateau** | la table : 4 quadrants (pills prénom + total) autour du **Gong** central + la **flèche du sens de jeu** (`PlayDirection`, réintégrée — absente des planches CD, elle ne disparaît pas) | persistant ; les **annonces** l'éclaboussent (surdominants) |
+| **le cartouche** | la voix calme (« {prénom} mène ») ; en **saisir** il devient le titre **« Saisie de la manche »** | fine ligne en haut, persistante ; change son texte sans animation ; porte le **« ← » persistant** (retour accueil, tous les états — fin du tunnel) |
+| **le plateau** | la table : 4 quadrants (pills prénom + total) autour du **Gong** central. La **flèche du sens de jeu** (`PlayDirection`, réintégrée — absente des planches CD, elle ne disparaît pas) flotte **en overlay sur la zone du bas** (sous les quadrants), plus dans une bande dédiée | persistant ; les **annonces** l'éclaboussent (surdominants) |
 | **la zone du bas** | conteneur à contenu d'état | hauteur **dépendante de l'état** (voir ci-dessous) |
+
+**La navigation (Eric 11/08) :** un **« ← » persistant** en haut à gauche (posé sur le cartouche) rend l'accueil accessible dans **tous** les états — avant, seul `nommer` avait un retour, `jouer`/`saisir` étaient un tunnel. Retour sans risque : la partie est auto-sauvée à chaque manche (l'accueil propose « reprendre »).
 
 **Hauteur par état — la contrainte que les rendus CD (70/30) ratent :**
 
 | état du Round | zone du bas | contrainte dure |
 |---|---|---|
 | **nommer** | le **clavier natif** monte | le plateau (pills à nommer) reste entièrement visible au-dessus du clavier (~45-48 % d'écran) → plateau compressible à ~50 % |
-| **jouer** (repos) | **aperçu feuille** : ≥ 2 dernières manches + la ligne vierge + accès « feuille complète » | jamais une seule ligne orpheline (illisible) ; zéro vide mort |
-| **saisir** | le **numpad-calculette 3×4** (0-9 · del · **« = »**) | la grille 3×4 tient dans ~40 % ; la pill active reste visible |
+| **jouer** (repos) | **la boîte du jeu en filigrane** (game-box.webp) + bouton **« la feuille de scores »** (ouvre la feuille complète ; la correction de la dernière manche vit DANS la feuille, ligne crayon éditable) | zéro vide mort *(l'aperçu chiffré des 2 manches — jugé obscur, redondant avec les totaux des pills — a été retiré, Eric 09/08)* |
+| **saisir** | le **numpad-calculette 3×4** (0-9 · del · **« = »**) ; le cartouche titre **« Saisie de la manche »** + une ligne de guidage **« Combien de cartes restantes en main ? »** (texte des règles : on saisit les **cartes restantes**, 0–16, un seul joueur à 0 — pas des points) | la grille 3×4 tient dans ~40 % ; la pill active reste visible |
 | **annonce / cérémonie / fin** | inchangée ou masquée | le surdominant se joue **sur le plateau** |
 
 **Le battement** (détail : `reshape.md` §battement) : tap une **pill** (seule
@@ -71,9 +73,11 @@ périmètre gelé). Ce qui vient des frictions réelles et **survit tel quel** :
 - **Veille bloquée (keepAwake) pendant une partie en cours** — la **friction n°1**
   de la soirée (le téléphone du scribe se verrouillait, code de déverrouillage
   irritant). S'active à l'entrée en jeu, se relâche hors partie.
-- **La notif « {prénom} donne sa meilleure carte »** (sur la pill du perdant de
-  manche, interactive) — *validée par l'usage réel* (« ça sert à rien et pourtant
-  ça a plu »), gardée telle quelle, non généralisée.
+- **La passe de carte « {perdant} donne sa meilleure carte à {gagnant} »** —
+  *validée par l'usage réel* (« ça sert à rien et pourtant ça a plu »). **Déplacée
+  (11/08)** de la pill vers **une ligne unique sous le cartouche** (le Gong masquait
+  les notifs posées « vers le centre ») : phrase interactive (tap = confirmé) ; un
+  petit **▲** reste sur la pill du gagnant de manche.
 - **L'undo minimal** — couvert : corriger le **dernier score** (le crayon,
   dernière ligne éditable) · **annuler la partie** (accueil, confirmation
   légère) · **éditer un prénom** en cours de partie — **geste signé (12/07) :
@@ -112,11 +116,15 @@ reste.
 Manchette d'invite en haut (« on rejoue ? » / « on s'en refait une ? » — jamais
 « revanche ») · le **disque-GANG** au centre — **variante 4c signée (12/07)** :
 disque crème, le mot GANG noir, énorme, **coupé aux bords du cercle** (la grande
-gueule littérale ; **pas** le logo) · **tes gangs** en bas : la liste des rosters
-(4 prénoms, pas de nom de gang) + **temps relatif gros grain** (« hier · 8 j ·
-1 mois ») ; tap un roster → sa stèle. États : *vierge* (« nouveau gang ? », liste
-en germe) · *invite* (gangs connus) · *reprise* (reprendre / **annuler** avec
-confirmation légère).
+gueule littérale ; **pas** le logo) — **ombre portée ronde** sous le disque +
+**libellé d'aide** dessous (« TAP → … ») · **« MES GANGS »** en bas *(polish
+11/08)* : **ancré en bas d'écran**, titre entre **deux filets**, la liste des
+rosters (4 prénoms, pas de nom de gang) + **temps relatif gros grain** (« hier ·
+8 j · 1 mois ») ; **hauteur fixe de 4 slots** (lignes vides réglées si < 4 ;
+**scroll vertical** si > 4) ; **noms longs → défilement horizontal** de la ligne ;
+tap un roster → sa stèle. États : *vierge* (« nouveau gang ? », liste en germe) ·
+*invite* (gangs connus) · *reprise* (reprendre / **annuler** avec confirmation
+légère).
 
 **Masquer un gang** *(décision 12/07)* : un roster se **masque** de la liste —
 ses feuilles **restent au vrac** (« n'oublie rien » : on ne détruit jamais la
@@ -136,12 +144,21 @@ restent possibles ; c'est le prix d'Identité = A (« aucune réconciliation »)
   joueur (parties, manches, branlées) + la **mention GOF** (« N gang-of-four
   pendant cette partie ») + *on rejoue ?* + **`[partager]`** (la stèle se
   partage à tout moment — cf. [[specs-partage]], périmètre B). Monde étrange
-  (mêmes deux trônes) affiché tel quel.
+  (mêmes deux trônes) affiché tel quel. **Polish (11/08) :** entête = titre
+  **« Palmarès du gang »** (le roster répété retiré) ; **☞ seulement sur le trône**
+  (retiré du tableau détail) ; **symétrie des couleurs** — le **P▲ du champion**
+  et le **P▼ du looser** en rougeClair ; la liste **« LES PARTIES »** porte le
+  **lieu** et **surligne la plus récente** (repère du flux *consulter*).
 - **Feuille** : grille manche × joueur, cellules = **scores de manche** (le
-  cumul vit sur TOT et les pills) ; **deux matières** — crayon (dernière manche,
-  éditable sans confirmation) / gravé (le reste ; la **branlée pèse** : ligne
-  inversée + marque + légende) ; titre = la session « Établi · 8 juin » (lieu
-  optionnel) ; `[partager]` (capture WYSIWYG — la signature part dans l'image).
+  cumul vit sur la ligne total — **sans label « TOT »**, 11/08 — et les pills) ;
+  **deux matières** — crayon (dernière manche, **tappable → rouvre la saisie
+  pré-remplie** du Round pour corriger) / gravé (le reste ; la **branlée pèse** :
+  ligne inversée + marque + légende) ; **date + lieu en tête de grille** *(11/08,
+  **dans la zone capturée** → portés au partage)* — le **lieu** est **éditable
+  inline** pour la partie en cours ; **fini le « Établi · … »** (titre modale =
+  **« la feuille »**) ; **min. 4 lignes + 1 vide** tant que la partie vit ;
+  `[partager]` (capture WYSIWYG — la capture **nettoie placeholder/curseur** du
+  lieu ; la signature part dans l'image).
 
 ## Le thème — direction « l'affiche » (placard)
 
@@ -152,7 +169,9 @@ restent possibles ; c'est le prix d'Identité = A (« aucune réconciliation »)
 > palette aux hexs exacts, **règle d'or du chaud** (le vivant seul), matières
 > crayon/gravé. Elle **supersede** trois placeholders de cette section (implémentés
 > 18/07) : les **4 couleurs de siège sont RETIRÉES** (plateau noir/crème, seul le
-> meneur s'allume rouge) · le **disque-accueil est en 4b (noir)** (et non 4c crème)
+> meneur s'allume **orange** — ex-rouge, jugé trop criard le 09/08 ; **masqué
+> pendant la saisie** pour ne pas rivaliser avec l'orange du feedback ; **plus de
+> ◀** sur le meneur, le fond suffit) · le **disque-accueil est en 4b (noir)** (et non 4c crème)
 > · les chaleurs sont **pinnées** (plus « aux tokens »). Ci-dessous = l'intention ;
 > les valeurs vivent dans la spec placard + `theme/tokens.ts`.
 
@@ -160,9 +179,9 @@ restent possibles ; c'est le prix d'Identité = A (« aucune réconciliation »)
 - **Typo** : condensée bold pour ce qui proclame (titres, totaux, manchettes) ;
   mono pour le chrome (labels, listes). **Le mot, jamais illustré** : aucune
   imagerie hors le logo.
-- **Chaleurs** : le rouge / jaune-orangé **du logo** en accents (le meneur, le
-  disque qui rayonne, la manche éditable) — intensité entre « braise » (4d) et
-  « brasier » (4f), calée aux tokens.
+- **Chaleurs** : le rouge / jaune-orangé **du logo** en accents (le meneur **en
+  orange**, le disque qui rayonne, la manche éditable) — intensité entre « braise »
+  (4d) et « brasier » (4f), calée aux tokens.
 - **Logo vs wordmark** : le logo `gang-of-four.webp` = la marque du **jeu** →
   **uniquement** dans le Gong du Round. Le mot **GANG** = l'app → l'accueil
   (disque-GANG) et les titres.

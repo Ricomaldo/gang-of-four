@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   // La pill s'allume en saisie : liseré orangé (le vivant).
   contentActive: { borderWidth: 2, borderColor: palette.orange, borderRadius: 8 },
-  name: { ...typography.chrome, fontSize: 13, letterSpacing: 1, color: palette.murmure },
+  name: { ...typography.chrome, fontSize: 16, letterSpacing: 1, color: palette.encre },
   nameInverse: { color: palette.cremePage },
   nameInput: { fontFamily: fonts.mono, color: palette.encre, fontSize: 15, minWidth: 90, paddingVertical: 2, textAlign: 'center' },
   nameInputError: { color: palette.rouge },

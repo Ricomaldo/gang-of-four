@@ -106,7 +106,7 @@ export function AccueilScreen({ navigation }: Props) {
             <Text style={styles.annulerTxt}>annuler la partie</Text>
           </TouchableOpacity>
         ) : (
-          <Text style={styles.tapHint}>TAP → ON JOUE</Text>
+          <Text style={styles.tapHint}>TAP → NOUVEAU GANG</Text>
         )}
       </View>
 

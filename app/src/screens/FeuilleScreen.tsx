@@ -13,7 +13,7 @@
  * même mécanique que l'ex-ScoreGridScreen (supprimé, éclaté ici + en stèle).
  */
 import { useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,11 +27,6 @@ import { fonts, palette, typography } from '../theme/tokens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Feuille'>;
 
-/** « Établi · 8 juin » — pas d'année (le contexte hors-app suffit, cf. specs-partage). */
-function formatSessionDate(ts: number): string {
-  return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' }).format(new Date(ts));
-}
-
 export function FeuilleScreen({ navigation, route }: Props) {
   const archiveId = route.params?.archiveId;
   const vrac = useGameStore((s) => s.vrac);
@@ -41,7 +36,9 @@ export function FeuilleScreen({ navigation, route }: Props) {
   const rounds = useGameStore((s) => s.rounds);
   const status = useGameStore((s) => s.status);
   const gofCount = useGameStore((s) => s.gofCount);
+  const lieu = useGameStore((s) => s.lieu);
   const requestCorrect = useGameStore((s) => s.requestCorrect);
+  const setLieu = useGameStore((s) => s.setLieu);
 
   const pastArchive = archiveId ? findArchive(vrac.parties, archiveId) : undefined;
   const archive: GameArchive =
@@ -53,20 +50,27 @@ export function FeuilleScreen({ navigation, route }: Props) {
       rounds,
       status,
       gofCount,
+      lieu,
     };
   // Sealed dès que status === 'terminee' (au vrac, ou en mémoire juste après le
   // final — cf. gameStore.addRound) : plus de matière crayon à afficher.
   const isLive = archive.status !== 'terminee';
 
-  const titre = isLive ? formatSessionDate(archive.archivedAt) : `Établi · ${formatSessionDate(archive.archivedAt)}`;
+  // La date + le lieu vivent désormais DANS la grille (capturée au partage) ; la
+  // barre de titre n'énigme plus « ÉTABLI · date » — juste l'identité de l'écran.
+  const titre = 'la feuille';
 
   const captureZone = useRef<View>(null);
   const [sharing, setSharing] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const onShare = async () => {
     if (sharing) return;
+    Keyboard.dismiss(); // ferme le clavier → pas de curseur du lieu dans la capture
     setSharing(true);
     try {
+      // Laisse le rendu "capture" se poser (le lieu bascule input → texte, cf.
+      // Feuille capturing) avant de figer l'image.
+      await new Promise((resolve) => setTimeout(resolve, 60));
       const uri = await captureRef(captureZone, { format: 'png', quality: 1 });
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: 'Feuille de score' });
@@ -107,6 +111,10 @@ export function FeuilleScreen({ navigation, route }: Props) {
             onCorrigerDerniere={
               archiveId ? undefined : () => { requestCorrect(); navigation.goBack(); }
             }
+            // Lieu éditable inline : partie en cours seulement (archive passée = read-only).
+            onSetLieu={archiveId ? undefined : setLieu}
+            // Pendant la capture : lieu figé en texte (ni placeholder « + lieu » ni curseur).
+            capturing={sharing}
           />
         </View>
       </ScrollView>

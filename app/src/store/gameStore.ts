@@ -63,6 +63,7 @@ function gameOf(s: Game): Game {
     rounds: s.rounds,
     status: s.status,
     gofCount: s.gofCount,
+    lieu: s.lieu,
   };
 }
 
@@ -75,6 +76,7 @@ interface GameStore extends Game {
    *  le Round consomme le signal, rouvre la saisie pré-remplie, puis le remet à false. */
   correctRequest: boolean;
   setPrenom: (id: PlayerId, prenom: string) => void;
+  setLieu: (lieu: string) => void;
   addRound: (cardCounts: Record<PlayerId, CardCount>) => void;
   resetGame: (keepPlayers?: boolean) => void;
   cancelGame: () => void;
@@ -100,6 +102,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     saveGame(gameOf(get()));
   },
 
+  setLieu: (lieu) => {
+    set({ lieu });
+    saveGame(gameOf(get()));
+  },
+
   addRound: (cardCounts) => {
     set((s) => {
       const rounds = [...s.rounds, { cardCounts } as Round];
@@ -115,6 +122,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
           rounds,
           status,
           gofCount: s.gofCount,
+          lieu: s.lieu,
         };
         vrac = appendToVrac(vrac, archive);
         saveVrac(vrac);

@@ -351,22 +351,52 @@ export function RoundScreen({ navigation }: Props) {
 
   // Le meneur au cartouche : son prénom en AMBRE (le seul chaud toléré ici), « mène » en crème.
   const leaderName = state !== 'nommer' && leaderId !== null ? players[leaderId].prenom : null;
-  // En saisie (nommer) le cartouche invite déjà — « Qui joue ? » — puis bascule
-  // sur « on joue ? » quand les 4 prénoms sont prêts (le Gong apparaît).
-  const cartoucheText = leaderName ? 'mène' : state === 'nommer' ? (namesReady ? 'on joue ?' : 'Qui joue ?') : '';
+  // En SAISIE, les deux bandes (cartouche + notif) sont repurposées en guidage
+  // d'entrée (le meneur reste lisible sur les pills, la passe a déjà fait son
+  // office) — habite les espaces morts du round 1 (Eric 11/08). Texte des règles :
+  // on saisit les CARTES restantes (0–16, un seul joueur à 0), pas des points.
+  const inSaisir = state === 'saisir';
+  const cartoucheAccent = inSaisir ? undefined : leaderName ?? undefined;
+  const cartoucheText = inSaisir
+    ? 'Saisie de la manche'
+    : leaderName
+      ? 'mène'
+      : state === 'nommer'
+        ? (namesReady ? 'on joue ?' : 'Qui joue ?')
+        : '';
 
   // La passe de carte (règle GoF) : le dernier de la manche préc. donne sa meilleure
   // carte au gagnant. UNE ligne sous le cartouche, tappable pour confirmer — elle
   // remplace les 2 notifs par-pill que le Gong masquait. prevWinner ≠ null ⇒ rounds > 0.
-  const passeActive = (state === 'jouer' || state === 'saisir') && prevWinner !== null && prevLast !== null;
+  // En saisie, cette ligne devient le guidage (« Combien de cartes… »).
+  const passeActive = state === 'jouer' && prevWinner !== null && prevLast !== null;
   const passeText = passeActive
     ? `${players[prevLast!].prenom} ${cardGiven ? 'a donné' : 'donne'} sa meilleure carte à ${players[prevWinner!].prenom}`
     : '';
 
   return (
     <SafeAreaView style={styles.safe}>
-      <Cartouche accent={leaderName ?? undefined} text={cartoucheText} />
-      {passeActive && (
+      {/* Le cartouche + le « ← » persistant (tous états) posé PAR-DESSUS, à gauche :
+          débloque le tunnel jouer/saisir (la partie est auto-sauvée → retour sans
+          risque, l'accueil propose « reprendre »). Le texte du cartouche est court
+          et centré → pas de collision avec la flèche. */}
+      <View>
+        <Cartouche accent={cartoucheAccent} text={cartoucheText} />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Accueil')}
+          hitSlop={12}
+          style={styles.backBtn}
+          accessibilityLabel="Retour à l'accueil"
+        >
+          <Text style={styles.backTxt}>←</Text>
+        </TouchableOpacity>
+      </View>
+      {inSaisir ? (
+        // Guidage d'entrée (règles) — non tappable, occupe la bande notif.
+        <View style={styles.passeBar}>
+          <Text style={styles.guideTxt}>Combien de cartes restantes en main ?</Text>
+        </View>
+      ) : passeActive ? (
         <TouchableOpacity
           onPress={cardGiven ? undefined : () => setCardGiven(true)}
           disabled={cardGiven}
@@ -376,7 +406,7 @@ export function RoundScreen({ navigation }: Props) {
         >
           <Text style={[styles.passeTxt, cardGiven && styles.passeTxtDone]}>{passeText}</Text>
         </TouchableOpacity>
-      )}
+      ) : null}
 
       <View
         style={styles.plateauZone}
@@ -416,15 +446,8 @@ export function RoundScreen({ navigation }: Props) {
       </View>
 
       <View style={styles.zoneBas}>
-        {state === 'nommer' && (
-          // Saisie des prénoms : retour explicite au moyeu, comme la Stèle. Rien
-          // n'est commité tant que le Gong n'a pas lancé — quitter est sans risque.
-          <View style={styles.retourWrap}>
-            <TouchableOpacity onPress={() => navigation.navigate('Accueil')} hitSlop={8} style={styles.retourBtn}>
-              <Text style={styles.retour}>← accueil</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        {/* nommer : le retour vit désormais dans le « ← » persistant du haut (plus
+            de doublon bas — Eric 11/08). La zone du bas reste vide en nommer. */}
         {state === 'jouer' && (
           // Zone du bas (jeu) : la boîte du jeu en filigrane (décor, non tappable) +
           // le bouton net « LA FEUILLE ». La correction de la dernière manche a migré
@@ -473,9 +496,9 @@ const styles = StyleSheet.create({
   // Le flash léger (« passe devant », ossature) — un bref éclat ambré (la lumière).
   flashLayer: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: palette.ambre, opacity: 0.18 },
   zoneBas: { flex: 4, justifyContent: 'center' },
-  retourWrap: { flex: 1, justifyContent: 'flex-end' },
-  retourBtn: { alignItems: 'center', paddingVertical: 12 },
-  retour: { ...typography.chrome, fontSize: 13, color: palette.murmure, textDecorationLine: 'underline' },
+  // Le « ← » persistant : posé sur le cartouche (bande noire), crème, à gauche.
+  backBtn: { position: 'absolute', left: 10, top: 0, bottom: 0, justifyContent: 'center', paddingHorizontal: 8 },
+  backTxt: { ...typography.chrome, fontSize: 20, color: palette.cremePage },
 
   // Zone du bas (jeu) : la boîte en filigrane + le bouton feuille par-dessus.
   playBottom: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14, paddingHorizontal: 24 },
@@ -491,4 +514,6 @@ const styles = StyleSheet.create({
   passeBar: { paddingVertical: 6, paddingHorizontal: 20, alignItems: 'center' },
   passeTxt: { ...typography.chrome, fontSize: 12, color: palette.encre, textAlign: 'center', textDecorationLine: 'underline' },
   passeTxtDone: { color: palette.murmure, textDecorationLine: 'none' },
+  // Guidage d'entrée (saisie) : la voix calme, non tappable — pas de soulignement.
+  guideTxt: { ...typography.chrome, fontSize: 12, color: palette.murmure, textAlign: 'center' },
 });

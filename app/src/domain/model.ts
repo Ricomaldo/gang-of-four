@@ -49,6 +49,8 @@ export interface Game {
   rounds: Round[];
   status: GameStatus;
   gofCount: number;
+  /** Lieu libre optionnel (« Chez Damien ») — saisi inline dans la grille, porté au partage. */
+  lieu?: string;
 }
 
 export const PLAYER_IDS: readonly PlayerId[] = [0, 1, 2, 3];
@@ -79,6 +81,8 @@ export interface GameArchive {
   rounds: Round[];
   status: GameStatus;
   gofCount: number;
+  /** Lieu libre optionnel, figé au scellage (cf. Game.lieu). */
+  lieu?: string;
 }
 
 /** Ensemble de parties regroupées par date (tolérance nuit : avant 5h = veille) — dérivé, jamais stocké tel quel. */

@@ -13,7 +13,7 @@
  *    le score du donneur « 0 ‡ » en rouge clair, légende brique dessous. Ça pèse.
  * Précédence : une branlée scellée est TOUJOURS gravée, même en dernière manche.
  */
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SEAT_ORDER } from '../domain/model';
 import type { GameArchive, PlayerId } from '../domain/model';
 import { computeRoundScore, computeTotals, detectBranlee } from '../domain/scoring';
@@ -29,15 +29,20 @@ const ENCOCHE: Record<'petite' | 'grosse', string> = { petite: '‡', grosse: '�
  *  la 1ʳᵉ colonne redevient la flèche (remplace le « Mx » du placard). */
 const dirGlyph = (roundNumber: number): string => (directionOfPlay(roundNumber) === 'anti-horaire' ? '→' : '←');
 
+/** « 8 juin » — jour + mois en lettres, sans année (le contexte hors-app suffit). */
+function formatSessionDate(ts: number): string {
+  return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long' }).format(new Date(ts));
+}
+
 /** Ligne TOT — le cumul final : Anton sur crème, trait fort 4px, le total du MENEUR inversé. */
 export function TotRow({ totals }: { totals: Record<PlayerId, number> }) {
   const lastId = SEAT_ORDER[SEAT_ORDER.length - 1];
   const min = Math.min(...SEAT_ORDER.map((id) => totals[id]));
   return (
     <View style={[styles.row, styles.totalRow]}>
-      <View style={[styles.labelCell, styles.totalLabel]}>
-        <Text style={styles.totalLabelText}>TOT</Text>
-      </View>
+      {/* Plus de « TOT » : la ligne Anton en gras se lit d'elle-même (Eric 11/08).
+          Cellule vide conservée pour l'alignement des colonnes. */}
+      <View style={[styles.labelCell, styles.totalLabel]} />
       {SEAT_ORDER.map((id) => {
         const leader = totals[id] === min;
         return (
@@ -58,6 +63,8 @@ export function Feuille({
   isLive,
   showDetails,
   onCorrigerDerniere,
+  onSetLieu,
+  capturing = false,
 }: {
   archive: GameArchive;
   isLive: boolean;
@@ -67,10 +74,17 @@ export function Feuille({
    *  corrigeable) → referme la feuille et rouvre la saisie du Round pré-remplie.
    *  Absent pour une archive passée ou une partie scellée (pas de ligne crayon). */
   onCorrigerDerniere?: () => void;
+  /** Partie EN COURS : rend le lieu éditable inline (persiste au store). Absent
+   *  pour une archive passée → le lieu (s'il existe) est en lecture seule. */
+  onSetLieu?: (v: string) => void;
+  /** Vrai pendant la capture de partage : on gèle le lieu en TEXTE (ni placeholder
+   *  « + lieu », ni curseur ne doivent polluer l'image). */
+  capturing?: boolean;
 }) {
   const { players, rounds } = archive;
   const totals = computeTotals(rounds);
   const lastId = SEAT_ORDER[SEAT_ORDER.length - 1];
+  const dateLabel = formatSessionDate(archive.archivedAt);
 
   const rows = rounds.map((r, i) => {
     const donneur = roundWinner(r);
@@ -94,6 +108,28 @@ export function Feuille({
 
   return (
     <View style={styles.feuille}>
+      {/* Date + lieu — DANS la zone capturée (portés au partage). Lieu éditable
+          inline pour la partie en cours ; lecture seule pour une archive passée. */}
+      <View style={styles.metaRow}>
+        <Text style={styles.metaDate}>{dateLabel}</Text>
+        {onSetLieu && !capturing ? (
+          <>
+            <Text style={styles.metaSep}> · </Text>
+            <TextInput
+              style={styles.metaLieuInput}
+              value={archive.lieu ?? ''}
+              onChangeText={onSetLieu}
+              placeholder="+ lieu"
+              placeholderTextColor={palette.estompe}
+              maxLength={24}
+            />
+          </>
+        ) : archive.lieu ? (
+          // Capture, ou archive passée : le lieu en texte pur (ni placeholder ni curseur).
+          <Text style={styles.metaLieu}> · {archive.lieu}</Text>
+        ) : null}
+      </View>
+
       {/* En-tête colonnes : mono gris sous trait 3px. 1ʳᵉ colonne = sens de jeu (↔). */}
       <View style={[styles.row, styles.headRow]}>
         <View style={styles.labelCell}>
@@ -185,6 +221,12 @@ export function Feuille({
 
 const styles = StyleSheet.create({
   feuille: {},
+  // Date + lieu, en tête de grille (capturé au partage).
+  metaRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 8 },
+  metaDate: { ...typography.chrome, fontSize: 14, color: palette.encre },
+  metaSep: { ...typography.chrome, fontSize: 14, color: palette.murmure },
+  metaLieu: { ...typography.chrome, fontSize: 14, color: palette.murmure },
+  metaLieuInput: { ...typography.chrome, fontSize: 14, color: palette.murmure, minWidth: 80, paddingVertical: 0 },
   row: { flexDirection: 'row', borderBottomWidth: 1, borderColor: palette.encre },
   // En-tête sous trait fort 3px (placard).
   headRow: { borderBottomWidth: 3, borderColor: palette.encre },
@@ -192,7 +234,7 @@ const styles = StyleSheet.create({
   colDivider: { borderRightWidth: 1, borderRightColor: palette.encre },
 
   // 1ʳᵉ colonne = le sens de jeu (flèche par manche, réintroduit 31/07). La ligne
-  // TOT y garde « TOT » (totalLabelText). Placard : pas de colonne grise ombrée.
+  // TOT y laisse une cellule vide (le « TOT » retiré). Placard : pas de colonne grise ombrée.
   labelCell: { width: 44, alignItems: 'center', justifyContent: 'center', paddingVertical: 10 },
   labelCellBranlee: { backgroundColor: matiere.grave.fond },
   // La flèche →/← (anti-horaire/horaire, FD-09), en encre ; l'entête = ↔ atténué.
@@ -219,7 +261,6 @@ const styles = StyleSheet.create({
   // TOTAL : trait fort 4px, Anton, sur crème ; le meneur en cellule inversée.
   totalRow: { borderTopWidth: 4, borderColor: palette.encre, borderBottomWidth: 0 },
   totalLabel: {},
-  totalLabelText: { ...typography.chrome, fontSize: 11, color: palette.murmure },
   totLeaderCell: { backgroundColor: palette.encre },
   totalText: { fontFamily: fonts.affiche, fontSize: 24, color: palette.encre },
   totalTextLeader: { color: palette.cremePage },

@@ -81,7 +81,7 @@ export function GangList({ gangs, maskedCount, onTapGang, onMasquer, onRevelerMa
       {/* Titre centré flanqué de deux filets 3px (placard §04). */}
       <View style={styles.header}>
         <View style={styles.filet} />
-        <Text style={styles.titre}>TES GANGS</Text>
+        <Text style={styles.titre}>MES GANGS</Text>
         <View style={styles.filet} />
       </View>
       {scrollable ? (

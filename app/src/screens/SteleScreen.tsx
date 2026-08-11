@@ -18,7 +18,7 @@ import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { PLAYER_IDS, SEAT_ORDER } from '../domain/model';
+import { PLAYER_IDS } from '../domain/model';
 import type { GameArchive } from '../domain/model';
 import { computeSoireeStats } from '../domain/stats';
 import type { PrenomStats } from '../domain/stats';
@@ -123,13 +123,15 @@ export function SteleScreen({ navigation, route }: Props) {
     (a, b) => b.partiesGagnees - a.partiesGagnees || b.manchesGagnees - a.manchesGagnees,
   );
 
+  // La partie la plus récente = 1re ligne (pastParties triées desc). On la met en
+  // valeur (texte warm) : sert le flux « consulter » et repère « la plus fraîche ».
+  const mostRecentId = pastParties[0]?.parties[0]?.id;
+
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.topRow}>
-          <Text style={styles.titre} numberOfLines={1}>
-            {SEAT_ORDER.map((id) => roster.players[id].prenom).join(' · ')}
-          </Text>
+          <Text style={styles.titre} numberOfLines={1}>Palmarès du gang</Text>
           <TouchableOpacity onPress={onShare} style={styles.shareBtn} hitSlop={8} disabled={sharing}>
             {sharing ? <ActivityIndicator size="small" color={palette.encre} /> : <Text style={styles.shareTxt}>partager</Text>}
           </TouchableOpacity>
@@ -194,8 +196,10 @@ export function SteleScreen({ navigation, route }: Props) {
                     style={styles.feuilleRow}
                     onPress={() => navigation.navigate('Feuille', { archiveId: p.id })}
                   >
-                    <Text style={styles.feuilleTxt}>{partieLabel(p.archivedAt)}</Text>
-                    <Text style={styles.feuilleFleche}>→</Text>
+                    <Text style={[styles.feuilleTxt, p.id === mostRecentId && styles.feuilleTxtRecent]}>
+                      {partieLabel(p.archivedAt)}{p.lieu ? ` · ${p.lieu}` : ''}
+                    </Text>
+                    <Text style={[styles.feuilleFleche, p.id === mostRecentId && styles.feuilleTxtRecent]}>→</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -215,11 +219,12 @@ function DetailRow({ p, isLeader, isLooser }: { p: PrenomStats; isLeader: boolea
   return (
     <View style={styles.detailRow}>
       <Text style={[styles.detailNom, isLeader && styles.detailNomLeader]} numberOfLines={1}>
-        {isLooser ? '☞ ' : ''}
         {p.prenom}
       </Text>
-      <Text style={styles.detailStat}>{p.partiesGagnees}</Text>
-      <Text style={[styles.detailStat, isLooser && styles.detailStatLooser]}>{p.partiesPerdues}</Text>
+      {/* Symétrie : le P▲ du champion et le P▼ du looser — les deux stats extrêmes
+          — se répondent en rougeClair (Eric 11/08). */}
+      <Text style={[styles.detailStat, isLeader && styles.detailStatFort]}>{p.partiesGagnees}</Text>
+      <Text style={[styles.detailStat, isLooser && styles.detailStatFort]}>{p.partiesPerdues}</Text>
       <Text style={styles.detailStat}>{p.manchesGagnees}</Text>
       <Text style={styles.detailStat}>{p.manchesPerdues}</Text>
     </View>
@@ -232,7 +237,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: palette.cremePage },
   scroll: { padding: 20, paddingBottom: 8 },
   topRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  titre: { ...typography.chrome, flex: 1, fontSize: 12, letterSpacing: 1, color: palette.murmure },
+  titre: { ...typography.chrome, flex: 1, fontSize: 13, letterSpacing: 1, color: palette.murmure },
   shareBtn: { borderWidth: 2, borderColor: palette.encre, paddingVertical: 4, paddingHorizontal: 12, minWidth: 66, alignItems: 'center' },
   shareTxt: { ...typography.chrome, fontSize: 11, color: palette.encre },
 
@@ -253,26 +258,26 @@ const styles = StyleSheet.create({
   },
 
   champion: { alignItems: 'center', gap: 3 },
-  championLabel: { ...typography.chrome, fontSize: 11, letterSpacing: 4, color: palette.pierre },
+  championLabel: { ...typography.chrome, fontSize: 12, letterSpacing: 4, color: palette.pierre },
   championNom: { fontFamily: fonts.affiche, fontSize: 52, letterSpacing: 1, color: palette.cremePage, textAlign: 'center' },
-  championSous: { ...typography.chrome, fontSize: 11, letterSpacing: 1, color: palette.pierre },
+  championSous: { ...typography.chrome, fontSize: 12, letterSpacing: 1, color: palette.pierre },
 
   dalleDivider: { height: 1, backgroundColor: LIGHT },
 
   looser: { alignItems: 'center', gap: 2 },
   looserNom: { fontFamily: fonts.affiche, fontSize: 30, letterSpacing: 1, color: palette.pierre, textAlign: 'center' },
-  looserSous: { ...typography.chrome, fontSize: 10, letterSpacing: 2, color: palette.brique },
+  looserSous: { ...typography.chrome, fontSize: 12, letterSpacing: 2, color: palette.brique },
 
   mondeEtrange: { ...typography.chrome, fontSize: 12, color: palette.cremePage, textAlign: 'center', fontStyle: 'italic' },
 
   detail: { gap: 7 },
   detailHead: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingBottom: 5, borderBottomWidth: 1, borderBottomColor: LIGHT },
-  detailHeadStat: { ...typography.chrome, fontSize: 10, letterSpacing: 1, color: palette.pierre, minWidth: 34, textAlign: 'center' },
+  detailHeadStat: { ...typography.chrome, fontSize: 12, letterSpacing: 1, color: palette.pierre, minWidth: 34, textAlign: 'center' },
   detailRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  detailNom: { ...typography.chrome, flex: 1, fontSize: 13, color: palette.pierre },
+  detailNom: { ...typography.chrome, flex: 1, fontSize: 15, color: palette.pierre },
   detailNomLeader: { color: palette.cremePage },
-  detailStat: { ...typography.chrome, fontSize: 13, color: palette.pierre, minWidth: 34, textAlign: 'center' },
-  detailStatLooser: { color: palette.rougeClair },
+  detailStat: { ...typography.chrome, fontSize: 15, color: palette.pierre, minWidth: 34, textAlign: 'center' },
+  detailStatFort: { color: palette.rougeClair },
 
   // Le socle revanche : bande brique pleine largeur de la dalle, Anton crème.
   revancheBtn: {
@@ -287,12 +292,15 @@ const styles = StyleSheet.create({
 
   feuilles: { marginTop: 26 },
   feuillesHead: { borderTopWidth: 3, borderBottomWidth: 3, borderColor: palette.encre, paddingVertical: 6, marginBottom: 2 },
-  feuillesTitre: { ...typography.chrome, fontSize: 11, letterSpacing: 3, color: palette.encre },
+  feuillesTitre: { ...typography.chrome, fontSize: 12, letterSpacing: 3, color: palette.encre },
   feuilleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 11, paddingHorizontal: 4, borderBottomWidth: 1.5, borderColor: palette.encre },
-  feuilleTxt: { ...typography.chrome, fontSize: 13, color: palette.encre },
+  feuilleTxt: { ...typography.chrome, fontSize: 15, color: palette.encre },
+  // La partie la plus récente : texte warm (brique — lisible sur crème, contrairement
+  // au rougeClair pensé pour fond noir). À caler à l'œil.
+  feuilleTxtRecent: { color: palette.brique },
   feuilleFleche: { ...typography.chrome, color: palette.murmure },
 
   retourBtn: { alignItems: 'center', paddingVertical: 12 },
-  retour: { ...typography.chrome, fontSize: 13, color: palette.murmure, textDecorationLine: 'underline' },
+  retour: { ...typography.chrome, fontSize: 14, color: palette.murmure, textDecorationLine: 'underline' },
   videTxt: { ...typography.chrome, fontSize: 14, color: palette.murmure, textAlign: 'center', marginTop: 40, marginBottom: 16, paddingHorizontal: 24 },
 });
