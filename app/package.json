@@ -1,6 +1,6 @@
 {
   "name": "gang-of-four",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.ts",
   "dependencies": {
     "@expo-google-fonts/anton": "^0.4.2",
