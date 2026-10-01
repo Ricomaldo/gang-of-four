@@ -6,7 +6,7 @@ title: Changelog — Gang of Four
 
 # Changelog — Gang of Four
 
-Changements par version (produit). Le récit de dev, lui, vit dans `docs/devlogs/`.
+Changements par version (produit). Le récit de dev, lui, vit dans `docs/journal/`.
 Format : plus récent en haut.
 
 ## 0.2.0 — alpha-signature (le PLACARD)

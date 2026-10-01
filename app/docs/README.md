@@ -1,8 +1,8 @@
 ---
 title: 'GANG — docs (porte d''entrée)'
 created: '2026-07-10'
-updated: '2026-07-13'
-version: 0.2.2
+updated: '2026-10-01'
+version: 0.2.3
 status: active
 type: index
 ---
@@ -11,8 +11,8 @@ type: index
 
 > **Où suis-je ?** La porte d'entrée du dossier. Cinq zones, chacune sa maison.
 > Le **versioning marque l'ère** : `0.1.x` = build **alpha-core** (tag git
-> `v0.1`, commit `f73a326`) · `0.2.x` = phase **conception signature** (dev gelé,
-> UI/UX reshape).
+> `v0.1`, commit `f73a326`) · `0.2.x` = **alpha-signature** (le placard, tag
+> `v0.2`, 0.2.0 sortie le 11/08).
 
 ## Les zones
 
