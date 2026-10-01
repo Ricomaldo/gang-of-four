@@ -21,7 +21,7 @@ Tout est dans `_engagement/`. Ce sont des **primitives** : un fichier, une respo
 
 Scaffold stable qui survit au voyage `rooftop → forge → codebase → archives`. **La position du dossier EST l'état** — pas de timeline, pas de dates.
 
-- `_commission/` — l'origine, la demande de Damien, et le fil de son usage. `brief-01-amorce` (l'amorce, non retouchée) + `brief-02-complement` (la commande enrichie par le 1er retour) + `regles-jeu.pdf` + `journal-damien` (log de com, verbatim Damien tagué `FD-NN` — un conduit, pas un lieu de traitement). Ce qui est confié **et écouté**.
+- `_commission/` — l'origine, la demande de Damien, et le fil de son usage. `brief-01-amorce` (l'amorce, non retouchée) + `brief-02-complement` (la commande enrichie par le 1er retour) + `regles-jeu.pdf` + `journal-damien` (log de com, verbatim Damien tagué `FD-NN` — un conduit, pas un lieu de traitement) + `journal-pierre` (idem, joueur de la table, `FP-NN`). Ce qui est confié **et écouté**.
 - `_engagement/` — les primitives d'Eric, son « oui ». Le bundle de boot.
 - `app/` — le construit, l'app RN / Expo managed. `changelog.md` (versions produit).
   - `app/docs/` — porte d'entrée `README.md`. Les **specs** dans `specs/` (source de vérité du build : `specs-techniques`, `modele-donnees`, `logique-comptage`, `cas-reference-score`…), l'**identité** dans `signature/` (porte : `reshape.md`), les **traces datées** dans `journal/`, et le registre `bugs.md` (`BUG-NN`).
