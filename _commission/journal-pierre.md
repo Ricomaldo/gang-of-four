@@ -30,6 +30,6 @@ Le fil avec Pierre, joueur de la table. Ce qu'il renvoie. Un log, pas un lieu de
 - **FP-08** — « Version enfants sans gros mots »
 - **FP-09** — « Feuille finale pas clair » → *clarifié (01/10, Eric, de vive voix avec Pierre) : il parle de **la stèle** (palmarès du gang). Eric la trouve lui aussi peu claire. Étudiée sur capture le 02/10 → chantier `app/docs/journal/2026-10-02-chantier-refonte-stele-0.3.md` (refonte, contrat A3) + contrat A2 (branlées hors départage).*
 - **FP-10** — « Bug affichage chiffres à saisir sur certains téléphones (taille) » → *pas de détail demandé (Eric, 01/10) ; tranché → `app/docs/journal/2026-10-01-passe-0.3.md` A1.*
-- **FP-11** — « Petite branlee pour … plutôt que de - ou les deux »
+- **FP-11** — « Petite branlee pour … plutôt que de - ou les deux » → *mis au conclave de la prochaine soirée (Eric, 02/10) → contrat 0.3, C1.*
 
 **Clôture — verbatim :** « Voilou, c en vrac mais je notais au fur et à mesure des remarques tout en jouant - si truc pas clair dis-moi »
