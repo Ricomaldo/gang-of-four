@@ -1,8 +1,8 @@
 ---
 title: GANG — Specs stats & frontière P1/P2
 created: 2026-07-07
-updated: '2026-07-13'
-version: 0.2.2
+updated: '2026-10-02'
+version: 0.2.3
 status: active
 type: specs
 ---
@@ -40,10 +40,10 @@ Toutes calculées **sur les parties `terminee` du gang uniquement** (le vrac fil
 
 | Titre | Marque | Attribution |
 |---|---|---|
-| Champion *(ex-« Leader »)* | ✌️ | le plus de 🏆 **seuls** ; départage : ⭐️ manches → **branlées données** → **le tenant reste** (dérivé par rejeu). **Jamais le 💩.** |
-| Looser | 🐌 | **miroir strict** : le plus de 💩 **seuls** ; départage : 💥 manches perdues → **branlées prises** → **le tenant reste** (par rejeu). **Jamais le 🏆.** |
+| Champion *(ex-« Leader »)* | ✌️ | le plus de 🏆 **seuls** ; départage : ⭐️ manches → **le tenant reste** (dérivé par rejeu). **Jamais le 💩.** |
+| Looser | 🐌 | **miroir strict** : le plus de 💩 **seuls** ; départage : 💥 manches perdues → **le tenant reste** (par rejeu). **Jamais le 🏆.** |
 
-Les départages **croisés sont supprimés** (l'ancien « ✌️ départagé par moins de ❌ » interdisait le **monde étrange** — même joueur champion *et* looser, résultat **assumé**, cf. signature/palmares.md). Titres décernés **dès la 1ʳᵉ partie terminée** (pas de seuil). À 1 partie : champion = vainqueur, looser = dernier, les autres sans titre. Tie-break = **tenant par rejeu** (plus de « premier vu l'emporte »).
+Les départages **croisés sont supprimés** (l'ancien « ✌️ départagé par moins de ❌ » interdisait le **monde étrange** — même joueur champion *et* looser, résultat **assumé**, cf. signature/palmares.md). Titres décernés **dès la 1ʳᵉ partie terminée** (pas de seuil). À 1 partie : champion = vainqueur, looser = dernier, les autres sans titre. Tie-break = **tenant par rejeu** (plus de « premier vu l'emporte »). **Les branlées n'entrent dans aucun départage** (`palmares.md`, 31/07 ; signé par Eric le 02/10 — le code `stats.ts` les compte encore → contrat 0.3, A2).
 
 ## Identité — agrégation par prénom, roster-scoped
 
