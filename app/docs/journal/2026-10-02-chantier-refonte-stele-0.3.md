@@ -26,7 +26,7 @@ Pierre : « Feuille finale pas clair » = la stèle (`journal-pierre`, FP-09). E
 
 - **Refonte complète de l'écran**, chantier en soi (pas une retouche).
 - Les en-têtes `P▲ P▼ M▲ M▼` **disparaissent**.
-- **La langue de la table, pas celle du code.** « Manche » est une nomenclature de code ; entre joueurs on dit **« prendre / a pris la main »** et **« fini premier / dernier x fois »**. « Partie pliée » n'est pas leur langage. « Finit dernier » prête à confusion sur la stèle.
+- **La langue de la table, pas celle du code.** « Manche » est une nomenclature de code ; entre joueurs on dit **« prendre / a pris la main »** et **« fini premier / dernier x fois »**. « Partie pliée » n'est pas leur langage. Ajouté le 02/10 (FP-04) : on dit **« a gagné »** (la manche) et **« distribue »**. « Finit dernier » prête à confusion sur la stèle.
 - **Hiérarchiser** : distinguer ce qui compte vraiment (première vue) du tableau de stats complet — utile, **pas indispensable** en première vue.
 - Les **emoji** restent abandonnés (cohérence de tout le design) ; leur retour **se discute**, il n'est pas acquis.
 - **Les branlées ne comptent pas** — signé (→ contrat A2).

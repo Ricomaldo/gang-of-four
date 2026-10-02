@@ -23,7 +23,7 @@ Le fil avec Pierre, joueur de la table. Ce qu'il renvoie. Un log, pas un lieu de
 - **FP-01** — « Possibilité de lancer plusieurs parties en même temps (si partie ajournée) »
 - **FP-02** — « Timer pour le picon »
 - **FP-03** — « Scores en audio recap - et commentaires branlee aussi »
-- **FP-04** — « Appli dit à qui de jouer après le gagnant de la manche »
+- **FP-04** — « Appli dit à qui de jouer après le gagnant de la manche » → *étudié avec Eric le 02/10 (cartouche + ligne de passe) ; tranché → contrat 0.3, A4.*
 - **FP-05** — « Déclenchement automatique du son GoF sur un son donné »
 - **FP-06** — « + de sons GoF - on se lasse »
 - **FP-07** — « Voix féminines »
