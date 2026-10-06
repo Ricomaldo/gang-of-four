@@ -64,3 +64,7 @@ Ce qui doit être vrai pour qu'elle le soit :
 - Le suivi valorise le récit : manches gagnées, manches jouées, et la frime (le « Gang of Four ! » de la combinaison reine).
 
 Le séquençage de cette branche en paliers (le premier : « Le Palmarès ») n'est pas ici — l'arbre dit le pourquoi, pas l'ordre.
+
+---
+
+> **Note pour une prochaine session (06/10/2026, hors sujet du jour).** Eric a des choses à dire et à voir sur l'arbre. Déclencheur : en parlant des easter eggs (`app/docs/signature/easter-eggs.md`), il a nommé une fin qui n'est pas ici — l'app **communautaire** (la table, l'association fondée autour du jeu) et son **rayonnement** (« contribuera au rayonnement possible de la capacité à créer des apps »). À regarder avec lui, pas à ajouter seul.
