@@ -24,11 +24,11 @@ Le fil avec Pierre, joueur de la table. Ce qu'il renvoie. Un log, pas un lieu de
 
 - **FP-01** — « Possibilité de lancer plusieurs parties en même temps (si partie ajournée) » → *clarifié par Eric (06/10) : plusieurs gangs, chacun sa partie en cours ; tranché → contrat 0.3, A6.*
 - **FP-02** — « Timer pour le picon » → *clarifié par Eric (06/10, de vive voix) : Pierre a ri — c'est une suggestion de son ami **Jean-Marc**, lancée en plaisantant. Eric prend la plaisanterie au sérieux : germe d'un **clin d'œil** dans l'app (« PICON TIME ! » quand Jean-Marc est du gang) — et d'une famille de clins d'œil dédiés aux amis (ex. le son de but argentin, dédicace à Santi, réservé à ses parties) → `app/docs/signature/easter-eggs.md`.*
-- **FP-03** — « Scores en audio recap - et commentaires branlee aussi »
+- **FP-03** — « Scores en audio recap - et commentaires branlee aussi » → *son — tranché par Eric (06/10) : hors 0.3, critère assets (→ contrat, HORS 0.3 « Le son »).*
 - **FP-04** — « Appli dit à qui de jouer après le gagnant de la manche » → *étudié avec Eric le 02/10 (cartouche + ligne de passe) ; tranché → contrat 0.3, A4.*
-- **FP-05** — « Déclenchement automatique du son GoF sur un son donné »
-- **FP-06** — « + de sons GoF - on se lasse »
-- **FP-07** — « Voix féminines »
+- **FP-05** — « Déclenchement automatique du son GoF sur un son donné » → *son — tranché par Eric (06/10) : hors 0.3 avec les autres (→ contrat, HORS 0.3 « Le son »). Note : de nature différente — pas un asset mais de l'écoute micro ; ouvert.*
+- **FP-06** — « + de sons GoF - on se lasse » → *son — tranché par Eric (06/10) : hors 0.3, critère assets (→ contrat, HORS 0.3 « Le son »).*
+- **FP-07** — « Voix féminines » → *son — tranché par Eric (06/10) : hors 0.3, critère assets (→ contrat, HORS 0.3 « Le son »).*
 - **FP-08** — « Version enfants sans gros mots » → *clarifié par Eric (06/10) : le mot en cause est **« branlée »**. Friction vécue par Eric aussi, en août, en jouant avec sa sœur, son fils et son neveu — il avait trouvé « raclée », mais remplacer un mot n'affirme pas la signature. Tranché : une **version enfant / version 18+** au démarrage, deux signatures poussées chacune plus loin — **0.4 ou ultérieure**, hors contrat 0.3 (→ HORS 0.3). Le conclave C1 servira à recueillir l'écho, discrètement.*
 - **FP-09** — « Feuille finale pas clair » → *clarifié (01/10, Eric, de vive voix avec Pierre) : il parle de **la stèle** (palmarès du gang). Eric la trouve lui aussi peu claire. Étudiée sur capture le 02/10 → chantier `app/docs/journal/2026-10-02-chantier-refonte-stele-0.3.md` (refonte, contrat A3) + contrat A2 (branlées hors départage).*
 - **FP-10** — « Bug affichage chiffres à saisir sur certains téléphones (taille) » → *pas de détail demandé (Eric, 01/10) ; tranché → `app/docs/journal/2026-10-01-passe-0.3.md` A1.*
