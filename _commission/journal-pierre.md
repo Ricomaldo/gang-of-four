@@ -16,6 +16,8 @@ Le fil avec Pierre, joueur de la table. Ce qu'il renvoie. Un log, pas un lieu de
 
 **Contexte :** notes prises au fur et à mesure, en jouant, sur la 0.2.0 (sortie le 11/08). Rangé le 01/10, ouvert à peine avant.
 
+**Préambule (Eric, 06/10) :** Pierre a testé l'app **pendant une semaine de vacances, avec ses propres amis** — pas la table habituelle, pas une soirée. Ils étaient **nombreux** et **avaient du temps** : plusieurs tables, des parties qui s'interrompent et reprennent. C'est ce qui a fait naître le besoin de « sauvegarder » une partie interrompue (FP-01), et c'est le cadre à garder en tête pour lire les autres retours — certains naissent de cette configuration (durée, nombre, présence d'enfants) plus que de la soirée à 4.
+
 **Préambule — verbatim :** « V'la qqs premiers commentaires mais d'abord, bravo Eric - ça fonctionne carrément bien et très pratique à utiliser 👍 »
 
 **Retour — verbatim, tagué :**
