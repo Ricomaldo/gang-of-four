@@ -20,7 +20,7 @@ Le fil avec Pierre, joueur de la table. Ce qu'il renvoie. Un log, pas un lieu de
 
 **Retour — verbatim, tagué :**
 
-- **FP-01** — « Possibilité de lancer plusieurs parties en même temps (si partie ajournée) »
+- **FP-01** — « Possibilité de lancer plusieurs parties en même temps (si partie ajournée) » → *clarifié par Eric (06/10) : plusieurs gangs, chacun sa partie en cours ; tranché → contrat 0.3, A6.*
 - **FP-02** — « Timer pour le picon »
 - **FP-03** — « Scores en audio recap - et commentaires branlee aussi »
 - **FP-04** — « Appli dit à qui de jouer après le gagnant de la manche » → *étudié avec Eric le 02/10 (cartouche + ligne de passe) ; tranché → contrat 0.3, A4.*
